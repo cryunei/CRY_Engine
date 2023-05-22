@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "Dx11Mesh.h"
+#include "../Render/Dx11Mesh.h"
 #include <d3d11.h>
 
 
@@ -12,12 +12,12 @@ class Dx11Renderer
 {
 
 private:
-	IDXGISwapChain*         SwapChain;
-	ID3D11Device*           Device;
-	ID3D11DeviceContext*    DeviceContext;
 	ID3D11RenderTargetView* RenderTargetView;
+	ID3D11Buffer*           WorldMatrixBuffer;
+	ID3D11Buffer*           ViewMatrixBuffer;
+	ID3D11Buffer*           ProjectionMatrixBuffer;
 
-	Dx11Mesh Primitive;
+	Dx11Mesh Mesh;
 
 public:
 	// Constructor
@@ -27,16 +27,19 @@ public:
 	void Clear();
 	
 	// Initialize
-	void Initialize( HWND hWnd );
+	void Initialize();
 
-	// Render Frame
+	// Render frame
 	void RenderFrame();
 
 private:
-	// Initialize RenderTargetView
+	// Initialize render target view
 	void _InitializeRenderTargetView();
 
-	// Initialize Viewport
-	void _InitializeViewport();
+	// Initialize viewport
+	void _InitializeViewport() const;
+
+	// Initialize matrix buffer
+	void InitializeMatrixBuffer( ID3D11Buffer* Buffer ) const;
 };
 

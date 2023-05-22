@@ -27,18 +27,22 @@ private:
     ID3D11Texture2D*          Texture2D;
     ID3D11Resource*           TextureResource;
     ID3D11ShaderResourceView* TextureSRV;
+    ID3D11SamplerState*       TextureSS;
     
 public:
     // Construct
     Dx11Material();
     
     // Initialize
-    void Initialize( ID3D11Device* Device, ID3D11DeviceContext* DeviceContext );
+    void Initialize();
+
+    // Render
+    void Render() const;
 
 private:
     // Create pixel shader
-    void _CreatePixelShader( ID3D11Device* Device, ID3D11DeviceContext* DeviceContext );
+    void _CreatePixelShader();
 
     // Create texture
-    void _CreateTexture( ID3D11Device* Device, ID3D11DeviceContext* DeviceContext );
+    void _CreateTexture();
 };

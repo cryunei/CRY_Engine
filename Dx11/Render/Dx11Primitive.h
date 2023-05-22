@@ -48,21 +48,21 @@ public:
     Dx11Primitive();
 
     // Initialize
-    void Initialize( ID3D11Device* Device, ID3D11DeviceContext* DeviceContext );
+    void Initialize();
 
     // Create buffers
-    void CreateBuffers( ID3D11Device* Device, ID3D11DeviceContext* DeviceContext );
+    void CreateBuffers();
 
     // Render
-    void Render( ID3D11DeviceContext* DeviceContext ) const;
+    void Render() const;
 
 private:
     // Create vertex shader
-    void _CreateVertexShader( ID3D11Device* Device, ID3D11DeviceContext* DeviceContext );
+    void _CreateVertexShader();
 
     // Create vertex buffer
-    void _CreateVertexBuffer( ID3D11Device* Device, ID3D11DeviceContext* DeviceContext );
+    void _CreateVertexBuffer();
 
     // Create index buffer
-    void _CreateIndexBuffer( ID3D11Device* Device, ID3D11DeviceContext* DeviceContext );
+    void _CreateIndexBuffer();
 };

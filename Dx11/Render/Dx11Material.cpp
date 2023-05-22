@@ -6,6 +6,8 @@
 
 
 #include "Dx11Material.h"
+#include "../Core/Dx11Device.h"
+#include "../Core/Dx11ShaderFactory.h"
 #include <d3dcompiler.h>
 
 
@@ -23,29 +25,36 @@ Dx11Material::Dx11Material()
 //=================================================================================================
 // @brief	Initialize
 //=================================================================================================
-void Dx11Material::Initialize( ID3D11Device* Device, ID3D11DeviceContext* DeviceContext )
+void Dx11Material::Initialize()
 {
+    _CreatePixelShader();
+    _CreateTexture();
+}
+
+//=================================================================================================
+// @brief	Render
+//=================================================================================================
+void Dx11Material::Render() const
+{
+    GetDx11DeviceContext()->PSSetShaderResources( 0, 1, &TextureSRV );
+    GetDx11DeviceContext()->PSSetSamplers(0, 1, &TextureSS );
 }
 
 //=================================================================================================
 // @brief	Create pixel shader
 //=================================================================================================
-void Dx11Material::_CreatePixelShader( ID3D11Device* Device, ID3D11DeviceContext* DeviceContext )
+void Dx11Material::_CreatePixelShader()
 {
-    ID3D10Blob* ps = nullptr;
-    ID3D10Blob* error = nullptr;
+    ID3D10Blob* ps = Dx11ShaderFactory::CompileShader( L"Shader/shader.hlsl", "PS", "ps_4_0" );
 
-    D3DCompileFromFile( L"Shader/shader.hlsl", nullptr, nullptr, "PS", "ps_4_0", D3DCOMPILE_ENABLE_STRICTNESS, 0, &ps, &error );
-
-    Device->CreatePixelShader ( ps->GetBufferPointer(), ps->GetBufferSize(), nullptr, &PixelShader  );
-
-    DeviceContext->PSSetShader( PixelShader,  0, 0 );
+    GetDx11Device()->CreatePixelShader ( ps->GetBufferPointer(), ps->GetBufferSize(), nullptr, &PixelShader  );
+    GetDx11DeviceContext()->PSSetShader( PixelShader,  0, 0 );
 }
 
 //=================================================================================================
 // @brief	Create texture
 //=================================================================================================
-void Dx11Material::_CreateTexture( ID3D11Device* Device, ID3D11DeviceContext* DeviceContext )
+void Dx11Material::_CreateTexture()
 {
     // create texture
     D3D11_TEXTURE2D_DESC td;
@@ -63,10 +72,10 @@ void Dx11Material::_CreateTexture( ID3D11Device* Device, ID3D11DeviceContext* De
     td.CPUAccessFlags = 0;
     td.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
-    Device->CreateTexture2D( &td, nullptr, &Texture2D );
+    GetDx11Device()->CreateTexture2D( &td, nullptr, &Texture2D );
 
     // create sample state
-    ID3D11SamplerState* SampleState;
+    
 
     D3D11_SAMPLER_DESC sd;
     ZeroMemory( &sd, sizeof( D3D11_SAMPLER_DESC ) );
@@ -86,12 +95,9 @@ void Dx11Material::_CreateTexture( ID3D11Device* Device, ID3D11DeviceContext* De
     sd.MaxLOD = D3D11_FLOAT32_MAX;
 
     // Create the texture sampler state.
-    Device->CreateSamplerState( &sd, &SampleState );
+    GetDx11Device()->CreateSamplerState( &sd, &TextureSS );
 
     CoInitialize( nullptr );
 
-    CreateWICTextureFromFile( Device, L"Resource/Texture/SampleTexture.png", &TextureResource, &TextureSRV );
-
-    DeviceContext->PSSetShaderResources( 0, 1, &TextureSRV );
-    DeviceContext->PSSetSamplers(0, 1, &SampleState );
+    CreateWICTextureFromFile( GetDx11Device(), L"Resource/Texture/SampleTexture.png", &TextureResource, &TextureSRV );
 }

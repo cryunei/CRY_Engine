@@ -1,98 +1,74 @@
 #include "Dx11Renderer.h"
+#include "../Core/Dx11Device.h"
 
-//------------------------------------------------------------------------------
-// Constructor
-//------------------------------------------------------------------------------
+
+//=================================================================================================
+// @brief	Constructor
+//=================================================================================================
 Dx11Renderer::Dx11Renderer()
-: SwapChain        ( nullptr )
-, Device           ( nullptr )
-, DeviceContext    ( nullptr )
-, RenderTargetView ( nullptr )
+: RenderTargetView       ( nullptr )
+, WorldMatrixBuffer      ( nullptr )
+, ViewMatrixBuffer       ( nullptr )
+, ProjectionMatrixBuffer ( nullptr )
 {
 }
 
-//------------------------------------------------------------------------------
-// Clear
-//------------------------------------------------------------------------------
+//=================================================================================================
+// @brief	Clear
+//=================================================================================================
 void Dx11Renderer::Clear()
 {
-	if ( SwapChain ) SwapChain->Release();
-	if ( Device ) Device->Release();
-	if ( DeviceContext ) DeviceContext->Release();
 	if ( RenderTargetView )RenderTargetView->Release();
 
-	SwapChain = nullptr;
-	Device = nullptr;
-	DeviceContext = nullptr;
 	RenderTargetView = nullptr;
 }
 
-//------------------------------------------------------------------------------
-// Initialize
-//------------------------------------------------------------------------------
-void Dx11Renderer::Initialize( HWND hWnd )
+//=================================================================================================
+// @brief	Initialize
+//=================================================================================================
+void Dx11Renderer::Initialize()
 {
-	DXGI_SWAP_CHAIN_DESC scd;
-	ZeroMemory( &scd, sizeof( DXGI_SWAP_CHAIN_DESC ) );
-
-	scd.BufferCount = 1;
-	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scd.OutputWindow = hWnd;
-	scd.SampleDesc.Count = 4;
-	scd.Windowed = true;
-
-	D3D11CreateDeviceAndSwapChain( nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0, D3D11_SDK_VERSION, &scd, &SwapChain, &Device, nullptr, &DeviceContext);
-
 	_InitializeRenderTargetView();
 	_InitializeViewport();
 
-	Primitive.Initialize( Device, DeviceContext );
+	Mesh.Initialize();
 }
 
-//------------------------------------------------------------------------------
-// RenderFrame
-//------------------------------------------------------------------------------
+//=================================================================================================
+// @brief	Render frame
+//=================================================================================================
 void Dx11Renderer::RenderFrame()
 {
-	if ( !DeviceContext ) return;
-	if ( !SwapChain ) return;
-	
 	float color[ 4 ] = { 0.0f, 0.2f, 0.4f, 1.0f };
 	
-	DeviceContext->ClearRenderTargetView( RenderTargetView, color );
+	GetDx11DeviceContext()->ClearRenderTargetView( RenderTargetView, color );
 
-	Primitive.Render( DeviceContext );
+	Mesh.Render();
 
-	SwapChain->Present( 0, 0 );
+	GetSwapChain()->Present( 0, 0 );
 }
 
-//------------------------------------------------------------------------------
-// _InitializeRenderTargetView
-//------------------------------------------------------------------------------
+//=================================================================================================
+// @brief	Initialize render target view
+//=================================================================================================
 void Dx11Renderer::_InitializeRenderTargetView()
 {
-	if ( !SwapChain ) return;
-	if ( !Device ) return;
-	if ( !DeviceContext ) return;
-	
 	ID3D11Texture2D* texture = nullptr;
-	SwapChain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), ( LPVOID* )&texture );
+
+	GetSwapChain()->GetBuffer( 0, __uuidof( ID3D11Texture2D ), ( LPVOID* )&texture );
 	if ( !texture ) return;
 
-	Device->CreateRenderTargetView( texture, nullptr, &RenderTargetView );
+	GetDx11Device()->CreateRenderTargetView( texture, nullptr, &RenderTargetView );
+	GetDx11DeviceContext()->OMSetRenderTargets( 1, &RenderTargetView, nullptr );
+	
 	texture->Release();
-
-	DeviceContext->OMSetRenderTargets( 1, &RenderTargetView, nullptr );
 }
 
-//------------------------------------------------------------------------------
-// _InitializeViewport
-//------------------------------------------------------------------------------
-void Dx11Renderer::_InitializeViewport()
+//=================================================================================================
+// @brief	Initialize viewport
+//=================================================================================================
+void Dx11Renderer::_InitializeViewport() const
 {
-	if ( !DeviceContext ) return;
-	
 	D3D11_VIEWPORT viewport;
 	ZeroMemory( &viewport, sizeof( D3D11_VIEWPORT ) );
 
@@ -101,5 +77,26 @@ void Dx11Renderer::_InitializeViewport()
 	viewport.Width = 800;
 	viewport.Height = 600;
 
-	DeviceContext->RSSetViewports( 1, &viewport );
+	GetDx11DeviceContext()->RSSetViewports( 1, &viewport );
+}
+
+//=================================================================================================
+// @brief	Initialize matrix buffer
+//=================================================================================================
+void Dx11Renderer::InitializeMatrixBuffer( ID3D11Buffer* Buffer ) const
+{
+	if ( Buffer )
+	{
+		Buffer->Release();
+	}
+
+	D3D11_BUFFER_DESC bd;
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = sizeof( XMMATRIX );
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bd.MiscFlags = 0;
+	bd.StructureByteStride = 0;
+
+	GetDx11Device()->CreateBuffer( &bd, nullptr, &Buffer );
 }
