@@ -56,7 +56,7 @@ void Dx11Material::_CreatePixelShader()
 //=================================================================================================
 void Dx11Material::_CreateTexture()
 {
-    // create texture
+   // create texture
     D3D11_TEXTURE2D_DESC td;
     ZeroMemory( &td, sizeof( D3D11_TEXTURE2D_DESC ) );
 
@@ -75,8 +75,6 @@ void Dx11Material::_CreateTexture()
     GetDx11Device()->CreateTexture2D( &td, nullptr, &Texture2D );
 
     // create sample state
-    
-
     D3D11_SAMPLER_DESC sd;
     ZeroMemory( &sd, sizeof( D3D11_SAMPLER_DESC ) );
 

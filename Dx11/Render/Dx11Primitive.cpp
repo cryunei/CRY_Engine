@@ -80,10 +80,10 @@ void Dx11Primitive::_CreateVertexBuffer()
 {
     Vertex Vertices[] =
     {
-        { XMFLOAT3(  0.0f,   0.5f, 0.0f ), XMFLOAT2( 0.0f, 0.0f ) },
-        { XMFLOAT3(  0.45f, -0.5f, 0.0f ), XMFLOAT2( 1.0f, 0.0f ) },
-        { XMFLOAT3( -0.45f, -0.5f, 0.0f ), XMFLOAT2( 0.0f, 1.0f ) },
-        { XMFLOAT3(  0.0f,  -1.5f, 0.0f ), XMFLOAT2( 1.0f, 1.0f ) },
+        { XMFLOAT3(  0.f, 0.f, 0.f ), XMFLOAT2( 0.f, 1.f ) },
+        { XMFLOAT3(  0.f, 1.f, 0.f ), XMFLOAT2( 0.f, 0.f ) },
+        { XMFLOAT3(  1.f, 0.f, 0.f ), XMFLOAT2( 1.f, 1.f ) },
+        { XMFLOAT3(  1.f, 1.f, 0.f ), XMFLOAT2( 1.f, 0.f ) },
     };
     
     VertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;

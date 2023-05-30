@@ -2,6 +2,7 @@
 
 
 #include "../Render/Dx11Mesh.h"
+#include "../Actor/Camera/CrCamera.h"
 #include <d3d11.h>
 
 
@@ -10,14 +11,25 @@
 
 class Dx11Renderer
 {
+public:
+	struct WorldMatrix
+	{
+		XMMATRIX worldMat;
+	};
+
+	struct ViewProjMatrix
+	{
+		XMMATRIX viewMat;
+		XMMATRIX projMat;
+	};
 
 private:
 	ID3D11RenderTargetView* RenderTargetView;
-	ID3D11Buffer*           WorldMatrixBuffer;
-	ID3D11Buffer*           ViewMatrixBuffer;
-	ID3D11Buffer*           ProjectionMatrixBuffer;
+	ID3D11Buffer* WorldMatrixBuffer;
+	ID3D11Buffer* ViewProjectionMatrixBuffer;
 
 	Dx11Mesh Mesh;
+	CrCamera Camera;
 
 public:
 	// Constructor
@@ -32,6 +44,9 @@ public:
 	// Render frame
 	void RenderFrame();
 
+	CrCamera* GetCamera() { return &Camera; }
+	const CrCamera* GetCamera() const { return &Camera; }
+
 private:
 	// Initialize render target view
 	void _InitializeRenderTargetView();
@@ -39,7 +54,20 @@ private:
 	// Initialize viewport
 	void _InitializeViewport() const;
 
+	// Initialize world matrix buffer
+	void _InitializeWorldMatrixBuffer();
+
+	// Initialize view projection matrix buffer
+	void _InitializeViewProjectionMatrixBuffer();
+
 	// Initialize matrix buffer
-	void InitializeMatrixBuffer( ID3D11Buffer* Buffer ) const;
+	void _InitializeMatrixBuffer( ID3D11Buffer** Buffer ) const;
+
+	// Set world matrix buffer data
+	void _SetWorldMatrixBufferData( const XMMATRIX& Matrix ) const;
+
+	// Set view projection matrix buffer data
+	void _SetViewProjectionMatrixBufferData() const;
+
 };
 

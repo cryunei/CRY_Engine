@@ -20,3 +20,11 @@ Matrix DxTransform::ToLocalMatrix() const
            Matrix::CreateFromQuaternion( Rotation  ) *
            Matrix::CreateTranslation   ( Location  );
 }
+
+//=================================================================================================
+// @brief	Get world matrix
+//=================================================================================================
+Matrix DxTransform::GetWorldMatrix() const
+{
+    return ToLocalMatrix();
+}

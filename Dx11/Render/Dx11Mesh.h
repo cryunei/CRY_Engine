@@ -29,4 +29,6 @@ public:
 
     // Render
     void Render();
+
+    const DxTransform& GetTransform() const { return Transform; }
 };
