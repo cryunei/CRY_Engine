@@ -27,8 +27,8 @@ Dx11Material::Dx11Material()
 //=================================================================================================
 void Dx11Material::Initialize()
 {
-    _CreatePixelShader();
-    _CreateTexture();
+    _createPixelShader();
+    _createTexture();
 }
 
 //=================================================================================================
@@ -43,7 +43,7 @@ void Dx11Material::Render() const
 //=================================================================================================
 // @brief	Create pixel shader
 //=================================================================================================
-void Dx11Material::_CreatePixelShader()
+void Dx11Material::_createPixelShader()
 {
     ID3D10Blob* ps = Dx11ShaderFactory::CompileShader( L"Shader/shader.hlsl", "PS", "ps_4_0" );
 
@@ -54,7 +54,7 @@ void Dx11Material::_CreatePixelShader()
 //=================================================================================================
 // @brief	Create texture
 //=================================================================================================
-void Dx11Material::_CreateTexture()
+void Dx11Material::_createTexture()
 {
    // create texture
     D3D11_TEXTURE2D_DESC td;

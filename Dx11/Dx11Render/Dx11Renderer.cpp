@@ -10,6 +10,7 @@ Dx11Renderer::Dx11Renderer()
 : RenderTargetView           ( nullptr )
 , WorldMatrixBuffer          ( nullptr )
 , ViewProjectionMatrixBuffer ( nullptr )
+, LightPropertyBuffer		 ( nullptr )
 {
 }
 
@@ -28,14 +29,16 @@ void Dx11Renderer::Clear()
 //=================================================================================================
 void Dx11Renderer::Initialize()
 {
-	_InitializeRenderTargetView();
-	_InitializeViewport();
-	_InitializeWorldMatrixBuffer();
-	_InitializeViewProjectionMatrixBuffer();
+	_initializeRenderTargetView();
+	_initializeViewport();
+	_initializeWorldMatrixBuffer();
+	_initializeViewProjectionMatrixBuffer();
+	_initializeLightPropertyBuffer();
 
 	Mesh.Initialize();
-	 GetCamera()->SetLookAtDirection( Vector3( 0.f, 0.f, -1.f ) );
-	 GetCamera()->Transform.SetLocation( 0.f, 0.f, 5.f );
+
+	GetCamera()->SetLookAtDirection( Vector3( 0.f, 0.f, -1.f ) );
+	GetCamera()->Transform.SetLocation( 0.f, 0.f, 5.f );
 }
 
 //=================================================================================================
@@ -47,11 +50,12 @@ void Dx11Renderer::RenderFrame()
 	
 	GetDx11DeviceContext()->ClearRenderTargetView( RenderTargetView, color );
 
-	_SetViewProjectionMatrixBufferData();
+	_setViewProjectionMatrixBufferData();
+	_setLightPropertyBufferData();
 
 	// foreach Mesh
 	{
-		_SetWorldMatrixBufferData( Mesh.GetTransform().GetWorldMatrix() ); 
+		_setWorldMatrixBufferData( Mesh.GetTransform().GetWorldMatrix() ); 
 		Mesh.Render();
 	}
 
@@ -61,7 +65,7 @@ void Dx11Renderer::RenderFrame()
 //=================================================================================================
 // @brief	Initialize render target view
 //=================================================================================================
-void Dx11Renderer::_InitializeRenderTargetView()
+void Dx11Renderer::_initializeRenderTargetView()
 {
 	ID3D11Texture2D* texture = nullptr;
 
@@ -77,7 +81,7 @@ void Dx11Renderer::_InitializeRenderTargetView()
 //=================================================================================================
 // @brief	Initialize viewport
 //=================================================================================================
-void Dx11Renderer::_InitializeViewport() const
+void Dx11Renderer::_initializeViewport() const
 {
 	D3D11_VIEWPORT viewport;
 	ZeroMemory( &viewport, sizeof( D3D11_VIEWPORT ) );
@@ -93,7 +97,7 @@ void Dx11Renderer::_InitializeViewport() const
 //=================================================================================================
 // @brief	Initialize world matrix buffer
 //=================================================================================================
-void Dx11Renderer::_InitializeWorldMatrixBuffer()
+void Dx11Renderer::_initializeWorldMatrixBuffer()
 {
 	if ( WorldMatrixBuffer )
 	{
@@ -114,7 +118,7 @@ void Dx11Renderer::_InitializeWorldMatrixBuffer()
 //=================================================================================================
 // @brief	Initialize view projection matrix buffer
 //=================================================================================================
-void Dx11Renderer::_InitializeViewProjectionMatrixBuffer()
+void Dx11Renderer::_initializeViewProjectionMatrixBuffer()
 {
 	if ( ViewProjectionMatrixBuffer )
 	{
@@ -133,9 +137,30 @@ void Dx11Renderer::_InitializeViewProjectionMatrixBuffer()
 }
 
 //=================================================================================================
+// @brief	Initialize light property buffer
+//=================================================================================================
+void Dx11Renderer::_initializeLightPropertyBuffer()
+{
+	if ( LightPropertyBuffer )
+	{
+		LightPropertyBuffer->Release();
+	}
+
+	D3D11_BUFFER_DESC bd;
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.ByteWidth = sizeof( LightProperty );
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bd.MiscFlags = 0;;
+	bd.StructureByteStride = 0;
+
+	HRESULT hr = GetDx11Device()->CreateBuffer( &bd, nullptr, &LightPropertyBuffer );
+}
+
+//=================================================================================================
 // @brief	Set world matrix buffer data
 //=================================================================================================
-void Dx11Renderer::_SetWorldMatrixBufferData( const XMMATRIX& Matrix ) const
+void Dx11Renderer::_setWorldMatrixBufferData( const XMMATRIX& Matrix ) const
 {
 	if ( !WorldMatrixBuffer ) return;
 
@@ -157,7 +182,7 @@ void Dx11Renderer::_SetWorldMatrixBufferData( const XMMATRIX& Matrix ) const
 //=================================================================================================
 // @brief	Set view projection matrix buffer data
 //=================================================================================================
-void Dx11Renderer::_SetViewProjectionMatrixBufferData() const
+void Dx11Renderer::_setViewProjectionMatrixBufferData() const
 {
 	if ( !ViewProjectionMatrixBuffer ) return;
 
@@ -176,4 +201,28 @@ void Dx11Renderer::_SetViewProjectionMatrixBufferData() const
 	GetDx11DeviceContext()->Unmap( ViewProjectionMatrixBuffer, 0 );
 
 	GetDx11DeviceContext()->VSSetConstantBuffers( 1, 1, &ViewProjectionMatrixBuffer );
+}
+
+//=================================================================================================
+// @brief	Set light property buffer data
+//=================================================================================================
+void Dx11Renderer::_setLightPropertyBufferData() const
+{
+	if ( !LightPropertyBuffer ) return;
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+	LightProperty* dataPtr = nullptr;
+
+	GetDx11DeviceContext()->Map( LightPropertyBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource );
+	{
+		dataPtr = ( LightProperty* )mappedResource.pData;
+
+		dataPtr->diffuseColor   = Vector4::One;
+		dataPtr->lightDirection = Vector3( 0.0f, 0.0f, -1.0f );
+		dataPtr->padding        = 0.f;
+	}
+	GetDx11DeviceContext()->Unmap( LightPropertyBuffer, 0 );
+
+	GetDx11DeviceContext()->PSSetConstantBuffers( 2, 1, &LightPropertyBuffer );
 }

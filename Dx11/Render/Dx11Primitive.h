@@ -27,6 +27,7 @@ public:
     {
         XMFLOAT3 Position;  // position
         XMFLOAT2 TextureUV; // texture uv
+        XMFLOAT3 Normal;    // normal
     };
 
 private:
@@ -36,12 +37,12 @@ private:
     ID3D11Buffer* VertexBuffer;
     ID3D11Buffer* IndexBuffer;
 
-    std::vector< int > Indices;
+    std::vector< int > Indices{};
 
-    D3D11_BUFFER_DESC VertexBufferDesc;
-    D3D11_BUFFER_DESC IndexBufferDesc;
+    D3D11_BUFFER_DESC VertexBufferDesc{};
+    D3D11_BUFFER_DESC IndexBufferDesc{};
 
-    D3D11_SUBRESOURCE_DATA IndexBufferSD;
+    D3D11_SUBRESOURCE_DATA IndexBufferSD{};
 
 public:
     // Construct
@@ -50,19 +51,16 @@ public:
     // Initialize
     void Initialize();
 
-    // Create buffers
-    void CreateBuffers();
-
     // Render
     void Render() const;
 
 private:
     // Create vertex shader
-    void _CreateVertexShader();
+    void _createVertexShader();
 
     // Create vertex buffer
-    void _CreateVertexBuffer();
+    void _createVertexBuffer();
 
     // Create index buffer
-    void _CreateIndexBuffer();
+    void _createIndexBuffer();
 };

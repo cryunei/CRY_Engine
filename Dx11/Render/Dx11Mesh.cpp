@@ -17,8 +17,8 @@ void Dx11Mesh::Initialize()
 
     // Test code
     Transform.SetLocationX( 1.f );
-    Transform.SetRotationX( 1.f );
-    Transform.SetScale( 3.f, 3.f, 3.f );
+    //Transform.SetRotationX( 1.f );
+    //Transform.SetScale( 3.f, 3.f, 3.f );
 }
 
 //=================================================================================================

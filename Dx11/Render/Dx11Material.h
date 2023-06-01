@@ -41,8 +41,8 @@ public:
 
 private:
     // Create pixel shader
-    void _CreatePixelShader();
+    void _createPixelShader();
 
     // Create texture
-    void _CreateTexture();
+    void _createTexture();
 };

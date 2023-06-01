@@ -3,6 +3,7 @@
 
 #include "../Render/Dx11Mesh.h"
 #include "../Actor/Camera/CrCamera.h"
+#include "../Actor/Light/CrDirectionalLight.h"
 #include <d3d11.h>
 
 
@@ -23,13 +24,22 @@ public:
 		XMMATRIX projMat;
 	};
 
+	struct LightProperty
+	{
+		XMFLOAT4 diffuseColor;
+		XMFLOAT3 lightDirection;
+		float    padding;
+	};
+
 private:
 	ID3D11RenderTargetView* RenderTargetView;
 	ID3D11Buffer* WorldMatrixBuffer;
 	ID3D11Buffer* ViewProjectionMatrixBuffer;
+	ID3D11Buffer* LightPropertyBuffer;
 
 	Dx11Mesh Mesh;
 	CrCamera Camera;
+	CrDirectionalLight Light;
 
 public:
 	// Constructor
@@ -49,25 +59,28 @@ public:
 
 private:
 	// Initialize render target view
-	void _InitializeRenderTargetView();
+	void _initializeRenderTargetView();
 
 	// Initialize viewport
-	void _InitializeViewport() const;
+	void _initializeViewport() const;
 
 	// Initialize world matrix buffer
-	void _InitializeWorldMatrixBuffer();
+	void _initializeWorldMatrixBuffer();
 
 	// Initialize view projection matrix buffer
-	void _InitializeViewProjectionMatrixBuffer();
+	void _initializeViewProjectionMatrixBuffer();
 
-	// Initialize matrix buffer
-	void _InitializeMatrixBuffer( ID3D11Buffer** Buffer ) const;
+	// Initialize light property buffer
+	void _initializeLightPropertyBuffer();
 
 	// Set world matrix buffer data
-	void _SetWorldMatrixBufferData( const XMMATRIX& Matrix ) const;
+	void _setWorldMatrixBufferData( const XMMATRIX& Matrix ) const;
 
 	// Set view projection matrix buffer data
-	void _SetViewProjectionMatrixBufferData() const;
+	void _setViewProjectionMatrixBufferData() const;
+
+	// Set light property buffer data
+	void _setLightPropertyBufferData() const;
 
 };
 

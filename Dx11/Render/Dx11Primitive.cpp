@@ -32,9 +32,9 @@ IndexBuffer  ( nullptr )
 //=================================================================================================
 void Dx11Primitive::Initialize()
 {
-    _CreateVertexShader();
-    _CreateVertexBuffer();
-    _CreateIndexBuffer ();
+    _createVertexShader();
+    _createVertexBuffer();
+    _createIndexBuffer ();
 }
 
 //=================================================================================================
@@ -54,7 +54,7 @@ void Dx11Primitive::Render() const
 //=================================================================================================
 // @brief	Create vertex shader
 //=================================================================================================
-void Dx11Primitive::_CreateVertexShader()
+void Dx11Primitive::_createVertexShader()
 {
     ID3D10Blob* vs = Dx11ShaderFactory::CompileShader( L"Shader/shader.hlsl", "VS", "vs_4_0" );
     if ( !vs ) return;
@@ -66,6 +66,7 @@ void Dx11Primitive::_CreateVertexShader()
     {
         { "SV_POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
     };
 
     GetDx11Device()->CreateInputLayout( ied, sizeof( ied ) / sizeof( D3D11_INPUT_ELEMENT_DESC ), vs->GetBufferPointer(), vs->GetBufferSize(), &InputLayout );
@@ -76,14 +77,14 @@ void Dx11Primitive::_CreateVertexShader()
 //=================================================================================================
 // @brief	Create vertex buffer
 //=================================================================================================
-void Dx11Primitive::_CreateVertexBuffer()
+void Dx11Primitive::_createVertexBuffer()
 {
     Vertex Vertices[] =
     {
-        { XMFLOAT3(  0.f, 0.f, 0.f ), XMFLOAT2( 0.f, 1.f ) },
-        { XMFLOAT3(  0.f, 1.f, 0.f ), XMFLOAT2( 0.f, 0.f ) },
-        { XMFLOAT3(  1.f, 0.f, 0.f ), XMFLOAT2( 1.f, 1.f ) },
-        { XMFLOAT3(  1.f, 1.f, 0.f ), XMFLOAT2( 1.f, 0.f ) },
+        { XMFLOAT3(  0.f, 0.f, 0.f ), XMFLOAT2( 0.f, 1.f ), XMFLOAT3( 0.f, 0.f, 1.f ) },
+        { XMFLOAT3(  0.f, 1.f, 0.f ), XMFLOAT2( 0.f, 0.f ), XMFLOAT3( 0.f, 0.f, 1.f ) },
+        { XMFLOAT3(  1.f, 0.f, 0.f ), XMFLOAT2( 1.f, 1.f ), XMFLOAT3( 0.f, 0.f, 1.f ) },
+        { XMFLOAT3(  1.f, 1.f, 0.f ), XMFLOAT2( 1.f, 0.f ), XMFLOAT3( 0.f, 0.f, 1.f ) },
     };
     
     VertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -104,7 +105,7 @@ void Dx11Primitive::_CreateVertexBuffer()
 //=================================================================================================
 // @brief	Create index buffer
 //=================================================================================================
-void Dx11Primitive::_CreateIndexBuffer()
+void Dx11Primitive::_createIndexBuffer()
 {
     Indices = { 0, 1, 2, 1, 3, 2 };
 
