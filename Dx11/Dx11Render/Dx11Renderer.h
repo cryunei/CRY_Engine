@@ -64,14 +64,8 @@ private:
 	// Initialize viewport
 	void _initializeViewport() const;
 
-	// Initialize world matrix buffer
-	void _initializeWorldMatrixBuffer();
-
-	// Initialize view projection matrix buffer
-	void _initializeViewProjectionMatrixBuffer();
-
-	// Initialize light property buffer
-	void _initializeLightPropertyBuffer();
+	// Initialize constant buffers
+	void _initializeConstantBuffers();
 
 	// Set world matrix buffer data
 	void _setWorldMatrixBufferData( const XMMATRIX& Matrix ) const;

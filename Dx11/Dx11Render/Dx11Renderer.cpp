@@ -1,7 +1,7 @@
 #include "Dx11Renderer.h"
 #include "../Actor/Camera/CrCamera.h"
 #include "../Core/Dx11Device.h"
-
+#include "../Core/Dx11ResourceFactory.h"
 
 //=================================================================================================
 // @brief	Constructor
@@ -31,9 +31,7 @@ void Dx11Renderer::Initialize()
 {
 	_initializeRenderTargetView();
 	_initializeViewport();
-	_initializeWorldMatrixBuffer();
-	_initializeViewProjectionMatrixBuffer();
-	_initializeLightPropertyBuffer();
+	_initializeConstantBuffers();	
 
 	Mesh.Initialize();
 
@@ -95,66 +93,13 @@ void Dx11Renderer::_initializeViewport() const
 }
 
 //=================================================================================================
-// @brief	Initialize world matrix buffer
+// @brief	Initialize constant buffers
 //=================================================================================================
-void Dx11Renderer::_initializeWorldMatrixBuffer()
+void Dx11Renderer::_initializeConstantBuffers()
 {
-	if ( WorldMatrixBuffer )
-	{
-		WorldMatrixBuffer->Release();
-	}
-
-	D3D11_BUFFER_DESC bd;
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof( WorldMatrix );
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bd.MiscFlags = 0;
-	bd.StructureByteStride = 0;
-
-	HRESULT hr = GetDx11Device()->CreateBuffer( &bd, nullptr, &WorldMatrixBuffer );
-}
-
-//=================================================================================================
-// @brief	Initialize view projection matrix buffer
-//=================================================================================================
-void Dx11Renderer::_initializeViewProjectionMatrixBuffer()
-{
-	if ( ViewProjectionMatrixBuffer )
-	{
-		ViewProjectionMatrixBuffer->Release();
-	}
-
-	D3D11_BUFFER_DESC bd;
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof( ViewProjMatrix );
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bd.MiscFlags = 0;
-	bd.StructureByteStride = 0;
-
-	HRESULT hr = GetDx11Device()->CreateBuffer( &bd, nullptr, &ViewProjectionMatrixBuffer );
-}
-
-//=================================================================================================
-// @brief	Initialize light property buffer
-//=================================================================================================
-void Dx11Renderer::_initializeLightPropertyBuffer()
-{
-	if ( LightPropertyBuffer )
-	{
-		LightPropertyBuffer->Release();
-	}
-
-	D3D11_BUFFER_DESC bd;
-	bd.Usage = D3D11_USAGE_DYNAMIC;
-	bd.ByteWidth = sizeof( LightProperty );
-	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bd.MiscFlags = 0;;
-	bd.StructureByteStride = 0;
-
-	HRESULT hr = GetDx11Device()->CreateBuffer( &bd, nullptr, &LightPropertyBuffer );
+	Dx11ResourceFactory::CreateConstantBuffer( &WorldMatrixBuffer, sizeof( WorldMatrix ) );
+	Dx11ResourceFactory::CreateConstantBuffer( &ViewProjectionMatrixBuffer, sizeof( ViewProjMatrix ) );
+	Dx11ResourceFactory::CreateConstantBuffer( &LightPropertyBuffer, sizeof( LightProperty ) );
 }
 
 //=================================================================================================

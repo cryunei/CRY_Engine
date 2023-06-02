@@ -7,7 +7,7 @@
 
 #include "Dx11Material.h"
 #include "../Core/Dx11Device.h"
-#include "../Core/Dx11ShaderFactory.h"
+#include "../Core/Dx11ResourceFactory.h"
 #include <d3dcompiler.h>
 
 
@@ -45,7 +45,7 @@ void Dx11Material::Render() const
 //=================================================================================================
 void Dx11Material::_createPixelShader()
 {
-    ID3D10Blob* ps = Dx11ShaderFactory::CompileShader( L"Shader/shader.hlsl", "PS", "ps_4_0" );
+    ID3D10Blob* ps = Dx11ResourceFactory::CompileShader( L"Shader/shader.hlsl", "PS", "ps_4_0" );
 
     GetDx11Device()->CreatePixelShader ( ps->GetBufferPointer(), ps->GetBufferSize(), nullptr, &PixelShader  );
     GetDx11DeviceContext()->PSSetShader( PixelShader,  0, 0 );

@@ -7,7 +7,7 @@
 
 #include "Dx11Primitive.h"
 #include "../Core/Dx11Device.h"
-#include "../Core/Dx11ShaderFactory.h"
+#include "../Core/Dx11ResourceFactory.h"
 #include <d3dcompiler.h>
 
 
@@ -56,7 +56,7 @@ void Dx11Primitive::Render() const
 //=================================================================================================
 void Dx11Primitive::_createVertexShader()
 {
-    ID3D10Blob* vs = Dx11ShaderFactory::CompileShader( L"Shader/shader.hlsl", "VS", "vs_4_0" );
+    ID3D10Blob* vs = Dx11ResourceFactory::CompileShader( L"Shader/shader.hlsl", "VS", "vs_4_0" );
     if ( !vs ) return;
 
     GetDx11Device()->CreateVertexShader( vs->GetBufferPointer(), vs->GetBufferSize(), nullptr, &VertexShader );

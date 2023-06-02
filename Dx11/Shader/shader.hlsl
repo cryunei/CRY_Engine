@@ -31,9 +31,10 @@ PixelIn VS( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 normal
     output.position = mul( position, worldMat );
     output.position = mul( output.position, viewMat );
     output.position = mul( output.position, projMat );
-    output.tex = tex;
-
+    
     output.normal = mul( normal, (float3x3)worldMat );
+
+    output.tex = tex;
 
     return output;
 }
@@ -54,4 +55,5 @@ float4 PS( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 normal 
     float4 finalColor = textureColor * lightColor;
 
     return finalColor;
+    //return float4( normal, 1.f );
 }
