@@ -44,15 +44,15 @@ SamplerState SampleType;
 
 float4 PS( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 normal : NORMAL ) : SV_TARGET
 {
-    float4 textureColor;
-    textureColor = shaderTexture.Sample( SampleType, tex );
-    textureColor = pow( textureColor, 1.f/2.2f );
+    float4 textureColor = float4( 1.f, 1.f, 1.f, 1.f );
+    //textureColor = shaderTexture.Sample( SampleType, tex );
+    //textureColor = pow( textureColor, 1.f/2.2f );
 
     float3 lightDir = normalize( -lightDirection );
     float lightIntensity = saturate( dot( lightDir, normal ) );
     float4 lightColor = saturate( diffuseColor * lightIntensity );
     
-    float4 finalColor = textureColor * lightColor;
+    float4 finalColor = textureColor; * lightColor;
 
     return finalColor;
     //return float4( normal, 1.f );

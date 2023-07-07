@@ -24,5 +24,5 @@ Matrix CrCamera::GetViewMatrix() const
 Matrix CrCamera::GetProjectionMatrix() const
 {
     //return Matrix::Identity;
-    return Matrix::CreatePerspectiveFieldOfView( 0.25f * 3.1415926535f, 800.f / 600.f, 0.1f, 1000.f );
+    return Matrix::CreatePerspectiveFieldOfView( 0.25f * 3.1415926535f, 800.f / 600.f, 0.1f, 10000.f );
 }

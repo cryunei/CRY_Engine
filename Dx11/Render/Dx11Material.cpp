@@ -45,7 +45,7 @@ void Dx11Material::Render() const
 //=================================================================================================
 void Dx11Material::_createPixelShader()
 {
-    ID3D10Blob* ps = Dx11ResourceFactory::CompileShader( L"Shader/shader.hlsl", "PS", "ps_4_0" );
+    ID3D10Blob* ps = Dx11ResourceFactory::CompileShader( L"../Shader/shader.hlsl", "PS", "ps_4_0" );
 
     GetDx11Device()->CreatePixelShader ( ps->GetBufferPointer(), ps->GetBufferSize(), nullptr, &PixelShader  );
     GetDx11DeviceContext()->PSSetShader( PixelShader,  0, 0 );
@@ -97,5 +97,5 @@ void Dx11Material::_createTexture()
 
     CoInitialize( nullptr );
 
-    CreateWICTextureFromFile( GetDx11Device(), L"Resource/Texture/SampleTexture.png", &TextureResource, &TextureSRV );
+    CreateWICTextureFromFile( GetDx11Device(), L"../Asset/Texture/SampleTexture.png", &TextureResource, &TextureSRV );
 }

@@ -8,7 +8,9 @@
 #include "Dx11Primitive.h"
 #include "../Core/Dx11Device.h"
 #include "../Core/Dx11ResourceFactory.h"
+#include "../Fbx/FbxImportHelper.h"
 #include <d3dcompiler.h>
+
 
 
 //=================================================================================================
@@ -33,6 +35,18 @@ IndexBuffer  ( nullptr )
 void Dx11Primitive::Initialize()
 {
     _createVertexShader();
+}
+
+//=================================================================================================
+// @brief	Load FBX
+//=================================================================================================
+void Dx11Primitive::LoadFBX( const std::string& FilePath )
+{
+    FbxImportHelper fbxImportHelper;
+    if ( !fbxImportHelper.Load( FilePath ) ) return;
+
+    fbxImportHelper.GetVertices( Vertices, Indices );
+    
     _createVertexBuffer();
     _createIndexBuffer ();
 }
@@ -47,7 +61,7 @@ void Dx11Primitive::Render() const
 
     GetDx11DeviceContext()->IASetVertexBuffers( 0, 1, &VertexBuffer, &stride, &offset );
     GetDx11DeviceContext()->IASetIndexBuffer( IndexBuffer, DXGI_FORMAT_R32_UINT, 0 );
-    GetDx11DeviceContext()->IASetPrimitiveTopology( D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+    GetDx11DeviceContext()->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
     GetDx11DeviceContext()->DrawIndexed( (UINT)( Indices.size() ), 0, 0 );
 }
 
@@ -56,7 +70,7 @@ void Dx11Primitive::Render() const
 //=================================================================================================
 void Dx11Primitive::_createVertexShader()
 {
-    ID3D10Blob* vs = Dx11ResourceFactory::CompileShader( L"Shader/shader.hlsl", "VS", "vs_4_0" );
+    ID3D10Blob* vs = Dx11ResourceFactory::CompileShader( L"../Shader/shader.hlsl", "VS", "vs_4_0" );
     if ( !vs ) return;
 
     GetDx11Device()->CreateVertexShader( vs->GetBufferPointer(), vs->GetBufferSize(), nullptr, &VertexShader );
@@ -79,16 +93,12 @@ void Dx11Primitive::_createVertexShader()
 //=================================================================================================
 void Dx11Primitive::_createVertexBuffer()
 {
-    Vertex Vertices[] =
-    {
-        { XMFLOAT3(  0.f, 0.f, 0.f ), XMFLOAT2( 0.f, 1.f ), XMFLOAT3( 0.f, 0.f, 1.f ) },
-        { XMFLOAT3(  0.f, 1.f, 0.f ), XMFLOAT2( 0.f, 0.f ), XMFLOAT3( 0.f, 0.f, 1.f ) },
-        { XMFLOAT3(  1.f, 0.f, 0.f ), XMFLOAT2( 1.f, 1.f ), XMFLOAT3( 0.f, 0.f, 1.f ) },
-        { XMFLOAT3(  1.f, 1.f, 0.f ), XMFLOAT2( 1.f, 0.f ), XMFLOAT3( 0.f, 0.f, 1.f ) },
-    };
-    
+    if ( Vertices.empty() ) return;
+
+    unsigned int bufferSize = sizeof( Vertex ) * Vertices.size();
+
     VertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    VertexBufferDesc.ByteWidth = sizeof( Vertex ) * ( sizeof( Vertices ) / sizeof( Vertex ) );
+    VertexBufferDesc.ByteWidth = bufferSize;
     VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     VertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
@@ -97,7 +107,7 @@ void Dx11Primitive::_createVertexBuffer()
     D3D11_MAPPED_SUBRESOURCE ms;
     GetDx11DeviceContext()->Map( VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms );
     {
-        memcpy( ms.pData, Vertices, sizeof( Vertices ) );
+        memcpy( ms.pData, &Vertices[ 0 ], bufferSize );
     }
     GetDx11DeviceContext()->Unmap( VertexBuffer, 0 );
 }
@@ -107,10 +117,10 @@ void Dx11Primitive::_createVertexBuffer()
 //=================================================================================================
 void Dx11Primitive::_createIndexBuffer()
 {
-    Indices = { 0, 1, 2, 1, 3, 2 };
+    if ( Indices.empty() ) return;
 
     IndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    IndexBufferDesc.ByteWidth = (UINT)( sizeof( int ) * Indices.size() );
+    IndexBufferDesc.ByteWidth = (unsigned int)( sizeof( int ) * Indices.size() );
     IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
     IndexBufferDesc.CPUAccessFlags = 0;
     IndexBufferDesc.MiscFlags = 0;

@@ -36,7 +36,7 @@ void Dx11Renderer::Initialize()
 	Mesh.Initialize();
 
 	GetCamera()->SetLookAtDirection( Vector3( 0.f, 0.f, -1.f ) );
-	GetCamera()->Transform.SetLocation( 0.f, 0.f, 5.f );
+	GetCamera()->Transform.SetLocation( 0.f, 0.f, 50.f );
 }
 
 //=================================================================================================
@@ -164,7 +164,7 @@ void Dx11Renderer::_setLightPropertyBufferData() const
 		dataPtr = ( LightProperty* )mappedResource.pData;
 
 		dataPtr->diffuseColor   = Vector4::One;
-		dataPtr->lightDirection = Vector3( 0.0f, 0.0f, -1.0f );
+		dataPtr->lightDirection = Vector3( 1.0f, -1.0f, 1.0f );
 		dataPtr->padding        = 0.f;
 	}
 	GetDx11DeviceContext()->Unmap( LightPropertyBuffer, 0 );

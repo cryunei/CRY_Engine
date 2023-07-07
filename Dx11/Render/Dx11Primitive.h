@@ -10,26 +10,11 @@
 #pragma once
 
 
-#include <d3d11.h>
-#include <DirectXMath.h>
-#include <vector>
-
-#pragma comment ( lib, "d3d11.lib" )
-
-
-using namespace DirectX;
+#include "../DxTypes.h"
 
 
 class Dx11Primitive
 {
-public:
-    struct Vertex
-    {
-        XMFLOAT3 Position;  // position
-        XMFLOAT2 TextureUV; // texture uv
-        XMFLOAT3 Normal;    // normal
-    };
-
 private:
     ID3D11VertexShader* VertexShader;
     ID3D11InputLayout*  InputLayout;
@@ -37,12 +22,13 @@ private:
     ID3D11Buffer* VertexBuffer;
     ID3D11Buffer* IndexBuffer;
 
-    std::vector< int > Indices{};
+    std::vector< Vertex > Vertices;
+    std::vector< int > Indices;
 
-    D3D11_BUFFER_DESC VertexBufferDesc{};
-    D3D11_BUFFER_DESC IndexBufferDesc{};
+    D3D11_BUFFER_DESC VertexBufferDesc;
+    D3D11_BUFFER_DESC IndexBufferDesc;
 
-    D3D11_SUBRESOURCE_DATA IndexBufferSD{};
+    D3D11_SUBRESOURCE_DATA IndexBufferSD;
 
 public:
     // Construct
@@ -50,6 +36,9 @@ public:
 
     // Initialize
     void Initialize();
+
+    // Load FBX
+    void LoadFBX( const std::string& FilePath );
 
     // Render
     void Render() const;
