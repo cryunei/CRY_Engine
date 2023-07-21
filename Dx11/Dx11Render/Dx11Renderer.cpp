@@ -2,6 +2,8 @@
 #include "../Actor/Camera/CrCamera.h"
 #include "../Core/Dx11Device.h"
 #include "../Core/Dx11ResourceFactory.h"
+#include "../GUI/GuiManager.h""
+
 
 //=================================================================================================
 // @brief	Constructor
@@ -44,6 +46,8 @@ void Dx11Renderer::Initialize()
 //=================================================================================================
 void Dx11Renderer::RenderFrame()
 {
+	GetGuiManager()->PreRender();
+
 	float color[ 4 ] = { 0.0f, 0.2f, 0.4f, 1.0f };
 	
 	GetDx11DeviceContext()->ClearRenderTargetView( RenderTargetView, color );
@@ -56,6 +60,8 @@ void Dx11Renderer::RenderFrame()
 		_setWorldMatrixBufferData( Mesh.GetTransform().GetWorldMatrix() ); 
 		Mesh.Render();
 	}
+
+GetGuiManager()->PostRender();
 
 	GetSwapChain()->Present( 0, 0 );
 }
