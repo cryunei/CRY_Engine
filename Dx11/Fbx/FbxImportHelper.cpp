@@ -84,60 +84,50 @@ void FbxImportHelper::GetVertices( std::vector< Vertex >& OutVertices, std::vect
     int idx = 0;
     for ( int i = 0; i < fbxMesh->GetPolygonCount(); ++i )
     {
-        // Assuming triangles, so process only the first three vertices of each polygon
-        for ( int j = 0; j < 3; ++j )
+        _AddVertex( fbxMesh, i, 0, OutVertices );
+        _AddVertex( fbxMesh, i, 1, OutVertices );
+        _AddVertex( fbxMesh, i, 2, OutVertices );
+
+        for ( int j = 2; j < fbxMesh->GetPolygonSize( i ); ++j )
         {
-            int controlPointIndex = fbxMesh->GetPolygonVertex( i, j );
-            Vertex vertex;
-
-            // Set the position
-            vertex.Position.x = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 0 ] );
-            vertex.Position.y = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 1 ] );
-            vertex.Position.z = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 2 ] );
-
-            _ReadNormal( fbxMesh, controlPointIndex, idx, vertex.Normal );
-
-            // Set the texture coordinates (if available)
-            if ( hasUVs )
-            {
-                int uvIndex = fbxUVs->GetIndexArray().GetAt( controlPointIndex );
-                const FbxVector2& uv = fbxUVs->GetDirectArray().GetAt( uvIndex );
-                vertex.TextureUV.x = static_cast< float >( uv[ 0 ] );
-                vertex.TextureUV.y = static_cast< float >( uv[ 1 ] );
-            }
-
-            // Add the vertex to the output vector
-            OutVertices.push_back( vertex );
-            OutIndices.push_back( idx++ );
+            _AddVertex( fbxMesh, i, 0    , OutVertices );
+            _AddVertex( fbxMesh, i, j    , OutVertices );
+            _AddVertex( fbxMesh, i, j + 1, OutVertices );
         }
     }
 }
 
 //=================================================================================================
-// @brief	Read normal
+// @brief	Add vertex
 //=================================================================================================
-void FbxImportHelper::_ReadNormal( FbxMesh* Mesh, int ControlPointIndex, int VertexCounter, XMFLOAT3& OutNormal ) const
+void FbxImportHelper::_AddVertex( FbxMesh* Mesh, int ControlPointIndex, int PositionPolygon, std::vector< Vertex >& OutVertices ) const
 {
     if ( !Mesh ) return;
-    if ( Mesh->GetElementNormalCount() < 1 ) return;
 
-    int idx = ControlPointIndex;
+    Vertex vtx;
 
-    FbxGeometryElementNormal* normal = Mesh->GetElementNormal( 0 );
-    switch ( normal->GetMappingMode() )
+    FbxVector4* fbxVertices = Mesh->GetControlPoints();
+    int controlPointIndex = Mesh->GetPolygonVertex( ControlPointIndex, PositionPolygon );
+
+    vtx.Position.x = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 0 ] );
+    vtx.Position.y = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 1 ] );
+    vtx.Position.z = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 2 ] );
+
+    FbxVector4 normal;
+    Mesh->GetPolygonVertexNormal( ControlPointIndex, PositionPolygon, normal );
+
+    vtx.Normal.x = static_cast< float >( normal.mData[ 0 ] );
+    vtx.Normal.y = static_cast< float >( normal.mData[ 1 ] );
+    vtx.Normal.z = static_cast< float >( normal.mData[ 2 ] );
+
+    FbxVector2 uv;
+    bool unmappedUV;
+    Mesh->GetPolygonVertexUV( ControlPointIndex, PositionPolygon, Mesh->GetElementUV( 0 )->GetName(), uv, unmappedUV );
+    if ( !unmappedUV )
     {
-    case FbxGeometryElement::eByControlPoint:  idx = ControlPointIndex; break;
-    case FbxGeometryElement::eByPolygonVertex: idx = VertexCounter; break;
-    default: break;
+        vtx.TextureUV.x = static_cast< float >( uv.mData[ 0 ] );
+        vtx.TextureUV.y = static_cast< float >( uv.mData[ 1 ] );
     }
 
-    if ( normal->GetReferenceMode() == FbxGeometryElement::eIndexToDirect )
-    {
-        idx = normal->GetIndexArray().GetAt( idx );
-    }
-
-    OutNormal.x = static_cast< float >( normal->GetDirectArray().GetAt( idx ).mData[ 0 ] );
-    OutNormal.y = static_cast< float >( normal->GetDirectArray().GetAt( idx ).mData[ 1 ] );
-    OutNormal.z = static_cast< float >( normal->GetDirectArray().GetAt( idx ).mData[ 2 ] );
+    OutVertices.push_back( vtx );
 }
-

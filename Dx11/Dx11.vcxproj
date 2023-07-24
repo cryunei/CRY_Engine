@@ -104,11 +104,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Externals\;$(SolutionDir)\Externals\FbxSDK\include\;$(SolutionDir)\Dx11\Externals\ImGUI\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Externals\FbxSDK\lib\debug\</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(TargetDir)\libfbxsdk.dll" "$(SolutionDir)\Externals\FbxSDK\lib\debug\libfbxsdk.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -127,21 +132,130 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Actor\Camera\CrCamera.h" />
+    <ClInclude Include="Actor\CrActor.h" />
+    <ClInclude Include="Actor\Light\CrDirectionalLight.h" />
+    <ClInclude Include="Core\Dx11Device.h" />
+    <ClInclude Include="Core\Dx11ResourceFactory.h" />
+    <ClInclude Include="Core\DxTransform.h" />
     <ClInclude Include="Dx11.h" />
-    <ClInclude Include="Dx11Render\Dx11Mesh.h" />
     <ClInclude Include="Dx11Render\Dx11Renderer.h" />
+    <ClInclude Include="DxCoreInc.h" />
+    <ClInclude Include="DxTypes.h" />
+    <ClInclude Include="Externals\ImGUI\imconfig.h" />
+    <ClInclude Include="Externals\ImGUI\imgui.h" />
+    <ClInclude Include="Externals\ImGUI\imgui_impl_dx11.h" />
+    <ClInclude Include="Externals\ImGUI\imgui_impl_dx12.h" />
+    <ClInclude Include="Externals\ImGUI\imgui_impl_win32.h" />
+    <ClInclude Include="Externals\ImGUI\imgui_internal.h" />
+    <ClInclude Include="Externals\ImGUI\imstb_rectpack.h" />
+    <ClInclude Include="Externals\ImGUI\imstb_textedit.h" />
+    <ClInclude Include="Externals\ImGUI\imstb_truetype.h" />
+    <ClInclude Include="Fbx\FbxImportHelper.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Render\Dx11Material.h" />
+    <ClInclude Include="Render\Dx11Mesh.h" />
     <ClInclude Include="Render\Dx11Primitive.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="GUI\DevTestUI.h" />
+    <ClInclude Include="GUI\GuiManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actor\Camera\CrCamera.cpp" />
+    <ClCompile Include="Actor\CrActor.cpp" />
+    <ClCompile Include="Actor\Light\CrDirectionalLight.cpp" />
+    <ClCompile Include="Core\Dx11Device.cpp" />
+    <ClCompile Include="Core\Dx11ResourceFactory.cpp" />
+    <ClCompile Include="Core\DxTransform.cpp" />
     <ClCompile Include="Dx11.cpp" />
-    <ClCompile Include="Dx11Render\Dx11Mesh.cpp" />
-    <ClCompile Include="Dx11Render\Dx11Renderer.cpp" />
+    <ClCompile Include="Dx11Render\Dx11Renderer.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Column</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableASAN>false</EnableASAN>
+      <EnableFuzzer>false</EnableFuzzer>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateModuleDependencies>false</GenerateModuleDependencies>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard_C>Default</LanguageStandard_C>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ModuleDependenciesFile>x64\Debug\</ModuleDependenciesFile>
+      <ModuleOutputFile>x64\Debug\</ModuleOutputFile>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>x64\Debug\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>x64\Debug\vc143.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>x64\Debug\Dx11.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <ShowIncludes>false</ShowIncludes>
+      <SourceDependenciesFile>x64\Debug\</SourceDependenciesFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>x64\Debug\Dx11.tlog\</TrackerLogDirectory>
+      <TranslateIncludes>false</TranslateIncludes>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <IntelJCCErratum>false</IntelJCCErratum>
+      <TreatAngleIncludeAsExternal>false</TreatAngleIncludeAsExternal>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <TreatExternalTemplatesAsInternal>true</TreatExternalTemplatesAsInternal>
+      <DisableAnalyzeExternal>false</DisableAnalyzeExternal>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_UNICODE;UNICODE;</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <LinkCompiled>true</LinkCompiled>
+    </ClCompile>
+    <ClCompile Include="Externals\ImGUI\imgui.cpp" />
+    <ClCompile Include="Externals\ImGUI\imgui_demo.cpp" />
+    <ClCompile Include="Externals\ImGUI\imgui_draw.cpp" />
+    <ClCompile Include="Externals\ImGUI\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Externals\ImGUI\imgui_impl_dx12.cpp" />
+    <ClCompile Include="Externals\ImGUI\imgui_impl_win32.cpp" />
+    <ClCompile Include="Externals\ImGUI\imgui_tables.cpp" />
+    <ClCompile Include="Externals\ImGUI\imgui_widgets.cpp" />
+    <ClCompile Include="Fbx\FbxImportHelper.cpp" />
     <ClCompile Include="Render\Dx11Material.cpp" />
+    <ClCompile Include="Render\Dx11Mesh.cpp" />
     <ClCompile Include="Render\Dx11Primitive.cpp" />
+    <ClCompile Include="GUI\DevTestUI.cpp" />
+    <ClCompile Include="GUI\GuiManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Dx11.rc" />
@@ -155,9 +269,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Externals\DirectXTK\DirectXTK_Desktop_2022.vcxproj">
-      <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
-    </ProjectReference>
-    <ProjectReference Include="Externals\DirectXTK\DirectXTK_Desktop_2022.vcxproj">
       <Project>{e0b52ae7-e160-4d32-bf3f-910b785e5a8e}</Project>
     </ProjectReference>
   </ItemGroup>

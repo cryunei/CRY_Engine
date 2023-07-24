@@ -1,4 +1,5 @@
 ﻿#include "GuiManager.h"
+#include "imgui_internal.h"
 #include "../Core/Dx11Device.h"
 
 
@@ -43,8 +44,8 @@ void GuiManager::PreRender() const
     ImGui_ImplWin32_NewFrame();
 
     ImGui::NewFrame();
-    ImGui::ShowDemoWindow();
-    //ImGui::Text( "Test Text" );
+
+    DevTestUI.Render();
 }
 
 //=================================================================================================
@@ -55,7 +56,6 @@ void GuiManager::PostRender() const
     ImGui::Render();
 
     ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
-    GetSwapChain()->Present( 1, 0 );
 }
 
 //=================================================================================================

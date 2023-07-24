@@ -2,7 +2,7 @@
 #include "../Actor/Camera/CrCamera.h"
 #include "../Core/Dx11Device.h"
 #include "../Core/Dx11ResourceFactory.h"
-#include "../GUI/GuiManager.h""
+#include "../GUI/GuiManager.h"
 
 
 //=================================================================================================
@@ -13,6 +13,8 @@ Dx11Renderer::Dx11Renderer()
 , WorldMatrixBuffer          ( nullptr )
 , ViewProjectionMatrixBuffer ( nullptr )
 , LightPropertyBuffer		 ( nullptr )
+, ViewportWidth              ( 800.f )
+, ViewportHeight             ( 600.f )
 {
 }
 
@@ -38,7 +40,7 @@ void Dx11Renderer::Initialize()
 	Mesh.Initialize();
 
 	GetCamera()->SetLookAtDirection( Vector3( 0.f, 0.f, -1.f ) );
-	GetCamera()->Transform.SetLocation( 0.f, 0.f, 50.f );
+	GetCamera()->Transform.SetLocation( 0.f, 0.f, 25.f );
 }
 
 //=================================================================================================
@@ -61,7 +63,7 @@ void Dx11Renderer::RenderFrame()
 		Mesh.Render();
 	}
 
-GetGuiManager()->PostRender();
+	GetGuiManager()->PostRender();
 
 	GetSwapChain()->Present( 0, 0 );
 }
@@ -78,8 +80,6 @@ void Dx11Renderer::_initializeRenderTargetView()
 
 	GetDx11Device()->CreateRenderTargetView( texture, nullptr, &RenderTargetView );
 	GetDx11DeviceContext()->OMSetRenderTargets( 1, &RenderTargetView, nullptr );
-	
-	texture->Release();
 }
 
 //=================================================================================================
@@ -92,8 +92,8 @@ void Dx11Renderer::_initializeViewport() const
 
 	viewport.TopLeftX = 0;
 	viewport.TopLeftY = 0;
-	viewport.Width = 800;
-	viewport.Height = 600;
+	viewport.Width = ViewportWidth;
+	viewport.Height = ViewportHeight;
 
 	GetDx11DeviceContext()->RSSetViewports( 1, &viewport );
 }
@@ -146,7 +146,7 @@ void Dx11Renderer::_setViewProjectionMatrixBufferData() const
 		dataPtr = ( ViewProjMatrix* )mappedResource.pData;
 	
 		dataPtr->viewMat = GetCamera()->GetViewMatrix().Transpose();
-		dataPtr->projMat = GetCamera()->GetProjectionMatrix().Transpose();
+		dataPtr->projMat = GetCamera()->GetProjectionMatrix( ViewportWidth, ViewportHeight ).Transpose();
 
 	}
 	GetDx11DeviceContext()->Unmap( ViewProjectionMatrixBuffer, 0 );

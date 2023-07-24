@@ -97,5 +97,5 @@ void Dx11Material::_createTexture()
 
     CoInitialize( nullptr );
 
-    CreateWICTextureFromFile( GetDx11Device(), L"../Asset/Texture/SampleTexture.png", &TextureResource, &TextureSRV );
+    CreateWICTextureFromFile( GetDx11Device(), L"../Asset/Texture/mpm_vol.08_p16_light_side_A_diff.jpg", &TextureResource, &TextureSRV );
 }

@@ -30,6 +30,6 @@ public:
     void GetVertices( std::vector< Vertex >& OutVertices, std::vector< int >& OutIndices ) const;
 
 private:
-    // Read normal
-    void _ReadNormal( FbxMesh* Mesh, int ControlPointIndex, int VertexCounter, XMFLOAT3& OutNormal ) const;
+    // Add vertex
+    void _AddVertex( FbxMesh* Mesh, int ControlPointIndex, int PositionPolygon, std::vector< Vertex >& OutVertices ) const;
 };

@@ -2,6 +2,17 @@
 
 
 //=================================================================================================
+// @brief	Constructor
+//=================================================================================================
+CrCamera::CrCamera()
+: LookAtDirection( Vector3::Forward )
+, FovDegree      ( 45.f )
+, NearDistance   ( 0.1f )
+, FarDistance    ( 10000.f )
+{
+}
+
+//=================================================================================================
 // @brief	Set look at direction
 //=================================================================================================
 void CrCamera::SetLookAtDirection( const Vector3& direction )
@@ -21,8 +32,8 @@ Matrix CrCamera::GetViewMatrix() const
 //=================================================================================================
 // @brief	Get projection matrix
 //=================================================================================================
-Matrix CrCamera::GetProjectionMatrix() const
+Matrix CrCamera::GetProjectionMatrix( float ViewportWidth, float ViewportHeight ) const
 {
     //return Matrix::Identity;
-    return Matrix::CreatePerspectiveFieldOfView( 0.25f * 3.1415926535f, 800.f / 600.f, 0.1f, 10000.f );
+    return Matrix::CreatePerspectiveFieldOfView( DirectX::XMConvertToRadians( FovDegree ), ViewportWidth / ViewportHeight, NearDistance, FarDistance );
 }

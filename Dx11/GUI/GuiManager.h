@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-
+#include "DevTestUI.h"
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
@@ -9,6 +9,9 @@
 
 class GuiManager
 {
+private:
+    DevTestUI DevTestUI;
+
 public:
     // Constructor
     GuiManager() = default;

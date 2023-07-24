@@ -60,9 +60,9 @@ void Dx11Primitive::Render() const
     unsigned int offset = 0;
 
     GetDx11DeviceContext()->IASetVertexBuffers( 0, 1, &VertexBuffer, &stride, &offset );
-    GetDx11DeviceContext()->IASetIndexBuffer( IndexBuffer, DXGI_FORMAT_R32_UINT, 0 );
+    //GetDx11DeviceContext()->IASetIndexBuffer( IndexBuffer, DXGI_FORMAT_R32_UINT, 0 );
     GetDx11DeviceContext()->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-    GetDx11DeviceContext()->DrawIndexed( (UINT)( Indices.size() ), 0, 0 );
+    GetDx11DeviceContext()->Draw( (unsigned int)( Vertices.size() ), 0 );
 }
 
 //=================================================================================================

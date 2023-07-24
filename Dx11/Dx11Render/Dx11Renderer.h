@@ -37,6 +37,9 @@ private:
 	ID3D11Buffer* ViewProjectionMatrixBuffer;
 	ID3D11Buffer* LightPropertyBuffer;
 
+	float ViewportWidth;
+	float ViewportHeight;
+
 	Dx11Mesh Mesh;
 	CrCamera Camera;
 	CrDirectionalLight Light;
