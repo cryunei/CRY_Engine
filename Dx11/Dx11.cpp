@@ -1,33 +1,39 @@
-﻿// Dx11.cpp : 애플리케이션에 대한 진입점을 정의합니다.
-//
-
+﻿#include "Dx11.h"
 #include "framework.h"
-#include "Dx11.h"
+#include "Asset/CrAssetManager.h"
+#include "Asset/CrVertexShader.h"
 #include "Core/Dx11Device.h"
-
-#include "Dx11Render/Dx11Renderer.h"
+#include "Core/Dx11Renderer.h"
+#include "Fbx/FbxImportHelper.h"
 #include "GUI/GuiManager.h"
 
-#define MAX_LOADSTRING 100
+
+enum
+{
+    MAX_LOADSTRING = 100
+};
+
 
 // 전역 변수:
-HINSTANCE hInst;                           // 현재 인스턴스입니다.
-WCHAR     szTitle[ MAX_LOADSTRING ];       // 제목 표시줄 텍스트입니다.
-WCHAR     szWindowClass[ MAX_LOADSTRING ]; // 기본 창 클래스 이름입니다.
+HINSTANCE hInst; // 현재 인스턴스입니다.
 
+WCHAR szTitle[ MAX_LOADSTRING ];       // 제목 표시줄 텍스트입니다.
+WCHAR szWindowClass[ MAX_LOADSTRING ]; // 기본 창 클래스 이름입니다.
 
 Dx11Renderer G_Dx11Renderer;
 
 
-// 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
+// default functions
 ATOM MyRegisterClass( HINSTANCE hInstance );
-
 BOOL InitInstance( HINSTANCE, int );
-
 LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
-
 INT_PTR CALLBACK About( HWND, UINT, WPARAM, LPARAM );
+void LoadAssets();
 
+
+//=====================================================================================================================
+// @brief	wWinMain
+//=====================================================================================================================
 int APIENTRY wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow )
 {
     UNREFERENCED_PARAMETER( hPrevInstance );
@@ -70,11 +76,9 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
     return (int)msg.wParam;
 }
 
-//
-//  함수: MyRegisterClass()
-//
-//  용도: 창 클래스를 등록합니다.
-//
+//=====================================================================================================================
+// @brief	MyRegisterClass
+//=====================================================================================================================
 ATOM MyRegisterClass( HINSTANCE hInstance )
 {
     WNDCLASSEXW wcex;
@@ -96,16 +100,9 @@ ATOM MyRegisterClass( HINSTANCE hInstance )
     return RegisterClassExW( &wcex );
 }
 
-//
-//   함수: InitInstance(HINSTANCE, int)
-//
-//   용도: 인스턴스 핸들을 저장하고 주 창을 만듭니다.
-//
-//   주석:
-//
-//        이 함수를 통해 인스턴스 핸들을 전역 변수에 저장하고
-//        주 프로그램 창을 만든 다음 표시합니다.
-//
+//=====================================================================================================================
+// @brief	InitInstance
+//=====================================================================================================================
 BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
 {
     hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
@@ -117,6 +114,8 @@ BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
         return FALSE;
     }
 
+    LoadAssets();
+
     G_Dx11Device.Create( hWnd );
     G_Dx11Renderer.Initialize();
     GetGuiManager()->Initialize( hWnd );
@@ -127,16 +126,9 @@ BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
     return TRUE;
 }
 
-//
-//  함수: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  용도: 주 창의 메시지를 처리합니다.
-//
-//  WM_COMMAND  - 애플리케이션 메뉴를 처리합니다.
-//  WM_PAINT    - 주 창을 그립니다.
-//  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
-//
-//
+//=====================================================================================================================
+// @brief	WndProc
+//=====================================================================================================================
 LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
     if ( GetGuiManager()->WndProcHandler(hWnd, message, wParam, lParam) )
@@ -164,8 +156,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
-            HDC         hdc = BeginPaint( hWnd, &ps );
-
+            BeginPaint( hWnd, &ps );
             EndPaint( hWnd, &ps );
         }
         break;
@@ -176,7 +167,9 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
     return 0;
 }
 
-// 정보 대화 상자의 메시지 처리기입니다.
+//=====================================================================================================================
+// @brief	About
+//=====================================================================================================================
 INT_PTR CALLBACK About( HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam )
 {
     UNREFERENCED_PARAMETER( lParam );
@@ -192,4 +185,23 @@ INT_PTR CALLBACK About( HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam )
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+//=====================================================================================================================
+// @brief   LoadAssets
+//=====================================================================================================================
+void LoadAssets()
+{
+    FbxImportHelper fbxImporter;
+    fbxImporter.LoadAll( "../Asset/Fbx/wooden_sphere.fbx", "WoodenSphere" );
+
+    if ( CrVertexShader* vs = GetAssetManager()->CreateVertexShader( "DefaultDiffuse" ) )
+    {
+        vs->Initialize( "../Shader/Shader.hlsl", "VS", "vs_4_0",
+        {
+            { "SV_POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        } );
+    }
 }

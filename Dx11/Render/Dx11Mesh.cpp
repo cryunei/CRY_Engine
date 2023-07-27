@@ -1,4 +1,5 @@
 ﻿#include "Dx11Mesh.h"
+#include "../Core/Dx11ResourceManager.h"
 
 //=================================================================================================
 // @brief	Constructor
@@ -12,9 +13,11 @@ Dx11Mesh::Dx11Mesh()
 //=================================================================================================
 void Dx11Mesh::Initialize()
 {
-    Primitive.Initialize();
-    Primitive.LoadFBX( "../Asset/Fbx/wooden_sphere.fbx" );
-    Material .Initialize();
+    Dx11VertexBuffer* dxVB = GetDx11ResourceManager()->CreateVertexBuffer( "WoodenSphere_Vertex0" );
+    Dx11VertexShader* dxVS = GetDx11ResourceManager()->CreateVertexShader( "DefaultDiffuse" );
+
+    Primitive.Initialize( dxVB, nullptr, dxVS );
+    Material .Initialize( "../Asset/Texture/mpm_vol.08_p16_light_side_A_diff.jpg" );
 
     // Test code
     //Transform.SetLocationY( -10.f );

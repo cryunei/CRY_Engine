@@ -10,8 +10,9 @@
 #pragma once
 
 
-#include <d3d11.h>
 #include "../../Externals/DirectXTK/Inc/WICTextureLoader.h"
+#include <d3d11.h>
+#include <string>
 
 
 #pragma comment ( lib, "d3d11.lib" )
@@ -34,7 +35,7 @@ public:
     Dx11Material();
     
     // Initialize
-    void Initialize();
+    void Initialize( const std::string& TexturePath );
 
     // Render
     void Render() const;
@@ -44,5 +45,5 @@ private:
     void _createPixelShader();
 
     // Create texture
-    void _createTexture();
+    void _createTexture( const std::string& TexturePath );
 };

@@ -1,4 +1,6 @@
 ﻿#include "FbxImportHelper.h"
+#include "../Asset/CrAssetManager.h"
+#include "../Asset/CrVertexBuffer.h"
 
 
 //=================================================================================================
@@ -33,6 +35,8 @@ void FbxImportHelper::Clear()
 //=================================================================================================
 bool FbxImportHelper::Load( const std::string& FilePath )
 {
+    Clear();
+
     FbxManager = FbxManager::Create();
     if ( !FbxManager ) return false;
 
@@ -54,47 +58,50 @@ bool FbxImportHelper::Load( const std::string& FilePath )
 }
 
 //=================================================================================================
-// @brief	Get vertices
+// @brief	Load All
 //=================================================================================================
-void FbxImportHelper::GetVertices( std::vector< Vertex >& OutVertices, std::vector< int >& OutIndices ) const
+bool FbxImportHelper::LoadAll( const std::string& FilePath, const std::string& AssetName )
 {
-    if ( !FbxScene ) return;
+    Load( FilePath );
+
+    if ( !FbxScene ) return false;
 
     FbxNode* fbxRootNode = FbxScene->GetRootNode();
+    if ( !fbxRootNode ) return false;
 
-    // load mesh
-    FbxNode* fbxMeshNode = fbxRootNode->GetChild( 0 );
-    if ( !fbxMeshNode ) return;
+    int childCount = fbxRootNode->GetChildCount();
 
-    FbxMesh* fbxMesh = fbxMeshNode->GetMesh();
-    if ( !fbxMesh ) return;
-    
-    // Get the vertex positions
-    FbxVector4* fbxVertices = fbxMesh->GetControlPoints();
-
-    // Get the vertex normals (if available)
-    FbxGeometryElementNormal* fbxNormals = fbxMesh->GetElementNormal();
-    bool hasNormals = fbxNormals && fbxNormals->GetMappingMode() == FbxGeometryElement::eByPolygonVertex;
-
-    // Get the texture coordinates (if available)
-    FbxGeometryElementUV* fbxUVs = fbxMesh->GetElementUV();
-    bool hasUVs = fbxUVs && fbxUVs->GetMappingMode() == FbxGeometryElement::eByPolygonVertex;
-
-    // Process each polygon
-    int idx = 0;
-    for ( int i = 0; i < fbxMesh->GetPolygonCount(); ++i )
+    for ( int i = 0; i < childCount; ++i )
     {
-        _AddVertex( fbxMesh, i, 0, OutVertices );
-        _AddVertex( fbxMesh, i, 1, OutVertices );
-        _AddVertex( fbxMesh, i, 2, OutVertices );
+        // load mesh
+        FbxNode* fbxMeshNode = fbxRootNode->GetChild( i );
+        if ( !fbxMeshNode ) continue;
 
-        for ( int j = 2; j < fbxMesh->GetPolygonSize( i ); ++j )
+        FbxMesh* fbxMesh = fbxMeshNode->GetMesh();
+        if ( !fbxMesh ) continue;
+
+        CrVertexBuffer* vb = GetAssetManager()->CreateVertexBuffer( AssetName + "_Vertex" + std::to_string( i ) );
+        if ( !vb ) break;
+
+        vb->Vertices.reserve( _GetVertexCount( fbxMesh ) );
+
+        // Process each polygon
+        for ( int i = 0; i < fbxMesh->GetPolygonCount(); ++i )
         {
-            _AddVertex( fbxMesh, i, 0    , OutVertices );
-            _AddVertex( fbxMesh, i, j    , OutVertices );
-            _AddVertex( fbxMesh, i, j + 1, OutVertices );
+            _AddVertex( fbxMesh, i, 0, vb->Vertices );
+            _AddVertex( fbxMesh, i, 1, vb->Vertices );
+            _AddVertex( fbxMesh, i, 2, vb->Vertices );
+
+            for ( int j = 2; j < fbxMesh->GetPolygonSize( i ); ++j )
+            {
+                _AddVertex( fbxMesh, i, 0    , vb->Vertices );
+                _AddVertex( fbxMesh, i, j    , vb->Vertices );
+                _AddVertex( fbxMesh, i, j + 1, vb->Vertices );
+            }
         }
     }
+
+    return true;
 }
 
 //=================================================================================================
@@ -130,4 +137,25 @@ void FbxImportHelper::_AddVertex( FbxMesh* Mesh, int ControlPointIndex, int Posi
     }
 
     OutVertices.push_back( vtx );
+}
+
+//=================================================================================================
+// @brief	Get vertex count
+//=================================================================================================
+int FbxImportHelper::_GetVertexCount( FbxMesh* Mesh ) const
+{
+    if ( !Mesh ) return 0;
+
+    int count = 0;
+    // Process each polygon
+    for ( int i = 0; i < Mesh->GetPolygonCount(); ++i )
+    {
+        count += 3;
+        for ( int j = 2; j < Mesh->GetPolygonSize( i ); ++j )
+        {
+            count += 3;
+        }
+    }
+
+    return count;
 }

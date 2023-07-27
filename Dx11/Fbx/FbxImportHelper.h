@@ -26,10 +26,13 @@ public:
     // Load
     bool Load( const std::string& FilePath );
 
-    // Get vertices
-    void GetVertices( std::vector< Vertex >& OutVertices, std::vector< int >& OutIndices ) const;
+    // Load All
+    bool LoadAll( const std::string& FilePath, const std::string& AssetName );
 
 private:
     // Add vertex
     void _AddVertex( FbxMesh* Mesh, int ControlPointIndex, int PositionPolygon, std::vector< Vertex >& OutVertices ) const;
+
+    // Get vertex count
+    int _GetVertexCount( FbxMesh* Mesh ) const;
 };

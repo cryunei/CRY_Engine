@@ -8,7 +8,11 @@
 #include "Dx11Material.h"
 #include "../Core/Dx11Device.h"
 #include "../Core/Dx11ResourceFactory.h"
+#include "../Util/UtilString.h"
+#include <codecvt>
 #include <d3dcompiler.h>
+#include <locale>
+#include <string>
 
 
 //=================================================================================================
@@ -25,10 +29,10 @@ Dx11Material::Dx11Material()
 //=================================================================================================
 // @brief	Initialize
 //=================================================================================================
-void Dx11Material::Initialize()
+void Dx11Material::Initialize( const std::string& TexturePath )
 {
     _createPixelShader();
-    _createTexture();
+    _createTexture( TexturePath );
 }
 
 //=================================================================================================
@@ -45,7 +49,7 @@ void Dx11Material::Render() const
 //=================================================================================================
 void Dx11Material::_createPixelShader()
 {
-    ID3D10Blob* ps = Dx11ResourceFactory::CompileShader( L"../Shader/shader.hlsl", "PS", "ps_4_0" );
+    ID3D10Blob* ps = Dx11ResourceFactory::CompileShader( "../Shader/shader.hlsl", "PS", "ps_4_0" );
 
     GetDx11Device()->CreatePixelShader ( ps->GetBufferPointer(), ps->GetBufferSize(), nullptr, &PixelShader  );
     GetDx11DeviceContext()->PSSetShader( PixelShader,  0, 0 );
@@ -54,7 +58,7 @@ void Dx11Material::_createPixelShader()
 //=================================================================================================
 // @brief	Create texture
 //=================================================================================================
-void Dx11Material::_createTexture()
+void Dx11Material::_createTexture( const std::string& TexturePath )
 {
    // create texture
     D3D11_TEXTURE2D_DESC td;
@@ -97,5 +101,5 @@ void Dx11Material::_createTexture()
 
     CoInitialize( nullptr );
 
-    CreateWICTextureFromFile( GetDx11Device(), L"../Asset/Texture/mpm_vol.08_p16_light_side_A_diff.jpg", &TextureResource, &TextureSRV );
+    CreateWICTextureFromFile( GetDx11Device(), ToWstring( TexturePath ).c_str(), &TextureResource, &TextureSRV );
 }
