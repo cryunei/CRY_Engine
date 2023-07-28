@@ -1,9 +1,10 @@
 #pragma once
 
-
+#include "Dx11ConstantBuffer.h"
 #include "../Render/Dx11Mesh.h"
 #include "../Actor/Camera/CrCamera.h"
 #include "../Actor/Light/CrDirectionalLight.h"
+#include "../Render/Dx11ConstantBufferStructure.h"
 #include <d3d11.h>
 
 
@@ -12,30 +13,11 @@
 
 class Dx11Renderer
 {
-public:
-	struct WorldMatrix
-	{
-		XMMATRIX worldMat;
-	};
-
-	struct ViewProjMatrix
-	{
-		XMMATRIX viewMat;
-		XMMATRIX projMat;
-	};
-
-	struct LightProperty
-	{
-		XMFLOAT4 diffuseColor;
-		XMFLOAT3 lightDirection;
-		float    padding;
-	};
-
 private:
-	ID3D11RenderTargetView* RenderTargetView;
-	ID3D11Buffer* WorldMatrixBuffer;
-	ID3D11Buffer* ViewProjectionMatrixBuffer;
-	ID3D11Buffer* LightPropertyBuffer;
+	ID3D11RenderTargetView*              RenderTargetView;
+	Dx11ConstantBuffer< WorldMatrix >    WorldMatrixBuffer;
+	Dx11ConstantBuffer< ViewProjMatrix > ViewProjectionMatrixBuffer;
+	Dx11ConstantBuffer< LightProperty >  LightPropertyBuffer;	
 
 	float ViewportWidth;
 	float ViewportHeight;

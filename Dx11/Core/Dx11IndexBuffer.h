@@ -11,10 +11,10 @@
 class Dx11IndexBuffer : public Dx11Resource
 {
 private:
-    ID3D11Buffer*          IndexBuffer;
-    D3D11_BUFFER_DESC      IndexBufferDesc;
-    D3D11_SUBRESOURCE_DATA IndexBufferSD;
-    unsigned int           IndexCount;
+    ID3D11Buffer*          Buffer;
+    D3D11_BUFFER_DESC      BufferDesc;
+    D3D11_SUBRESOURCE_DATA BufferSD;
+    unsigned int           Count;
 
 public:
     // Construct
@@ -26,7 +26,7 @@ public:
     virtual ~Dx11IndexBuffer() = default;
 
     // Getters
-    unsigned int GetCount() const { return IndexCount; }
+    unsigned int GetCount() const { return Count; }
 
     // Operators
     Dx11IndexBuffer& operator=( const Dx11IndexBuffer& Other ) = default;

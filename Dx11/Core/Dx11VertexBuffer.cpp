@@ -1,4 +1,5 @@
 ﻿#include "Dx11VertexBuffer.h"
+#include "Dx11ResourceFactory.h"
 #include "../DxMacros.h"
 #include "../Core/Dx11Device.h"
 
@@ -6,40 +7,40 @@
 // @brief	Construct
 //=====================================================================================================================
 Dx11VertexBuffer::Dx11VertexBuffer()
-: VertexBuffer      ( nullptr )
-, VertexCount       ( 0 )
+: Buffer      ( nullptr )
+, Count       ( 0 )
 , Stride            ( 0 )
 , Offset            ( 0 )
 , PrimitiveTopology ( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST )
 
 {
-    ZeroMemory( &VertexBufferDesc, sizeof( D3D11_BUFFER_DESC ) );
+    ZeroMemory( &BufferDesc, sizeof( D3D11_BUFFER_DESC ) );
 }
 
 //=====================================================================================================================
 // @brief	Create
 //=====================================================================================================================
-void Dx11VertexBuffer::CreateBuffer( const std::vector<Vertex>& Vertices, D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess )
+void Dx11VertexBuffer::CreateBuffer( const std::vector< Vertex >& Vertices, D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess )
 {
     if ( Vertices.empty() ) return;
 
-    VertexCount = (unsigned int)( Vertices.size() );
+    Count = (unsigned int)( Vertices.size() );
     Stride = sizeof( Vertex ); 
-    unsigned int bufferSize = Stride * VertexCount;
+    unsigned int bufferSize = Stride * Count;
 
-    VertexBufferDesc.Usage = Usage;
-    VertexBufferDesc.ByteWidth = bufferSize;
-    VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    VertexBufferDesc.CPUAccessFlags = CpuAccess;
+    BufferDesc.Usage = Usage;
+    BufferDesc.ByteWidth = bufferSize;
+    BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    BufferDesc.CPUAccessFlags = CpuAccess;
 
-    GetDx11Device()->CreateBuffer( &VertexBufferDesc, nullptr, &VertexBuffer );
+    Dx11ResourceFactory::CreateBuffer( &Buffer, &BufferDesc, nullptr );
 
     D3D11_MAPPED_SUBRESOURCE ms;
-    GetDx11DeviceContext()->Map( VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms );
+    GetDx11DeviceContext()->Map( Buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms );
     {
         memcpy( ms.pData, &Vertices[ 0 ], bufferSize );
     }
-    GetDx11DeviceContext()->Unmap( VertexBuffer, 0 );
+    GetDx11DeviceContext()->Unmap( Buffer, 0 );
 }
 
 //=====================================================================================================================
@@ -47,9 +48,9 @@ void Dx11VertexBuffer::CreateBuffer( const std::vector<Vertex>& Vertices, D3D11_
 //=====================================================================================================================
 void Dx11VertexBuffer::Release()
 {
-    SAFE_RELEASE( VertexBuffer );
+    SAFE_RELEASE( Buffer );
 
-    VertexCount = 0;
+    Count = 0;
 }
 
 //=====================================================================================================================
@@ -57,9 +58,9 @@ void Dx11VertexBuffer::Release()
 //=====================================================================================================================
 bool Dx11VertexBuffer::Render() const
 {
-    if ( VertexCount == 0 ) return false;
+    if ( Count == 0 ) return false;
 
-    GetDx11DeviceContext()->IASetVertexBuffers( 0, 1, &VertexBuffer, &Stride, &Offset );
+    GetDx11DeviceContext()->IASetVertexBuffers( 0, 1, &Buffer, &Stride, &Offset );
     GetDx11DeviceContext()->IASetPrimitiveTopology( PrimitiveTopology );
 
     return true;

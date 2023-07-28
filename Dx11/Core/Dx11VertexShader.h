@@ -11,8 +11,8 @@
 class Dx11VertexShader : public Dx11Resource
 {
 private:
-    ID3D10Blob*         VertexShaderBlob;
-    ID3D11VertexShader* VertexShader;
+    ID3D10Blob*         ShaderBlob;
+    ID3D11VertexShader* Shader;
     ID3D11InputLayout*  InputLayout;
 
 public:

@@ -1,7 +1,6 @@
 #include "Dx11Renderer.h"
 #include "../Actor/Camera/CrCamera.h"
 #include "../Core/Dx11Device.h"
-#include "../Core/Dx11ResourceFactory.h"
 #include "../GUI/GuiManager.h"
 
 
@@ -9,12 +8,9 @@
 // @brief	Constructor
 //=================================================================================================
 Dx11Renderer::Dx11Renderer()
-: RenderTargetView           ( nullptr )
-, WorldMatrixBuffer          ( nullptr )
-, ViewProjectionMatrixBuffer ( nullptr )
-, LightPropertyBuffer		 ( nullptr )
-, ViewportWidth              ( 800.f )
-, ViewportHeight             ( 600.f )
+: RenderTargetView ( nullptr )
+, ViewportWidth    ( 800.f )
+, ViewportHeight   ( 600.f )
 {
 }
 
@@ -59,6 +55,7 @@ void Dx11Renderer::RenderFrame()
 
 	// foreach Mesh
 	{
+		Mesh.GetTransform().SetLocationX( 0.f );
 		_setWorldMatrixBufferData( Mesh.GetTransform().GetWorldMatrix() ); 
 		Mesh.Render();
 	}
@@ -103,9 +100,13 @@ void Dx11Renderer::_initializeViewport() const
 //=================================================================================================
 void Dx11Renderer::_initializeConstantBuffers()
 {
-	Dx11ResourceFactory::CreateConstantBuffer( &WorldMatrixBuffer, sizeof( WorldMatrix ) );
-	Dx11ResourceFactory::CreateConstantBuffer( &ViewProjectionMatrixBuffer, sizeof( ViewProjMatrix ) );
-	Dx11ResourceFactory::CreateConstantBuffer( &LightPropertyBuffer, sizeof( LightProperty ) );
+	WorldMatrixBuffer         .CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
+	ViewProjectionMatrixBuffer.CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
+	LightPropertyBuffer       .CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
+
+	WorldMatrixBuffer         .SetVS( 0 );
+	ViewProjectionMatrixBuffer.SetVS( 1 );
+	LightPropertyBuffer       .SetPS( 2 );
 }
 
 //=================================================================================================
@@ -113,21 +114,10 @@ void Dx11Renderer::_initializeConstantBuffers()
 //=================================================================================================
 void Dx11Renderer::_setWorldMatrixBufferData( const XMMATRIX& Matrix ) const
 {
-	if ( !WorldMatrixBuffer ) return;
+	WorldMatrix mat{};
+	mat.worldMat = XMMatrixTranspose( Matrix );
 
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-
-	WorldMatrix* dataPtr = nullptr;
-
-	GetDx11DeviceContext()->Map( WorldMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource );
-	{
-		dataPtr = ( WorldMatrix* )mappedResource.pData;
-
-		dataPtr->worldMat = XMMatrixTranspose( Matrix );
-	}
-	GetDx11DeviceContext()->Unmap( WorldMatrixBuffer, 0 );
-
-	GetDx11DeviceContext()->VSSetConstantBuffers( 0, 1, &WorldMatrixBuffer );
+	WorldMatrixBuffer.Update( mat );
 }
 
 //=================================================================================================
@@ -135,23 +125,11 @@ void Dx11Renderer::_setWorldMatrixBufferData( const XMMATRIX& Matrix ) const
 //=================================================================================================
 void Dx11Renderer::_setViewProjectionMatrixBufferData() const
 {
-	if ( !ViewProjectionMatrixBuffer ) return;
+	ViewProjMatrix mat{};
+	mat.viewMat = GetCamera()->GetViewMatrix().Transpose();
+	mat.projMat = GetCamera()->GetProjectionMatrix( ViewportWidth, ViewportHeight ).Transpose();
 
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-
-	ViewProjMatrix* dataPtr = nullptr;
-
-	GetDx11DeviceContext()->Map( ViewProjectionMatrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource );
-	{
-		dataPtr = ( ViewProjMatrix* )mappedResource.pData;
-	
-		dataPtr->viewMat = GetCamera()->GetViewMatrix().Transpose();
-		dataPtr->projMat = GetCamera()->GetProjectionMatrix( ViewportWidth, ViewportHeight ).Transpose();
-
-	}
-	GetDx11DeviceContext()->Unmap( ViewProjectionMatrixBuffer, 0 );
-
-	GetDx11DeviceContext()->VSSetConstantBuffers( 1, 1, &ViewProjectionMatrixBuffer );
+	ViewProjectionMatrixBuffer.Update( mat );
 }
 
 //=================================================================================================
@@ -159,21 +137,10 @@ void Dx11Renderer::_setViewProjectionMatrixBufferData() const
 //=================================================================================================
 void Dx11Renderer::_setLightPropertyBufferData() const
 {
-	if ( !LightPropertyBuffer ) return;
+	LightProperty prop{};	
+	prop.diffuseColor   = Vector4::One;
+	prop.lightDirection = Vector3( 1.0f, -1.0f, 1.0f );
+	prop.padding        = 0.f;
 
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-
-	LightProperty* dataPtr = nullptr;
-
-	GetDx11DeviceContext()->Map( LightPropertyBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource );
-	{
-		dataPtr = ( LightProperty* )mappedResource.pData;
-
-		dataPtr->diffuseColor   = Vector4::One;
-		dataPtr->lightDirection = Vector3( 1.0f, -1.0f, 1.0f );
-		dataPtr->padding        = 0.f;
-	}
-	GetDx11DeviceContext()->Unmap( LightPropertyBuffer, 0 );
-
-	GetDx11DeviceContext()->PSSetConstantBuffers( 2, 1, &LightPropertyBuffer );
+	LightPropertyBuffer.Update( prop );
 }

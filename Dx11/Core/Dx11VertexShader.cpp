@@ -8,8 +8,8 @@
 // @brief	Construct
 //=================================================================================================
 Dx11VertexShader::Dx11VertexShader()
-: VertexShaderBlob ( nullptr )
-, VertexShader     ( nullptr )
+: ShaderBlob ( nullptr )
+, Shader     ( nullptr )
 , InputLayout      ( nullptr )
 {
 }
@@ -19,10 +19,10 @@ Dx11VertexShader::Dx11VertexShader()
 //=================================================================================================
 void Dx11VertexShader::CreateShader( const std::string& FileName, const std::string& EntryPoint, const std::string& ShaderModel )
 {
-    VertexShaderBlob = Dx11ResourceFactory::CompileShader( FileName, EntryPoint, ShaderModel );
-    if ( !VertexShaderBlob ) return;
+    ShaderBlob = Dx11ResourceFactory::CompileShader( FileName, EntryPoint, ShaderModel );
+    if ( !ShaderBlob ) return;
 
-    GetDx11Device()->CreateVertexShader( VertexShaderBlob->GetBufferPointer(), VertexShaderBlob->GetBufferSize(), nullptr, &VertexShader );    
+    GetDx11Device()->CreateVertexShader( ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize(), nullptr, &Shader );    
 }
 
 //=================================================================================================
@@ -30,9 +30,9 @@ void Dx11VertexShader::CreateShader( const std::string& FileName, const std::str
 //=================================================================================================
 void Dx11VertexShader::CreateInputLayout( const std::vector<D3D11_INPUT_ELEMENT_DESC>& InputElements )
 {
-    if ( !VertexShaderBlob ) return;
+    if ( !ShaderBlob ) return;
 
-    GetDx11Device()->CreateInputLayout( &InputElements[ 0 ], InputElements.size(), VertexShaderBlob->GetBufferPointer(), VertexShaderBlob->GetBufferSize(), &InputLayout );    
+    GetDx11Device()->CreateInputLayout( &InputElements[ 0 ], InputElements.size(), ShaderBlob->GetBufferPointer(), ShaderBlob->GetBufferSize(), &InputLayout );    
 }
 
 //=====================================================================================================================
@@ -40,8 +40,8 @@ void Dx11VertexShader::CreateInputLayout( const std::vector<D3D11_INPUT_ELEMENT_
 //=====================================================================================================================
 void Dx11VertexShader::Release()
 {
-    SAFE_RELEASE( VertexShaderBlob );
-    SAFE_RELEASE( VertexShader );
+    SAFE_RELEASE( ShaderBlob );
+    SAFE_RELEASE( Shader );
     SAFE_RELEASE( InputLayout );
 }
 
@@ -50,10 +50,10 @@ void Dx11VertexShader::Release()
 //=====================================================================================================================
 bool Dx11VertexShader::Render() const
 {
-    if ( !VertexShader ) return false;
+    if ( !Shader ) return false;
     if ( !InputLayout ) return false;
 
-    GetDx11DeviceContext()->VSSetShader( VertexShader, nullptr, 0 );
+    GetDx11DeviceContext()->VSSetShader( Shader, nullptr, 0 );
     GetDx11DeviceContext()->IASetInputLayout( InputLayout );
 
     return true;

@@ -11,9 +11,9 @@
 class Dx11VertexBuffer : public Dx11Resource
 {
 private:
-    struct ID3D11Buffer*     VertexBuffer;
-    D3D11_BUFFER_DESC        VertexBufferDesc;
-    unsigned int             VertexCount;
+    ID3D11Buffer*            Buffer;
+    D3D11_BUFFER_DESC        BufferDesc;
+    unsigned int             Count;
     unsigned int             Stride;
     unsigned int             Offset;
     D3D11_PRIMITIVE_TOPOLOGY PrimitiveTopology;
@@ -28,7 +28,7 @@ public:
     virtual ~Dx11VertexBuffer() = default;
 
     // Getters
-    unsigned int GetCount() const { return VertexCount; }
+    unsigned int GetCount() const { return Count; }
 
     //Operators
     Dx11VertexBuffer& operator=( const Dx11VertexBuffer& Other ) = default;
