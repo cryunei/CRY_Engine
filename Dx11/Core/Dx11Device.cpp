@@ -19,7 +19,7 @@ bool Dx11Device::Create( HWND hWnd )
     scd.SampleDesc.Count = 4;
     scd.Windowed = true;
 
-    HRESULT hr = D3D11CreateDeviceAndSwapChain( nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0, D3D11_SDK_VERSION, &scd, &SwapChain, &Device, nullptr, &DeviceContext );
+    HRESULT hr = D3D11CreateDeviceAndSwapChain( nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0, D3D11_SDK_VERSION, &scd, SwapChainComPtr.GetAddressOf(), DeviceComPtr.GetAddressOf(), nullptr, DeviceContextComPtr.GetAddressOf() );
     if ( FAILED( hr ) ) return false;
         
     return true;

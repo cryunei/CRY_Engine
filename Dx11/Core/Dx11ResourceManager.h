@@ -4,7 +4,8 @@
 #include "../DxTypes.h"
 #include <map>
 
-
+class Dx11Texture2D;
+class Dx11PixelShader;
 class Dx11IndexBuffer;
 class Dx11VertexBuffer;
 class Dx11VertexShader;
@@ -19,6 +20,8 @@ private:
     std::map< std::string, Dx11VertexBuffer* > VertexBuffers;
     std::map< std::string, Dx11IndexBuffer* >  IndexBuffers;
     std::map< std::string, Dx11VertexShader* > VertexShaders;
+    std::map< std::string, Dx11PixelShader* >  PixelShaders;
+    std::map< std::string, Dx11Texture2D* >    Texture2Ds;
 
 public:
     // Construct
@@ -42,6 +45,12 @@ public:
     // Create vertex shader
     Dx11VertexShader* CreateVertexShader( const std::string& AssetName );
 
+    // Create pixel shader
+    Dx11PixelShader* CreatePixelShader( const std::string& AssetName );
+
+    // Create texture
+    Dx11Texture2D* CreateTexture2D( const std::string& AssetName );
+
     // Get vertex buffer
     Dx11VertexBuffer* GetVertexBuffer( const std::string& AssetName ) { return _get< Dx11VertexBuffer >( AssetName, VertexBuffers ); }
 
@@ -50,6 +59,12 @@ public:
 
     // Get vertex shader
     Dx11VertexShader* GetVertexShader( const std::string& AssetName ) { return _get< Dx11VertexShader >( AssetName, VertexShaders ); }
+
+    // Get pixel shader
+    Dx11PixelShader* GetPixelShader( const std::string& AssetName ) { return _get< Dx11PixelShader >( AssetName, PixelShaders ); }
+
+    // Get texture
+    Dx11Texture2D* GetTexture2D( const std::string& AssetName ) { return _get< Dx11Texture2D >( AssetName, Texture2Ds ); }
 
     // Release
     void Release();

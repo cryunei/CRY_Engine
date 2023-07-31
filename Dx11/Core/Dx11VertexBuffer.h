@@ -1,18 +1,16 @@
 ﻿#pragma once
 
 
-#include "Dx11Resource.h"
+#include "Dx11Buffer.h"
 #include "../DxTypes.h"
 
 
 //=====================================================================================================================
 // @brief	Dx11VertexBuffer
 //=====================================================================================================================
-class Dx11VertexBuffer : public Dx11Resource
+class Dx11VertexBuffer : public Dx11Buffer
 {
 private:
-    ID3D11Buffer*            Buffer;
-    D3D11_BUFFER_DESC        BufferDesc;
     unsigned int             Count;
     unsigned int             Stride;
     unsigned int             Offset;
@@ -25,7 +23,7 @@ public:
     Dx11VertexBuffer( Dx11VertexBuffer&& Other ) noexcept = default;
 
     // Destruct
-    virtual ~Dx11VertexBuffer() = default;
+    virtual ~Dx11VertexBuffer() override = default;
 
     // Getters
     unsigned int GetCount() const { return Count; }
@@ -36,9 +34,6 @@ public:
 
     // Create buffer
     void CreateBuffer( const std::vector< Vertex >& Vertices, D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess );
-
-    // Release
-    virtual void Release() override;
 
     // Render
     bool Render() const;

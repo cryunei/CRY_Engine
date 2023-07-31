@@ -1,31 +1,28 @@
 ﻿#pragma once
 
 
-#include <d3d11.h>
-
-
-#pragma comment ( lib, "d3d11.lib" )
+#include "../DxCoreInc.h"
 
 
 class Dx11Device
 {
 private:
-    IDXGISwapChain*      SwapChain;
-    ID3D11Device*        Device;
-    ID3D11DeviceContext* DeviceContext;
+    ComPtr< IDXGISwapChain > SwapChainComPtr;
+    ComPtr< ID3D11Device >   DeviceComPtr;
+    ComPtr< ID3D11DeviceContext > DeviceContextComPtr;
 
 public:
     // Create
     bool Create( HWND hWnd );
 
     // GetSwapChain
-    IDXGISwapChain* GetSwapchain() const { return SwapChain; };
+    IDXGISwapChain* GetSwapchain() const { return SwapChainComPtr.Get(); };
 
     // GetDevice
-    ID3D11Device* GetDevice() const { return Device; };
+    ID3D11Device* GetDevice() const { return DeviceComPtr.Get(); };
 
     // GetDeviceContext
-    ID3D11DeviceContext* GetDeviceContext() const { return DeviceContext; };
+    ID3D11DeviceContext* GetDeviceContext() const { return DeviceContextComPtr.Get(); };
 };
 
 

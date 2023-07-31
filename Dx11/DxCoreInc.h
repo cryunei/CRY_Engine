@@ -1,8 +1,11 @@
 ﻿#pragma once
 
 #include "../Externals/DirectXTK/Inc/SimpleMath.h"
+
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <wrl.h>
+
 #include <string>
 #include <vector>
 
@@ -12,6 +15,8 @@
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
+
+using namespace Microsoft::WRL;
 
 
 

@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>C:\Project\Dx11\x64\Debug\Dx11.exe</FullPath>
+      <FullPath>C:\Project\CRY_Engine\x64\Debug\Dx11.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

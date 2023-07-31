@@ -138,14 +138,20 @@
     <ClInclude Include="Asset\CrAsset.h" />
     <ClInclude Include="Asset\CrAssetManager.h" />
     <ClInclude Include="Asset\CrIndexBuffer.h" />
+    <ClInclude Include="Asset\CrPixelShader.h" />
+    <ClInclude Include="Asset\CrTexture2D.h" />
     <ClInclude Include="Asset\CrVertexBuffer.h" />
     <ClInclude Include="Asset\CrVertexShader.h" />
+    <ClInclude Include="Core\Dx11Buffer.h" />
+    <ClInclude Include="Core\Dx11ConstantBuffer.h" />
     <ClInclude Include="Core\Dx11Device.h" />
     <ClInclude Include="Core\Dx11IndexBuffer.h" />
+    <ClInclude Include="Core\Dx11PixelShader.h" />
     <ClInclude Include="Core\Dx11Renderer.h" />
     <ClInclude Include="Core\Dx11Resource.h" />
-    <ClInclude Include="Core\Dx11ResourceFactory.h" />
     <ClInclude Include="Core\Dx11ResourceManager.h" />
+    <ClInclude Include="Core\Dx11Shader.h" />
+    <ClInclude Include="Core\Dx11Texture2D.h" />
     <ClInclude Include="Core\Dx11VertexBuffer.h" />
     <ClInclude Include="Core\Dx11VertexShader.h" />
     <ClInclude Include="Core\DxTransform.h" />
@@ -163,6 +169,7 @@
     <ClInclude Include="Externals\ImGUI\imstb_truetype.h" />
     <ClInclude Include="Fbx\FbxImportHelper.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Render\Dx11ConstantBufferStructure.h" />
     <ClInclude Include="Render\Dx11Material.h" />
     <ClInclude Include="Render\Dx11Mesh.h" />
     <ClInclude Include="Render\Dx11Primitive.h" />
@@ -251,8 +258,12 @@
     </ClCompile>
     <ClCompile Include="Asset\CrAssetManager.cpp" />
     <ClCompile Include="Asset\CrIndexBuffer.cpp" />
+    <ClCompile Include="Asset\CrPixelShader.cpp" />
+    <ClCompile Include="Asset\CrTexture2D.cpp" />
     <ClCompile Include="Asset\CrVertexBuffer.cpp" />
     <ClCompile Include="Asset\CrVertexShader.cpp" />
+    <ClCompile Include="Core\Dx11Buffer.cpp" />
+    <ClCompile Include="Core\Dx11ConstantBuffer.cpp" />
     <ClCompile Include="Core\Dx11Device.cpp" />
     <ClCompile Include="Core\Dx11IndexBuffer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -328,10 +339,12 @@
       <AdditionalIncludeDirectories>C:\Project\CRY_Engine\\Externals\;C:\Project\CRY_Engine\\Externals\FbxSDK\include\;C:\Project\CRY_Engine\\Dx11\Externals\ImGUI\</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Core\Dx11PixelShader.cpp" />
     <ClCompile Include="Core\Dx11Renderer.cpp" />
     <ClCompile Include="Core\Dx11Resource.cpp" />
-    <ClCompile Include="Core\Dx11ResourceFactory.cpp" />
     <ClCompile Include="Core\Dx11ResourceManager.cpp" />
+    <ClCompile Include="Core\Dx11Shader.cpp" />
+    <ClCompile Include="Core\Dx11Texture2D.cpp" />
     <ClCompile Include="Core\Dx11VertexBuffer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>

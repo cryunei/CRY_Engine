@@ -1,18 +1,15 @@
 ﻿#pragma once
 
-
-#include "Dx11Resource.h"
+#include "Dx11Buffer.h"
 #include "../DxTypes.h"
 
 
 //=====================================================================================================================
 // @brief	Dx11IndexBuffer
 //=====================================================================================================================
-class Dx11IndexBuffer : public Dx11Resource
+class Dx11IndexBuffer : public Dx11Buffer
 {
 private:
-    ID3D11Buffer*          Buffer;
-    D3D11_BUFFER_DESC      BufferDesc;
     D3D11_SUBRESOURCE_DATA BufferSD;
     unsigned int           Count;
 
@@ -23,7 +20,7 @@ public:
     Dx11IndexBuffer( Dx11IndexBuffer&& Other ) noexcept = default;
 
     // Destruct
-    virtual ~Dx11IndexBuffer() = default;
+    virtual ~Dx11IndexBuffer() override = default;
 
     // Getters
     unsigned int GetCount() const { return Count; }
@@ -34,9 +31,6 @@ public:
 
     // Create buffer
     void CreateBuffer( const std::vector< unsigned int >& Indices, D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess );
-
-    // Release
-    virtual void Release() override;
 
     // Render
     bool Render() const;

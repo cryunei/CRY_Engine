@@ -14,13 +14,16 @@
 class Dx11Renderer
 {
 private:
-	ID3D11RenderTargetView*              RenderTargetView;
+	float ViewportWidth;
+	float ViewportHeight;
+
+	ID3D11RenderTargetView* RenderTargetView;
+
 	Dx11ConstantBuffer< WorldMatrix >    WorldMatrixBuffer;
 	Dx11ConstantBuffer< ViewProjMatrix > ViewProjectionMatrixBuffer;
 	Dx11ConstantBuffer< LightProperty >  LightPropertyBuffer;	
 
-	float ViewportWidth;
-	float ViewportHeight;
+	std::vector< Dx11Mesh > Meshes;
 
 	Dx11Mesh Mesh;
 	CrCamera Camera;

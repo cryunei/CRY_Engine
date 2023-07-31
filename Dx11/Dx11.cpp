@@ -204,4 +204,29 @@ void LoadAssets()
             { "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         } );
     }
+
+    if ( CrPixelShader* ps =  GetAssetManager()->CreatePixelShader( "DefaultDiffuse" ) )
+    {
+        ps->Initialize( "../Shader/Shader.hlsl", "PS", "ps_4_0" );
+    }
+
+    if ( CrPixelShader* ps =  GetAssetManager()->CreatePixelShader( "HalfLambert" ) )
+    {
+        ps->Initialize( "../Shader/Shader.hlsl", "PS_HalfLambert", "ps_4_0" );
+    }
+
+    if ( CrPixelShader* ps =  GetAssetManager()->CreatePixelShader( "Toon" ) )
+    {
+        ps->Initialize( "../Shader/Shader.hlsl", "PS_Toon", "ps_4_0" );
+    }
+
+    if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "WoodenSphereDiffuse" ) )
+    {
+        
+        tex->SetPath  ( "../Asset/Texture/mpm_vol.08_p16_light_side_A_diff.jpg" );
+        tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );
+        tex->SetWidth ( 2000 );
+        tex->SetHeight( 2000 );
+        tex->SetSamplingCount( 1 );
+    }
 }

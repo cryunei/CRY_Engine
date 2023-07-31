@@ -11,7 +11,8 @@
 
 
 #include "../../Externals/DirectXTK/Inc/WICTextureLoader.h"
-#include <d3d11.h>
+#include "../Core/Dx11PixelShader.h"
+#include "../Core/Dx11Texture2D.h"
 #include <string>
 
 
@@ -24,26 +25,16 @@ using namespace DirectX;
 class Dx11Material
 {
 private:
-    ID3D11PixelShader*        PixelShader;
-    ID3D11Texture2D*          Texture2D;
-    ID3D11Resource*           TextureResource;
-    ID3D11ShaderResourceView* TextureSRV;
-    ID3D11SamplerState*       TextureSS;
+    Dx11PixelShader* PixelShader;
+    Dx11Texture2D*   Texture2D;
     
 public:
     // Construct
     Dx11Material();
     
     // Initialize
-    void Initialize( const std::string& TexturePath );
+    void Initialize( Dx11PixelShader* InPixelShader, Dx11Texture2D* InTexture2D );
 
     // Render
     void Render() const;
-
-private:
-    // Create pixel shader
-    void _createPixelShader();
-
-    // Create texture
-    void _createTexture( const std::string& TexturePath );
 };

@@ -8,10 +8,8 @@
 // @brief	Construct
 //=====================================================================================================================
 Dx11IndexBuffer::Dx11IndexBuffer()
-: Buffer( nullptr )
-, Count( 0 )
+: Count( 0 )
 {
-    ZeroMemory( &BufferDesc, sizeof( D3D11_BUFFER_DESC ) );
     ZeroMemory( &BufferSD, sizeof( D3D11_SUBRESOURCE_DATA ) );
 }
 
@@ -29,22 +27,12 @@ void Dx11IndexBuffer::CreateBuffer( const std::vector< unsigned int >& Indices, 
     BufferDesc.ByteWidth = bufferSize;
     BufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
     BufferDesc.CPUAccessFlags = CpuAccess;
-    BufferDesc.MiscFlags = 0;
-    BufferDesc.StructureByteStride = 0;
 
     BufferSD.pSysMem = &Indices[ 0 ];
     BufferSD.SysMemPitch = 0;
     BufferSD.SysMemSlicePitch = 0;
 
-    Dx11ResourceFactory::CreateBuffer( &Buffer, &BufferDesc, &BufferSD );
-}
-
-//=====================================================================================================================
-// @brief	Release
-//=====================================================================================================================
-void Dx11IndexBuffer::Release()
-{
-    SAFE_RELEASE( Buffer );
+    Create( &BufferSD );
 }
 
 //=====================================================================================================================
@@ -54,7 +42,7 @@ bool Dx11IndexBuffer::Render() const
 {
     if ( Count == 0 ) return false;
 
-    GetDx11DeviceContext()->IASetIndexBuffer( Buffer, DXGI_FORMAT_R32_UINT, 0 );
+    GetDx11DeviceContext()->IASetIndexBuffer( GetBuffer(), DXGI_FORMAT_R32_UINT, 0 );
 
     return true;
 }

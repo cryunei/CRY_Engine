@@ -1,5 +1,7 @@
 ﻿#include "Dx11ResourceManager.h"
 #include "Dx11IndexBuffer.h"
+#include "Dx11PixelShader.h"
+#include "Dx11Texture2D.h"
 #include "Dx11VertexBuffer.h"
 #include "Dx11VertexShader.h"
 #include "../Asset/CrAssetManager.h"
@@ -62,4 +64,40 @@ Dx11VertexShader* Dx11ResourceManager::CreateVertexShader( const std::string& As
     VertexShaders[ AssetName ] = dxVS;
 
     return dxVS;
+}
+
+//=====================================================================================================================
+// @brief	Create pixel shader
+//=====================================================================================================================
+Dx11PixelShader* Dx11ResourceManager::CreatePixelShader( const std::string& AssetName )
+{
+    CrPixelShader* crPS = GetAssetManager()->GetPixelShader( AssetName );
+    if ( !crPS ) return nullptr;
+
+    Dx11PixelShader* dxPS = _create< Dx11PixelShader >( AssetName, PixelShaders );
+    if ( !dxPS ) return nullptr;
+
+    dxPS->CreateShader( crPS->GetFileName(), crPS->GetEntryPoint(), crPS->GetShaderModel() );
+
+    PixelShaders[ AssetName ] = dxPS;
+
+    return dxPS;
+}
+
+//=====================================================================================================================
+// @brief	Create texture
+//=====================================================================================================================
+Dx11Texture2D* Dx11ResourceManager::CreateTexture2D( const std::string& AssetName )
+{
+    CrTexture2D* crTex = GetAssetManager()->GetTexture2D( AssetName );
+    if ( !crTex ) return nullptr;
+
+    Dx11Texture2D* dxTex = _create< Dx11Texture2D >( AssetName, Texture2Ds );
+    if ( !dxTex ) return nullptr;
+
+    dxTex->CreateTexture( crTex->GetPath(), crTex->GetFormat(), crTex->GetWidth(), crTex->GetHeight(), crTex->GetSamplingCount() );
+
+    Texture2Ds[ AssetName ] = dxTex;
+
+    return dxTex;
 }
