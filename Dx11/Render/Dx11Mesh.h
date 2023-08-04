@@ -1,18 +1,14 @@
 ﻿#pragma once
 
-#include <DirectXMath.h>
+
 #include "Dx11Primitive.h"
 #include "Dx11Material.h"
 #include "../Core/DxTransform.h"
 
 
-#pragma comment ( lib, "d3d11.lib" )
-#pragma comment ( lib, "d3dcompiler.lib" )
-
-
-using namespace DirectX;
-
-
+//=====================================================================================================================
+// @brief	Dx11Mesh
+//=====================================================================================================================
 class Dx11Mesh
 {
 private:
@@ -21,14 +17,24 @@ private:
     Dx11Material  Material;
 
 public:
-    // Constructorride
-    Dx11Mesh();
+    // Construct
+    Dx11Mesh() = default;
 
-    // Initialize
-    void Initialize();
+    // Initialize primitive
+    void InitializePrimitive( Dx11VertexBuffer* VB, Dx11IndexBuffer* IB ) { Primitive.Initialize( VB, IB ); }
 
-    // Render
-    void Render();
+    // Initialize material
+    void InitializeMaterial( Dx11VertexShader* VS, Dx11PixelShader* PS, Dx11Texture2D* Tex ) { Material.Initialize( VS, PS, Tex ); }
 
-     DxTransform& GetTransform() { return Transform; }
+    // Get transform
+    const DxTransform& GetTransform() const { return Transform; }
+    DxTransform& GetTransform() { return Transform; }
+
+    // Get primitive
+    const Dx11Primitive& GetPrimitive() const { return Primitive; }
+    Dx11Primitive& GetPrimitive() { return Primitive; }
+
+    // Get material
+    const Dx11Material& GetMaterial() const { return Material; }
+    Dx11Material& GetMaterial() { return Material; }
 };

@@ -1,18 +1,7 @@
 ﻿#include "Dx11VertexBuffer.h"
 #include "Dx11ResourceFactory.h"
-#include "../DxMacros.h"
 #include "../Core/Dx11Device.h"
 
-//=====================================================================================================================
-// @brief	Construct
-//=====================================================================================================================
-Dx11VertexBuffer::Dx11VertexBuffer()
-: Count             ( 0 )
-, Stride            ( 0 )
-, Offset            ( 0 )
-, PrimitiveTopology ( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST )
-{
-}
 
 //=====================================================================================================================
 // @brief	Create
@@ -38,12 +27,14 @@ void Dx11VertexBuffer::CreateBuffer( const std::vector< Vertex >& Vertices, D3D1
         memcpy( ms.pData, &Vertices[ 0 ], bufferSize );
     }
     GetDx11DeviceContext()->Unmap( GetBuffer(), 0 );
+
+    PrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 }
 
 //=====================================================================================================================
-// @brief	Render
+// @brief	Set render state
 //=====================================================================================================================
-bool Dx11VertexBuffer::Render() const
+bool Dx11VertexBuffer::SetRenderState() const
 {
     if ( Count == 0 ) return false;
 

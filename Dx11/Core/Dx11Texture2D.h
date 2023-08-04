@@ -5,8 +5,13 @@
 #include "Dx11Resource.h"
 
 
+//=====================================================================================================================
+// @brief	Dx11Texture2D
+//=====================================================================================================================
 class Dx11Texture2D : public Dx11Resource
 {
+    CLASS_DEFAULT_BODY( Dx11Texture2D )
+
 private:
     ComPtr< ID3D11Texture2D           > Texture2DComPtr;
     ComPtr< ID3D11Resource            > TextureResourceComPtr;
@@ -18,15 +23,6 @@ private:
 public:
     // Construct
     Dx11Texture2D() = default;
-    Dx11Texture2D( const Dx11Texture2D& Other ) = default;
-    Dx11Texture2D( Dx11Texture2D&& Other ) noexcept = default;
-
-    // Destruct
-    virtual ~Dx11Texture2D() override = default;
-
-    // Operators
-    Dx11Texture2D& operator=( const Dx11Texture2D& Other ) = default;
-    Dx11Texture2D& operator=( Dx11Texture2D&& Other ) noexcept = default;
 
     // Create texture
     void CreateTexture( const std::string& TexturePath, DXGI_FORMAT Format, UINT Width, UINT Height, UINT SamplingCount );
@@ -34,8 +30,8 @@ public:
     // Release
     virtual void Release() override;
 
-    // Render
-    bool Render() const;
+    // Set render state
+    virtual bool SetRenderState() const override;
 
     
 };

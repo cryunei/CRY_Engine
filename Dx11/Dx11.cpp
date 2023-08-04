@@ -3,9 +3,11 @@
 #include "Asset/CrAssetManager.h"
 #include "Asset/CrVertexShader.h"
 #include "Core/Dx11Device.h"
-#include "Core/Dx11Renderer.h"
+#include "Level/CrLevel.h"
+#include "Render/Dx11Renderer.h"
 #include "Fbx/FbxImportHelper.h"
 #include "GUI/GuiManager.h"
+#include "Loader/Dx11LevelLoader.h"
 
 
 enum
@@ -21,6 +23,7 @@ WCHAR szTitle[ MAX_LOADSTRING ];       // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[ MAX_LOADSTRING ]; // 기본 창 클래스 이름입니다.
 
 Dx11Renderer G_Dx11Renderer;
+Dx11LevelLoader G_Dx11LevelLoader;
 
 
 // default functions
@@ -114,9 +117,10 @@ BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
         return FALSE;
     }
 
+    G_Dx11Device.Create( hWnd );
+
     LoadAssets();
 
-    G_Dx11Device.Create( hWnd );
     G_Dx11Renderer.Initialize();
     GetGuiManager()->Initialize( hWnd );
 
@@ -220,13 +224,25 @@ void LoadAssets()
         ps->Initialize( "../Shader/Shader.hlsl", "PS_Toon", "ps_4_0" );
     }
 
+    if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "BlockDiffuse" ) )
+    {
+        tex->SetPath  ( "../Asset/Texture/block.jpg" );
+        tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );
+        tex->SetWidth ( 743 );
+        tex->SetHeight( 484 );
+        tex->SetSamplingCount( 1 );
+    }
+
     if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "WoodenSphereDiffuse" ) )
     {
-        
         tex->SetPath  ( "../Asset/Texture/mpm_vol.08_p16_light_side_A_diff.jpg" );
         tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );
         tex->SetWidth ( 2000 );
         tex->SetHeight( 2000 );
         tex->SetSamplingCount( 1 );
     }
+
+    CrLevel level;
+    G_Dx11LevelLoader.Load( level );
+    G_Dx11LevelLoader.AddRenderMeshes( G_Dx11Renderer );
 }

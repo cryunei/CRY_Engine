@@ -9,6 +9,8 @@
 //=====================================================================================================================
 class Dx11IndexBuffer : public Dx11Buffer
 {
+    CLASS_DEFAULT_BODY( Dx11IndexBuffer )
+
 private:
     D3D11_SUBRESOURCE_DATA BufferSD;
     unsigned int           Count;
@@ -16,22 +18,13 @@ private:
 public:
     // Construct
     Dx11IndexBuffer();
-    Dx11IndexBuffer( const Dx11IndexBuffer& Other ) = default;
-    Dx11IndexBuffer( Dx11IndexBuffer&& Other ) noexcept = default;
-
-    // Destruct
-    virtual ~Dx11IndexBuffer() override = default;
-
-    // Getters
-    unsigned int GetCount() const { return Count; }
-
-    // Operators
-    Dx11IndexBuffer& operator=( const Dx11IndexBuffer& Other ) = default;
-    Dx11IndexBuffer& operator=( Dx11IndexBuffer&& Other ) noexcept = default;
-
+    
     // Create buffer
     void CreateBuffer( const std::vector< unsigned int >& Indices, D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess );
 
-    // Render
-    bool Render() const;
+    // Set to render state
+    virtual bool SetRenderState() const override;
+
+    // Getters
+    unsigned int GetCount() const { return Count; }
 };

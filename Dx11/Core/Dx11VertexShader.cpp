@@ -3,9 +3,9 @@
 #include "../Core/Dx11ResourceFactory.h"
 
 
-//=================================================================================================
+//=====================================================================================================================
 // @brief	Create shader
-//=================================================================================================
+//=====================================================================================================================
 void Dx11VertexShader::CreateShader( const std::string& Path, const std::string& EntryPoint, const std::string& ShaderModel )
 {
     if ( CreateBlob( Path, EntryPoint, ShaderModel ) )
@@ -14,14 +14,14 @@ void Dx11VertexShader::CreateShader( const std::string& Path, const std::string&
     }    
 }
 
-//=================================================================================================
+//=====================================================================================================================
 // @brief	Create input layout
-//=================================================================================================
+//=====================================================================================================================
 void Dx11VertexShader::CreateInputLayout( const std::vector<D3D11_INPUT_ELEMENT_DESC>& InputElements )
 {
     if ( !BlobComPtr.Get() ) return;
 
-    GetDx11Device()->CreateInputLayout( &InputElements[ 0 ], InputElements.size(), BlobComPtr->GetBufferPointer(), BlobComPtr->GetBufferSize(), &InputLayoutComPtr );    
+    GetDx11Device()->CreateInputLayout( &InputElements[ 0 ], (UINT)( InputElements.size() ), BlobComPtr->GetBufferPointer(), BlobComPtr->GetBufferSize(), &InputLayoutComPtr );    
 }
 
 //=====================================================================================================================
@@ -36,9 +36,9 @@ void Dx11VertexShader::Release()
 }
 
 //=====================================================================================================================
-// @brief	Render
+// @brief	Set to render state
 //=====================================================================================================================
-bool Dx11VertexShader::Render() const
+bool Dx11VertexShader::SetRenderState() const
 {
     if ( !ShaderComPtr.Get() ) return false;
     if ( !InputLayoutComPtr.Get() ) return false;

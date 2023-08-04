@@ -10,6 +10,8 @@
 //=====================================================================================================================
 class Dx11VertexBuffer : public Dx11Buffer
 {
+    CLASS_DEFAULT_BODY( Dx11VertexBuffer )
+
 private:
     unsigned int             Count;
     unsigned int             Stride;
@@ -18,23 +20,14 @@ private:
 
 public:
     // Construct
-    Dx11VertexBuffer();
-    Dx11VertexBuffer( const Dx11VertexBuffer& Other ) = default;
-    Dx11VertexBuffer( Dx11VertexBuffer&& Other ) noexcept = default;
-
-    // Destruct
-    virtual ~Dx11VertexBuffer() override = default;
-
-    // Getters
-    unsigned int GetCount() const { return Count; }
-
-    //Operators
-    Dx11VertexBuffer& operator=( const Dx11VertexBuffer& Other ) = default;
-    Dx11VertexBuffer& operator=( Dx11VertexBuffer&& Other ) noexcept = default;
+    Dx11VertexBuffer() = default;
 
     // Create buffer
     void CreateBuffer( const std::vector< Vertex >& Vertices, D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess );
 
-    // Render
-    bool Render() const;
+    // Set render state
+    virtual bool SetRenderState() const override;
+
+    // Getters
+    unsigned int GetCount() const { return Count; }
 };

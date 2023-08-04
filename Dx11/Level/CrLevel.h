@@ -1,16 +1,24 @@
 ﻿#pragma once
 
 
-#include "DxCoreInc.h"
+#include <vector>
+
+
+class CrMesh;
 
 
 //=====================================================================================================================
-// @brief	Vertex
+// @brief	CrLevel
 //=====================================================================================================================
-struct Vertex
+class CrLevel
 {
-    XMFLOAT3 Position;  // position
-    XMFLOAT2 TextureUV; // texture uv
-    XMFLOAT3 Normal;    // normal
-};
+private:
+    std::vector< CrMesh* > Meshes;
+    
+public:
+    // Constructor
+    CrLevel();
 
+    // Get meshes
+    const std::vector< CrMesh* >& GetMeshes() const { return Meshes; }
+};

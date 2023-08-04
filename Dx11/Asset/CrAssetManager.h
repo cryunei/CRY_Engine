@@ -2,6 +2,7 @@
 
 
 #include "CrIndexBuffer.h"
+#include "CrMesh.h"
 #include "CrVertexBuffer.h"
 #include "CrVertexShader.h"
 #include "CrPixelShader.h"
@@ -21,6 +22,7 @@ private:
     std::map< std::string, CrVertexShader* > VertexShaders;
     std::map< std::string, CrPixelShader*  > PixelShaders;
     std::map< std::string, CrTexture2D*    > Texture2Ds;
+    std::map< std::string, CrMesh*         > Meshes;
 
 public:
     // Contructor
@@ -59,6 +61,12 @@ public:
     // Get texture
     CrTexture2D* GetTexture2D( const std::string& Name ) { return _getAsset< CrTexture2D >( Name, Texture2Ds ); }
 
+    // Create mesh
+    CrMesh* CreateMesh( const std::string& Name ) { return _createAsset< CrMesh >( Name, Meshes ); }
+
+    // Get mesh
+    CrMesh* GetMesh( const std::string& Name ) { return _getAsset< CrMesh >( Name, Meshes ); }
+
 private:
     // Create asset
     template< typename T >
@@ -79,6 +87,7 @@ T* CrAssetManager::_createAsset( const std::string& Name, std::map< std::string,
     if ( T* asset = _getAsset( Name, AssetMap ) ) return asset;
 
     AssetMap[ Name ] = new T();
+    AssetMap[ Name ]->SetName( Name );
 
     return AssetMap[ Name ];
 }

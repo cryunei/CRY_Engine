@@ -5,8 +5,13 @@
 #include "../DxCoreInc.h"
 
 
-class Dx11Buffer : Dx11Resource
+//=====================================================================================================================
+// @brief	Dx11Buffer
+//=====================================================================================================================
+class Dx11Buffer : public Dx11Resource
 {
+    CLASS_DEFAULT_BODY( Dx11Buffer ) 
+
 protected:
     ComPtr< ID3D11Buffer > BufferComPtr;
     D3D11_BUFFER_DESC      BufferDesc{};
@@ -14,15 +19,6 @@ protected:
 public:
     // Construct
     Dx11Buffer();
-    Dx11Buffer( const Dx11Buffer& Other ) = default;
-    Dx11Buffer( Dx11Buffer&& Other ) noexcept = default;
-
-    // Destruct
-    virtual ~Dx11Buffer() override = default;
-
-    // Operators
-    Dx11Buffer& operator=( const Dx11Buffer& Other ) = default;
-    Dx11Buffer& operator=( Dx11Buffer&& Other ) noexcept = default;
 
     // Create
     void Create( const D3D11_SUBRESOURCE_DATA* SubresourceData = nullptr );

@@ -1,10 +1,28 @@
 ﻿#pragma once
 
+#include "IDxRenderElement.h"
+#include "../DxMacros.h"
 
-class Dx11Resource
+
+
+
+//=====================================================================================================================
+// @brief	Dx11Resource
+//=====================================================================================================================
+class Dx11Resource : public IDxRenderElement
 {
-public:
-    virtual ~Dx11Resource() = default;
+    CLASS_DEFAULT_BODY( Dx11Resource )
 
+public:
+    // Construct
+    Dx11Resource() = default;
+
+    // On render
+    virtual void OnRender() const override { SetRenderState(); }
+
+    // Set to render state 
+    virtual bool SetRenderState() const { return true; }
+
+    // Release
     virtual void Release() = 0;    
 };

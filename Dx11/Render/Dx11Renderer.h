@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Dx11ConstantBuffer.h"
+
+#include "Dx11RenderQueue.h"
+#include "../Core/Dx11ConstantBuffer.h"
 #include "../Render/Dx11Mesh.h"
 #include "../Actor/Camera/CrCamera.h"
 #include "../Actor/Light/CrDirectionalLight.h"
@@ -11,6 +13,9 @@
 #pragma comment ( lib, "d3d11.lib" )
 
 
+//=====================================================================================================================
+// @brief	Dx11Renderer
+//=====================================================================================================================
 class Dx11Renderer
 {
 private:
@@ -19,13 +24,12 @@ private:
 
 	ID3D11RenderTargetView* RenderTargetView;
 
-	Dx11ConstantBuffer< WorldMatrix >    WorldMatrixBuffer;
-	Dx11ConstantBuffer< ViewProjMatrix > ViewProjectionMatrixBuffer;
-	Dx11ConstantBuffer< LightProperty >  LightPropertyBuffer;	
+	WorldMatrixBuffer    WorldBuffer;
+	ViewProjMatrixBuffer ViewProjBuffer;
+	LightPropertyBuffer  LightBuffer;	
 
-	std::vector< Dx11Mesh > Meshes;
+	Dx11RenderQueue RenderQueue;
 
-	Dx11Mesh Mesh;
 	CrCamera Camera;
 	CrDirectionalLight Light;
 
@@ -42,6 +46,12 @@ public:
 	// Render frame
 	void RenderFrame();
 
+	// Add mesh render element
+	bool AddMeshRenderElement( const Dx11Mesh* MeshPtr );
+
+	// Sort render queue	
+	void SortRenderQueue();
+
 	CrCamera* GetCamera() { return &Camera; }
 	const CrCamera* GetCamera() const { return &Camera; }
 
@@ -55,14 +65,10 @@ private:
 	// Initialize constant buffers
 	void _initializeConstantBuffers();
 
-	// Set world matrix buffer data
-	void _setWorldMatrixBufferData( const XMMATRIX& Matrix ) const;
-
 	// Set view projection matrix buffer data
 	void _setViewProjectionMatrixBufferData() const;
 
 	// Set light property buffer data
 	void _setLightPropertyBufferData() const;
-
 };
 

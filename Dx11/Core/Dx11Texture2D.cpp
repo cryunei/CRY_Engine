@@ -57,12 +57,16 @@ void Dx11Texture2D::CreateTexture( const std::string& TexturePath, DXGI_FORMAT F
 //=====================================================================================================================
 void Dx11Texture2D::Release()
 {
+    SAFE_RELEASE_COMPTR( TextureSSComPtr );
+    SAFE_RELEASE_COMPTR( Texture2DComPtr );
+    SAFE_RELEASE_COMPTR( TextureResourceComPtr );
+    SAFE_RELEASE_COMPTR( TextureSRVComPtr );    
 }
 
 //=====================================================================================================================
-// @brief	Render
+// @brief	Set render state
 //=====================================================================================================================
-bool Dx11Texture2D::Render() const
+bool Dx11Texture2D::SetRenderState() const
 {
     GetDx11DeviceContext()->PSSetShaderResources( 0, 1, TextureSRVComPtr.GetAddressOf() );
     GetDx11DeviceContext()->PSSetSamplers(0, 1, TextureSSComPtr.GetAddressOf() );

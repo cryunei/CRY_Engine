@@ -10,18 +10,14 @@ class Dx11ConstantBufferStructure;
 template < typename T >
 class Dx11ConstantBuffer : public Dx11Buffer
 {
+    CLASS_DEFAULT_BODY( Dx11ConstantBuffer )
+
 public:
     // Construct
     Dx11ConstantBuffer() = default;
-    Dx11ConstantBuffer( const Dx11ConstantBuffer& Other ) = default;
-    Dx11ConstantBuffer( Dx11ConstantBuffer&& Other ) noexcept = default;
 
     // Destruct
     virtual ~Dx11ConstantBuffer() override = default;
-
-    // Operators
-    Dx11ConstantBuffer& operator=( const Dx11ConstantBuffer& Other ) = default;
-    Dx11ConstantBuffer& operator=( Dx11ConstantBuffer&& Other ) noexcept = default;
 
     // Create buffer
     void CreateBuffer( D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess );
@@ -71,6 +67,7 @@ void Dx11ConstantBuffer<T>::SetPS( int Idx ) const
 
 //=====================================================================================================================
 // @brief	Update
+//=====================================================================================================================
 template < typename T >
 void Dx11ConstantBuffer<T>::Update( const T& Data ) const
 {

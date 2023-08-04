@@ -4,6 +4,12 @@
 #include "../DxTypes.h"
 #include <map>
 
+
+class CrTexture2D;
+class CrPixelShader;
+class CrVertexShader;
+class CrIndexBuffer;
+class CrVertexBuffer;
 class Dx11Texture2D;
 class Dx11PixelShader;
 class Dx11IndexBuffer;
@@ -38,18 +44,23 @@ public:
 
     // Create vertex buffer
     Dx11VertexBuffer* CreateVertexBuffer( const std::string& AssetName );
+    Dx11VertexBuffer* CreateVertexBuffer( const CrVertexBuffer* AssetPtr );
 
     // Create index buffer
     Dx11IndexBuffer* CreateIndexBuffer( const std::string& AssetName );
+    Dx11IndexBuffer* CreateIndexBuffer( const CrIndexBuffer* AssetPtr );
 
     // Create vertex shader
     Dx11VertexShader* CreateVertexShader( const std::string& AssetName );
+    Dx11VertexShader* CreateVertexShader( const CrVertexShader* AssetPtr );
 
     // Create pixel shader
     Dx11PixelShader* CreatePixelShader( const std::string& AssetName );
+    Dx11PixelShader* CreatePixelShader( const CrPixelShader* AssetPtr );
 
     // Create texture
     Dx11Texture2D* CreateTexture2D( const std::string& AssetName );
+    Dx11Texture2D* CreateTexture2D( const CrTexture2D* AssetPtr );
 
     // Get vertex buffer
     Dx11VertexBuffer* GetVertexBuffer( const std::string& AssetName ) { return _get< Dx11VertexBuffer >( AssetName, VertexBuffers ); }
@@ -88,7 +99,7 @@ T* Dx11ResourceManager::_create( const std::string& Name, std::map< std::string,
 {
     if ( T* inst = _get( Name, Map ) )
     {
-        inst->Release();
+        return inst;
     }
 
     return new T();

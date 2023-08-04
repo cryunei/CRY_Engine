@@ -98,11 +98,11 @@ float4 PS_Toon( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 no
     // half lambert
     lightIntensity = lightIntensity * 0.5 + 0.5;
     lightIntensity = pow( lightIntensity, 2.f );
-
+    
     // toon
-    lightIntensity = lightIntensity * 3.f;
+    lightIntensity = lightIntensity * 5.f;
     lightIntensity = ceil( lightIntensity );
-    lightIntensity = lightIntensity / 3.f;
+    lightIntensity = lightIntensity / 5.f;
     
     float4 lightColor = saturate( diffuseColor * lightIntensity );
     
