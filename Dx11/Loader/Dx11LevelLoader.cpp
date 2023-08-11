@@ -27,8 +27,9 @@ void Dx11LevelLoader::Load( CrLevel& InLevel )
 
         Meshes.push_back( dxMesh );
 
-        dxMesh->GetTransform().SetLocationX( -5.f + 10.f * i );
-        ++i;
+        dxMesh->GetTransform().SetLocationX( -5.f + 10.f * ( ( i ) % 2 ) );
+        dxMesh->GetTransform().SetLocationY( -5.f + 10.f * ( ( i ) / 2 ) );
+        ++i;        
     }
 }
 

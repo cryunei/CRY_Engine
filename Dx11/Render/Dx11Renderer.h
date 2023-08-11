@@ -24,9 +24,13 @@ private:
 
 	ID3D11RenderTargetView* RenderTargetView;
 
-	WorldMatrixBuffer    WorldBuffer;
-	ViewProjMatrixBuffer ViewProjBuffer;
-	LightPropertyBuffer  LightBuffer;	
+	WorldMatrixBuffer        WorldBuffer;
+	ViewProjMatrixBuffer     ViewProjBuffer;
+	CameraPropertyBuffer     CameraBuffer;
+	LightPropertyBuffer      LightBuffer;
+	SpecularPropertyBuffer   SpecularBuffer;
+	PointLightLocationBuffer LightLocationBuffer;
+	PointLightColorBuffer    LightColorBuffer;
 
 	Dx11RenderQueue RenderQueue;
 

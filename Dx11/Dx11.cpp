@@ -198,6 +198,7 @@ void LoadAssets()
 {
     FbxImportHelper fbxImporter;
     fbxImporter.LoadAll( "../Asset/Fbx/wooden_sphere.fbx", "WoodenSphere" );
+    fbxImporter.LoadAll( "../Asset/Fbx/Lowpoly_tree_sample.fbx", "Tree" );
 
     if ( CrVertexShader* vs = GetAssetManager()->CreateVertexShader( "DefaultDiffuse" ) )
     {
@@ -209,17 +210,27 @@ void LoadAssets()
         } );
     }
 
-    if ( CrPixelShader* ps =  GetAssetManager()->CreatePixelShader( "DefaultDiffuse" ) )
+    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "DefaultDiffuse" ) )
     {
         ps->Initialize( "../Shader/Shader.hlsl", "PS", "ps_4_0" );
     }
 
-    if ( CrPixelShader* ps =  GetAssetManager()->CreatePixelShader( "HalfLambert" ) )
+    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "Specular" ) )
+    {
+        ps->Initialize( "../Shader/Shader.hlsl", "PS_Specular", "ps_4_0" );
+    }
+
+    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "PointLight" ) )
+    {
+        ps->Initialize( "../Shader/Shader.hlsl", "PS_PointLight", "ps_4_0" );
+    }
+
+    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "HalfLambert" ) )
     {
         ps->Initialize( "../Shader/Shader.hlsl", "PS_HalfLambert", "ps_4_0" );
     }
 
-    if ( CrPixelShader* ps =  GetAssetManager()->CreatePixelShader( "Toon" ) )
+    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "Toon" ) )
     {
         ps->Initialize( "../Shader/Shader.hlsl", "PS_Toon", "ps_4_0" );
     }

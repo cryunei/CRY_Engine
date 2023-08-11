@@ -1,10 +1,7 @@
 #include "Dx11Renderer.h"
 #include "../Actor/Camera/CrCamera.h"
 #include "../Core/Dx11Device.h"
-#include "../Core/Dx11PixelShader.h"
 #include "../Core/Dx11ResourceManager.h"
-#include "../Core/Dx11Texture2D.h"
-#include "../Core/Dx11VertexBuffer.h"
 #include "../Core/Dx11VertexShader.h"
 #include "../GUI/GuiManager.h"
 
@@ -114,13 +111,22 @@ void Dx11Renderer::_initializeViewport() const
 //=====================================================================================================================
 void Dx11Renderer::_initializeConstantBuffers()
 {
-	WorldBuffer   .CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
-	ViewProjBuffer.CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
-	LightBuffer   .CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
+	WorldBuffer         . CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
+	ViewProjBuffer      . CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
+	CameraBuffer        . CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
+	LightBuffer         . CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
+	SpecularBuffer      . CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
+	LightLocationBuffer . CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
+	LightColorBuffer    . CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
 
-	WorldBuffer   .SetVS( 0 );
-	ViewProjBuffer.SetVS( 1 );
-	LightBuffer   .SetPS( 2 );
+
+	WorldBuffer        .SetVS( 0 );
+	ViewProjBuffer     .SetVS( 1 );
+	CameraBuffer       .SetVS( 2 );
+	LightLocationBuffer.SetVS( 3 );
+	LightBuffer        .SetPS( 0 );
+	SpecularBuffer     .SetPS( 1 );
+	LightColorBuffer   .SetPS( 2 );
 }
 
 //=====================================================================================================================
@@ -131,6 +137,10 @@ void Dx11Renderer::_setViewProjectionMatrixBufferData() const
 	ViewProjMatrix mat( GetCamera()->GetViewMatrix().Transpose(), GetCamera()->GetProjectionMatrix( ViewportWidth, ViewportHeight ).Transpose() );
 
 	ViewProjBuffer.Update( mat );
+
+	CameraProperty prop( GetCamera()->Transform.GetLocation() );
+
+	CameraBuffer.Update( prop );
 }
 
 //=====================================================================================================================
@@ -138,7 +148,20 @@ void Dx11Renderer::_setViewProjectionMatrixBufferData() const
 //=====================================================================================================================
 void Dx11Renderer::_setLightPropertyBufferData() const
 {
-	LightProperty prop( Vector4::One, Vector3( 1.0f, -1.0f, 1.0f ) );
+	LightProperty prop( Vector4( 0.f, 0.f, 0.15f, 1.f ), Vector4::One, Vector3( 1.0f, -1.0f, 1.0f ) );
 
 	LightBuffer.Update( prop );
+
+	SpecularProperty specularProp( Vector4( 0.5f, 0.5f, 0.5f, 1.f ), 32.0f );
+
+	SpecularBuffer.Update( specularProp );
+
+	Vector4 lightLocations[ MaxPointLightCount ] = { Vector4( -10.f, 10.f, -5.f, 1.f ), Vector4( -5.f, -8.f, -5.f, 1.f ), Vector4( 5.f, 8.f, -5.f, 1.f ), Vector4( 10.f, -8.f, -3.f, 1.f ) };
+	Vector4 lightColors   [ MaxPointLightCount ] = { Vector4( 1.f, 1.f, 1.f, 1.f ), Vector4( 1.f, 0.f, 0.f, 1.f ), Vector4( 0.f, 1.f, 0.f, 1.f ), Vector4( 0.f, 0.f, 1.f, 1.f ) };
+
+	PointLightLocation pointLightLocation( lightLocations );
+	PointLightColor    pointLightColor   ( lightColors    );
+
+	LightLocationBuffer.Update( pointLightLocation );
+	LightColorBuffer   .Update( pointLightColor    );	
 }

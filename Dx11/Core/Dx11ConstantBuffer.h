@@ -80,5 +80,3 @@ void Dx11ConstantBuffer<T>::Update( const T& Data ) const
     }
     GetDx11DeviceContext()->Unmap( GetBuffer(), 0 );
 }
-
-
