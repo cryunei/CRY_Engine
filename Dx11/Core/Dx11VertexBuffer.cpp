@@ -11,7 +11,8 @@ void Dx11VertexBuffer::CreateBuffer( const std::vector< Vertex >& Vertices, D3D1
     if ( Vertices.empty() ) return;
 
     Count = (unsigned int)( Vertices.size() );
-    Stride = sizeof( Vertex ); 
+    Stride = sizeof( Vertex );
+    Offset = 0; 
     unsigned int bufferSize = Stride * Count;
 
     BufferDesc.Usage = Usage;
@@ -34,11 +35,11 @@ void Dx11VertexBuffer::CreateBuffer( const std::vector< Vertex >& Vertices, D3D1
 //=====================================================================================================================
 // @brief	Set render state
 //=====================================================================================================================
-bool Dx11VertexBuffer::SetRenderState() const
+bool Dx11VertexBuffer::SetRenderState( int InRegisterIndex ) const
 {
     if ( Count == 0 ) return false;
 
-    GetDx11DeviceContext()->IASetVertexBuffers( 0, 1, GetBufferAdressOf(), &Stride, &Offset );
+    GetDx11DeviceContext()->IASetVertexBuffers( InRegisterIndex, 1, GetBufferAdressOf(), &Stride, &Offset );
     GetDx11DeviceContext()->IASetPrimitiveTopology( PrimitiveTopology );
 
     return true;

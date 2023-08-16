@@ -28,11 +28,9 @@ void Dx11PixelShader::Release()
 }
 
 //=====================================================================================================================
-// @brief	Set to render state
+// @brief	Set shader
 //=====================================================================================================================
-bool Dx11PixelShader::SetRenderState() const
+void Dx11PixelShader::SetShader() const
 {
     GetDx11DeviceContext()->PSSetShader( ShaderComPtr.Get(), nullptr, 0 );
-
-    return true;
 }

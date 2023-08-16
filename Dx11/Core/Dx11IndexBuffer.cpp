@@ -38,7 +38,7 @@ void Dx11IndexBuffer::CreateBuffer( const std::vector< unsigned int >& Indices, 
 //=====================================================================================================================
 // @brief	Set to render state
 //=====================================================================================================================
-bool Dx11IndexBuffer::SetRenderState() const
+bool Dx11IndexBuffer::SetRenderState( int InRegisterIndex ) const
 {
     if ( Count == 0 ) return false;
 

@@ -46,4 +46,15 @@ CrLevel::CrLevel()
     mesh->LoadTexture( "BlockDiffuse" );
 
     Meshes.push_back( mesh );
+
+    mesh = GetAssetManager()->CreateMesh( "Test5" );
+    if ( !mesh ) return;
+
+    mesh->LoadVertexShader( "DefaultDiffuse" );
+    mesh->LoadVertexBuffer( "WoodenSphere_Vertex0" );
+    mesh->LoadPixelShader( "TextureBlended" );
+    mesh->LoadTexture( "BlockDiffuse" );
+    mesh->LoadTexture( "WoodenSphereDiffuse" );
+
+    Meshes.push_back( mesh );
 }

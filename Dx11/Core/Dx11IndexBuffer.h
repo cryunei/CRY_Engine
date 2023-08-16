@@ -23,7 +23,7 @@ public:
     void CreateBuffer( const std::vector< unsigned int >& Indices, D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess );
 
     // Set to render state
-    virtual bool SetRenderState() const override;
+    virtual bool SetRenderState( int InRegisterIndex ) const override;
 
     // Getters
     unsigned int GetCount() const { return Count; }

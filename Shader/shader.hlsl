@@ -76,7 +76,8 @@ PixelIn VS( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 normal
     return output;
 }
 
-Texture2D shaderTexture;
+Texture2D shaderTexture : register( t0 );
+Texture2D shaderTexture_blended : register( t1 );
 SamplerState SampleType;
 
 //------------------------------------------------------------------------------
@@ -167,6 +168,35 @@ float4 PS_HalfLambert( float4 position : SV_POSITION, float2 tex : TEXCOORD0, fl
     float4 textureColor = float4( 1.f, 1.f, 1.f, 1.f );
     textureColor = shaderTexture.Sample( SampleType, tex );
     textureColor = pow( textureColor, 1.f/2.2f );
+
+    float3 lightDir = normalize( -lightDirection );
+    float lightIntensity = saturate( dot( lightDir, normal ) );
+
+    // half lambert
+    lightIntensity = lightIntensity * 0.5 + 0.5;
+    lightIntensity = pow( lightIntensity, 2.f );
+    
+    float4 lightColor = saturate( diffuseColor * lightIntensity );
+    
+    float4 finalColor = textureColor * lightColor;
+
+    return finalColor;
+}
+
+//------------------------------------------------------------------------------
+// Texture Blended
+//------------------------------------------------------------------------------
+float4 PS_TextureBlended( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 normal : NORMAL ) : SV_TARGET
+{
+    float4 textureColor = float4( 1.f, 1.f, 1.f, 1.f );
+    textureColor = shaderTexture.Sample( SampleType, tex );
+    textureColor = pow( textureColor, 1.f/2.2f );
+
+    float4 textureColor_blended = float4( 1.f, 1.f, 1.f, 1.f );
+    textureColor_blended = shaderTexture_blended.Sample( SampleType, tex );
+    textureColor_blended = pow( textureColor_blended, 1.f/2.2f );
+
+    textureColor = lerp( textureColor, textureColor_blended, 0.5f );
 
     float3 lightDir = normalize( -lightDirection );
     float lightIntensity = saturate( dot( lightDir, normal ) );

@@ -36,15 +36,13 @@ void Dx11VertexShader::Release()
 }
 
 //=====================================================================================================================
-// @brief	Set to render state
+// @brief	Set shader
 //=====================================================================================================================
-bool Dx11VertexShader::SetRenderState() const
+void Dx11VertexShader::SetShader() const
 {
-    if ( !ShaderComPtr.Get() ) return false;
-    if ( !InputLayoutComPtr.Get() ) return false;
+    if ( !ShaderComPtr.Get() ) return;
+    if ( !InputLayoutComPtr.Get() ) return;
 
     GetDx11DeviceContext()->VSSetShader( ShaderComPtr.Get(), nullptr, 0 );
     GetDx11DeviceContext()->IASetInputLayout( InputLayoutComPtr.Get() );
-
-    return true;
 }

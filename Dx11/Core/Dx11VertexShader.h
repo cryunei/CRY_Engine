@@ -33,7 +33,7 @@ public:
     // Release
     virtual void Release() override;
 
-    // Set to render state
-    virtual bool SetRenderState() const override;
+    // Set shader
+    virtual void SetShader() const override;
     
 };

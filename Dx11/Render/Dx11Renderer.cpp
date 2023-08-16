@@ -120,13 +120,13 @@ void Dx11Renderer::_initializeConstantBuffers()
 	LightColorBuffer    . CreateBuffer( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
 
 
-	WorldBuffer        .SetVS( 0 );
-	ViewProjBuffer     .SetVS( 1 );
-	CameraBuffer       .SetVS( 2 );
-	LightLocationBuffer.SetVS( 3 );
-	LightBuffer        .SetPS( 0 );
-	SpecularBuffer     .SetPS( 1 );
-	LightColorBuffer   .SetPS( 2 );
+	WorldBuffer        .SetRegister( ERenderPipeLineStage::VertexShader, 0 );
+	ViewProjBuffer     .SetRegister( ERenderPipeLineStage::VertexShader, 1 );
+	CameraBuffer       .SetRegister( ERenderPipeLineStage::VertexShader, 2 );
+	LightLocationBuffer.SetRegister( ERenderPipeLineStage::VertexShader, 3 );
+	LightBuffer        .SetRegister( ERenderPipeLineStage::PixelShader,  0 );
+	SpecularBuffer     .SetRegister( ERenderPipeLineStage::PixelShader,  1 );
+	LightColorBuffer   .SetRegister( ERenderPipeLineStage::PixelShader,  2 );
 }
 
 //=====================================================================================================================

@@ -5,6 +5,17 @@
 
 
 //=====================================================================================================================
+// @brief	Release
+//=====================================================================================================================
+void Dx11Texture2D::Release()
+{
+    SAFE_RELEASE_COMPTR( TextureSSComPtr );
+    SAFE_RELEASE_COMPTR( Texture2DComPtr );
+    SAFE_RELEASE_COMPTR( TextureResourceComPtr );
+    SAFE_RELEASE_COMPTR( TextureSRVComPtr );    
+}
+
+//=====================================================================================================================
 // @brief	Create texture
 //=====================================================================================================================
 void Dx11Texture2D::CreateTexture( const std::string& TexturePath, DXGI_FORMAT Format, UINT Width, UINT Height, UINT SamplingCount )
@@ -53,23 +64,12 @@ void Dx11Texture2D::CreateTexture( const std::string& TexturePath, DXGI_FORMAT F
 }
 
 //=====================================================================================================================
-// @brief	Release
-//=====================================================================================================================
-void Dx11Texture2D::Release()
-{
-    SAFE_RELEASE_COMPTR( TextureSSComPtr );
-    SAFE_RELEASE_COMPTR( Texture2DComPtr );
-    SAFE_RELEASE_COMPTR( TextureResourceComPtr );
-    SAFE_RELEASE_COMPTR( TextureSRVComPtr );    
-}
-
-//=====================================================================================================================
 // @brief	Set render state
 //=====================================================================================================================
-bool Dx11Texture2D::SetRenderState() const
+bool Dx11Texture2D::SetRenderState( int InRegisterIndex ) const
 {
-    GetDx11DeviceContext()->PSSetShaderResources( 0, 1, TextureSRVComPtr.GetAddressOf() );
-    GetDx11DeviceContext()->PSSetSamplers(0, 1, TextureSSComPtr.GetAddressOf() );
+    GetDx11DeviceContext()->PSSetShaderResources( InRegisterIndex, 1, TextureSRVComPtr.GetAddressOf() );
+    GetDx11DeviceContext()->PSSetSamplers( InRegisterIndex, 1, TextureSSComPtr.GetAddressOf() );
 
     return true;
 }

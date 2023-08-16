@@ -13,10 +13,10 @@ class Dx11VertexBuffer : public Dx11Buffer
     CLASS_DEFAULT_BODY( Dx11VertexBuffer )
 
 private:
-    unsigned int             Count;
-    unsigned int             Stride;
-    unsigned int             Offset;
-    D3D11_PRIMITIVE_TOPOLOGY PrimitiveTopology;
+    unsigned int             Count;             // vertex count
+    unsigned int             Stride;            // vetex sturct size
+    unsigned int             Offset;            // draw start offset
+    D3D11_PRIMITIVE_TOPOLOGY PrimitiveTopology; // draw primitive topology type
 
 public:
     // Construct
@@ -26,7 +26,7 @@ public:
     void CreateBuffer( const std::vector< Vertex >& Vertices, D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess );
 
     // Set render state
-    virtual bool SetRenderState() const override;
+    virtual bool SetRenderState( int InRegisterIndex ) const override;
 
     // Getters
     unsigned int GetCount() const { return Count; }

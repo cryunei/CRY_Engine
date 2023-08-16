@@ -24,7 +24,10 @@ public:
     void InitializePrimitive( Dx11VertexBuffer* VB, Dx11IndexBuffer* IB ) { Primitive.Initialize( VB, IB ); }
 
     // Initialize material
-    void InitializeMaterial( Dx11VertexShader* VS, Dx11PixelShader* PS, Dx11Texture2D* Tex ) { Material.Initialize( VS, PS, Tex ); }
+    void InitializeMaterial( Dx11VertexShader* VS, Dx11PixelShader* PS ) { Material.Initialize( VS, PS ); }
+
+    // Initialize texture 2d array
+    void InitializeTexture2Ds( const std::vector< Dx11Texture2D* >& InTexture2Ds ) { Material.InitializeTexture2Ds( InTexture2Ds ); }
 
     // Get transform
     const DxTransform& GetTransform() const { return Transform; }

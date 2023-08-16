@@ -1,6 +1,7 @@
 ﻿#include "CrMesh.h"
 #include "CrAssetManager.h"
 
+
 //=====================================================================================================================
 // @brief	Constructor
 //=====================================================================================================================
@@ -9,7 +10,6 @@ CrMesh::CrMesh()
 , VertexBufferPtr ( nullptr )
 , IndexBufferPtr  ( nullptr )
 , PixelShaderPtr  ( nullptr )
-, Texture2DPtr      ( nullptr )
 {
 }
 
@@ -50,5 +50,5 @@ void CrMesh::LoadPixelShader( const std::string& Name )
 //=====================================================================================================================
 void CrMesh::LoadTexture( const std::string& Name )
 {
-    Texture2DPtr = GetAssetManager()->CreateTexture2D( Name );
+    Texture2DPtrs.push_back( GetAssetManager()->CreateTexture2D( Name ) );
 }

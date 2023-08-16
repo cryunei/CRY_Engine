@@ -2,6 +2,7 @@
 
 
 #include "../DxTypes.h"
+#include "../DxMacros.h"
 #include "Dx11Resource.h"
 
 
@@ -24,14 +25,14 @@ public:
     // Construct
     Dx11Texture2D() = default;
 
-    // Create texture
-    void CreateTexture( const std::string& TexturePath, DXGI_FORMAT Format, UINT Width, UINT Height, UINT SamplingCount );
-
     // Release
     virtual void Release() override;
 
-    // Set render state
-    virtual bool SetRenderState() const override;
+    // Create texture
+    void CreateTexture( const std::string& TexturePath, DXGI_FORMAT Format, UINT Width, UINT Height, UINT SamplingCount );
+
+    // Set to render state 
+    virtual bool SetRenderState( int InRegisterIndex ) const override;
 
     
 };

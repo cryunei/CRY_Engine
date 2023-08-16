@@ -3,7 +3,7 @@
 
 #include "CrAsset.h"
 #include <string>
-
+#include <vector>
 
 class CrTexture2D;
 class CrPixelShader;
@@ -22,7 +22,8 @@ private:
     CrVertexBuffer* VertexBufferPtr;
     CrIndexBuffer*  IndexBufferPtr;
     CrPixelShader*  PixelShaderPtr;
-    CrTexture2D*    Texture2DPtr;
+
+    std::vector< CrTexture2D* > Texture2DPtrs;
 
 public:
     // Constructor
@@ -48,6 +49,8 @@ public:
     const CrVertexBuffer* GetVertexBuffer() const { return VertexBufferPtr; }
     const CrIndexBuffer*  GetIndexBuffer()  const { return IndexBufferPtr;  }
     const CrPixelShader*  GetPixelShader()  const { return PixelShaderPtr;  }
-    const CrTexture2D*    GetTexture2D()    const { return Texture2DPtr;    }
 
+    // Texture2D
+    const CrTexture2D* GetTexture2D( int Idx ) const { return Texture2DPtrs[ Idx ]; }
+    int GetCount_Texture2D() const { return (int)( Texture2DPtrs.size() ); }
 };

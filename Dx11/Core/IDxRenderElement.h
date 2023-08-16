@@ -22,6 +22,7 @@ public:
     // Decrease render count
     void DecreaseRenderCount() { --RenderCount; }
 
+    // Set render count
     void SetRenderCount( int InRenderCount ) { RenderCount = InRenderCount; }
 
     // Clear render count

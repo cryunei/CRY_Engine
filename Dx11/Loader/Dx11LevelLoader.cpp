@@ -1,6 +1,6 @@
 ﻿#include "Dx11LevelLoader.h"
 #include "../Asset/CrMesh.h"
-#include "../Asset/CrVertexBuffer.h"
+#include "../Core/Dx11Texture2D.h"
 #include "../Core/Dx11ResourceManager.h"
 #include "../Level/CrLevel.h"
 #include "../Render/Dx11Mesh.h"
@@ -19,16 +19,25 @@ void Dx11LevelLoader::Load( CrLevel& InLevel )
         Dx11IndexBuffer*  ib = GetDx11ResourceManager()->CreateIndexBuffer ( crMesh->GetIndexBuffer () );
         Dx11VertexShader* vs = GetDx11ResourceManager()->CreateVertexShader( crMesh->GetVertexShader() );
         Dx11PixelShader*  ps = GetDx11ResourceManager()->CreatePixelShader ( crMesh->GetPixelShader () );
-        Dx11Texture2D*    tx = GetDx11ResourceManager()->CreateTexture2D   ( crMesh->GetTexture2D   () );
 
         Dx11Mesh* dxMesh =new Dx11Mesh();
         dxMesh->InitializePrimitive( vb, ib );
-        dxMesh->InitializeMaterial( vs, ps, tx );
+        dxMesh->InitializeMaterial( vs, ps );
+
+        std::vector< Dx11Texture2D* > texture2Ds;
+        for ( int t = 0; t < crMesh->GetCount_Texture2D(); ++t )
+        {
+            Dx11Texture2D* texture2D = GetDx11ResourceManager()->CreateTexture2D( crMesh->GetTexture2D( t ) );
+            if ( !texture2D ) break;
+
+            texture2Ds.push_back( texture2D );
+        }
+        dxMesh->InitializeTexture2Ds( texture2Ds );
 
         Meshes.push_back( dxMesh );
 
-        dxMesh->GetTransform().SetLocationX( -5.f + 10.f * ( ( i ) % 2 ) );
-        dxMesh->GetTransform().SetLocationY( -5.f + 10.f * ( ( i ) / 2 ) );
+        dxMesh->GetTransform().SetLocationX( -8.f + 8.f * ( ( i ) % 3 ) );
+        dxMesh->GetTransform().SetLocationY( -4.f + 8.f * ( ( i ) / 3 ) );
         ++i;        
     }
 }

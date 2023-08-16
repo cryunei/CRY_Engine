@@ -1,6 +1,8 @@
 ﻿#pragma once
 
+
 #include "Dx11Buffer.h"
+#include "Dx11CoreTypes.h"
 #include "Dx11Device.h"
 
 
@@ -12,6 +14,9 @@ class Dx11ConstantBuffer : public Dx11Buffer
 {
     CLASS_DEFAULT_BODY( Dx11ConstantBuffer )
 
+private:
+    ERenderPipeLineStage BindStage;
+
 public:
     // Construct
     Dx11ConstantBuffer() = default;
@@ -22,11 +27,8 @@ public:
     // Create buffer
     void CreateBuffer( D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess );
 
-    // Set vs
-    void SetVS( int Idx ) const;
-
-    // Set ps
-    void SetPS( int Idx ) const;
+    // Set register
+    void SetRegister( ERenderPipeLineStage Stage, int Idx );
 
     // Update
     void Update( const T& Data ) const;
@@ -51,18 +53,15 @@ void Dx11ConstantBuffer<T>::CreateBuffer( D3D11_USAGE Usage, D3D11_CPU_ACCESS_FL
 // @brief	Set vs
 //=====================================================================================================================
 template < typename T >
-void Dx11ConstantBuffer<T>::SetVS( int Idx ) const
+void Dx11ConstantBuffer<T>::SetRegister( ERenderPipeLineStage Stage, int Idx )
 {
-    GetDx11DeviceContext()->VSSetConstantBuffers( Idx, 1, GetBufferAdressOf() );
-}
+    BindStage = Stage;
 
-//=====================================================================================================================
-// @brief	Set ps
-//=====================================================================================================================
-template < typename T >
-void Dx11ConstantBuffer<T>::SetPS( int Idx ) const
-{
-    GetDx11DeviceContext()->PSSetConstantBuffers( Idx, 1, GetBufferAdressOf() );
+    switch ( BindStage )
+    {
+    case ERenderPipeLineStage::VertexShader: GetDx11DeviceContext()->VSSetConstantBuffers( Idx, 1, GetBufferAdressOf() ); break;
+    case ERenderPipeLineStage::PixelShader:  GetDx11DeviceContext()->PSSetConstantBuffers( Idx, 1, GetBufferAdressOf() ); break;
+    }
 }
 
 //=====================================================================================================================

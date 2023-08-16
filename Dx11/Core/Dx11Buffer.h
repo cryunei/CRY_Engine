@@ -2,13 +2,15 @@
 
 
 #include "Dx11Resource.h"
+#include "IDxRenderElement.h"
 #include "../DxCoreInc.h"
+#include "../DxMacros.h"
 
 
 //=====================================================================================================================
 // @brief	Dx11Buffer
 //=====================================================================================================================
-class Dx11Buffer : public Dx11Resource
+class Dx11Buffer : public Dx11Resource, public IDxRenderElement
 {
     CLASS_DEFAULT_BODY( Dx11Buffer ) 
 
@@ -20,11 +22,17 @@ public:
     // Construct
     Dx11Buffer();
 
+    // Release
+    virtual void Release() override;
+
     // Create
     void Create( const D3D11_SUBRESOURCE_DATA* SubresourceData = nullptr );
 
-    // Release
-    virtual void Release() override;
+    // On render
+    virtual void OnRender() const override { SetRenderState( 0 ); }
+
+    // Set render state
+    virtual bool SetRenderState( int InRegisterIndex ) const override;
 
     // Getters
     ID3D11Buffer*        GetBuffer() const { return BufferComPtr.Get(); }

@@ -230,6 +230,11 @@ void LoadAssets()
         ps->Initialize( "../Shader/Shader.hlsl", "PS_HalfLambert", "ps_4_0" );
     }
 
+    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "TextureBlended" ) )
+    {
+        ps->Initialize( "../Shader/Shader.hlsl", "PS_TextureBlended", "ps_4_0" );
+    }
+
     if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "Toon" ) )
     {
         ps->Initialize( "../Shader/Shader.hlsl", "PS_Toon", "ps_4_0" );
