@@ -69,7 +69,7 @@ void Dx11Texture2D::CreateTexture( const std::string& TexturePath, DXGI_FORMAT F
 bool Dx11Texture2D::SetRenderState( int InRegisterIndex ) const
 {
     GetDx11DeviceContext()->PSSetShaderResources( InRegisterIndex, 1, TextureSRVComPtr.GetAddressOf() );
-    GetDx11DeviceContext()->PSSetSamplers( InRegisterIndex, 1, TextureSSComPtr.GetAddressOf() );
+    GetDx11DeviceContext()->PSSetSamplers( 0, 1, TextureSSComPtr.GetAddressOf() );
 
     return true;
 }

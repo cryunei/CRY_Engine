@@ -11,8 +11,8 @@
 //=====================================================================================================================
 Dx11Renderer::Dx11Renderer()
 : RenderTargetView ( nullptr )
-, ViewportWidth    ( 800.f )
-, ViewportHeight   ( 600.f )
+, ViewportWidth    ( 1920.f )
+, ViewportHeight   ( 1080.f )
 {
 }
 
@@ -29,14 +29,16 @@ void Dx11Renderer::Clear()
 //=====================================================================================================================
 // @brief	Initialize
 //=====================================================================================================================
-void Dx11Renderer::Initialize()
+void Dx11Renderer::Initialize( int Width, int Height )
 {
 	_initializeRenderTargetView();
-	_initializeViewport();
+	_initializeViewport( Width, Height);
 	_initializeConstantBuffers();	
 
 	GetCamera()->SetLookAtDirection( Vector3( 0.f, 0.f, -1.f ) );
 	GetCamera()->Transform.SetLocation( 0.f, 0.f, 25.f );
+
+	GetGuiManager()->GetDevTestUI().BindCameraTransform( &GetCamera()->Transform );
 }
 
 //=====================================================================================================================
@@ -65,6 +67,10 @@ void Dx11Renderer::RenderFrame()
 //=====================================================================================================================
 bool Dx11Renderer::AddMeshRenderElement( const Dx11Mesh* MeshPtr )
 {
+	if ( !MeshPtr ) return false;
+
+	MeshPtr->IncreaseRenderCount();
+
 	return RenderQueue.Add( MeshPtr, &WorldBuffer );
 }
 
@@ -93,8 +99,11 @@ void Dx11Renderer::_initializeRenderTargetView()
 //=====================================================================================================================
 // @brief	Initialize viewport
 //=====================================================================================================================
-void Dx11Renderer::_initializeViewport() const
+void Dx11Renderer::_initializeViewport( int Width, int Height )
 {
+	ViewportWidth  = Width;
+	ViewportHeight = Height;
+
 	D3D11_VIEWPORT viewport;
 	ZeroMemory( &viewport, sizeof( D3D11_VIEWPORT ) );
 

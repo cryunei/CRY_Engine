@@ -21,3 +21,21 @@ void Dx11Primitive::Initialize( Dx11VertexBuffer* InVertexBuffer, Dx11IndexBuffe
     VertexBuffer = InVertexBuffer;
     IndexBuffer  = InIndexBuffer;
 }
+
+//=====================================================================================================================
+// @brief	Incrase render count
+//=====================================================================================================================
+void Dx11Primitive::IncreaseRenderCount() const
+{
+    if ( VertexBuffer ) VertexBuffer->IncreaseRenderCount();
+    if ( IndexBuffer  ) IndexBuffer ->IncreaseRenderCount();
+}
+
+//=====================================================================================================================
+// @brief	Decrease render count
+//=====================================================================================================================
+void Dx11Primitive::DecreaseRenderCount() const
+{
+    if ( VertexBuffer ) VertexBuffer->DecreaseRenderCount();
+    if ( IndexBuffer  ) IndexBuffer ->DecreaseRenderCount();
+}

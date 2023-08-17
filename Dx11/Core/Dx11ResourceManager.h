@@ -4,7 +4,8 @@
 #include "../DxTypes.h"
 #include <map>
 
-
+class Dx11Resource;
+class Dx11ResourceRenderer;
 class CrTexture2D;
 class CrPixelShader;
 class CrVertexShader;
@@ -28,6 +29,7 @@ private:
     std::map< std::string, Dx11VertexShader* > VertexShaders;
     std::map< std::string, Dx11PixelShader* >  PixelShaders;
     std::map< std::string, Dx11Texture2D* >    Texture2Ds;
+    std::vector< Dx11ResourceRenderer* >       ResourceRenderers;
 
 public:
     // Construct
@@ -62,6 +64,10 @@ public:
     Dx11Texture2D* CreateTexture2D( const std::string& AssetName );
     Dx11Texture2D* CreateTexture2D( const CrTexture2D* AssetPtr );
 
+    // Create resource renderer
+    Dx11ResourceRenderer* CreateResourceRenderer_Texture2D( const std::string& AssetName, int Idx );
+    Dx11ResourceRenderer* CreateResourceRenderer_Texture2D( const CrTexture2D* AssetPtr, int Idx );
+
     // Get vertex buffer
     Dx11VertexBuffer* GetVertexBuffer( const std::string& AssetName ) { return _get< Dx11VertexBuffer >( AssetName, VertexBuffers ); }
 
@@ -76,6 +82,9 @@ public:
 
     // Get texture
     Dx11Texture2D* GetTexture2D( const std::string& AssetName ) { return _get< Dx11Texture2D >( AssetName, Texture2Ds ); }
+
+    // Get resource renderer
+    Dx11ResourceRenderer* GetResourceRenderer_Texture2D( const Dx11Resource* ResourcePtr, int Idx );
 
     // Release
     void Release();

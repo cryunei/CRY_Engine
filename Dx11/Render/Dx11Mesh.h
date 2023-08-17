@@ -27,7 +27,13 @@ public:
     void InitializeMaterial( Dx11VertexShader* VS, Dx11PixelShader* PS ) { Material.Initialize( VS, PS ); }
 
     // Initialize texture 2d array
-    void InitializeTexture2Ds( const std::vector< Dx11Texture2D* >& InTexture2Ds ) { Material.InitializeTexture2Ds( InTexture2Ds ); }
+    void InitializeTexture2Ds( const std::vector< Dx11ResourceRenderer* >& InResourceRenderers ) { Material.InitializeTexture2Ds( InResourceRenderers ); }
+
+    // Incrase render count
+    void IncreaseRenderCount() const { Primitive.IncreaseRenderCount(); Material.IncreaseRenderCount(); }
+
+    // Decrease render count
+    void DecreaseRenderCount() const { Primitive.DecreaseRenderCount(); Material.DecreaseRenderCount(); }
 
     // Get transform
     const DxTransform& GetTransform() const { return Transform; }

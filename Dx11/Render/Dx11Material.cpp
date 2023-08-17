@@ -26,12 +26,36 @@ void Dx11Material::Initialize(  Dx11VertexShader* InVertexShader, Dx11PixelShade
 //=====================================================================================================================
 // @brief	Initialize texture 2d array
 //=====================================================================================================================
-void Dx11Material::InitializeTexture2Ds( const std::vector< Dx11Texture2D* >& InTexture2D )
+void Dx11Material::InitializeTexture2Ds( const std::vector< Dx11ResourceRenderer* >& InResourceRenderers )
 {
-    int idx = 0;
-    for ( const Dx11Texture2D* texture2D : InTexture2D )
+    Texture2Ds = InResourceRenderers;
+}
+
+//=====================================================================================================================
+// @brief	Increase render count
+//=====================================================================================================================
+void Dx11Material::IncreaseRenderCount() const
+{
+    if ( VertexShader ) VertexShader->IncreaseRenderCount();
+    if ( PixelShader  ) PixelShader ->IncreaseRenderCount();
+
+    for ( auto& texture2D : Texture2Ds )
     {
-        Texture2Ds.emplace_back( texture2D, idx++ );
+        texture2D->IncreaseRenderCount();
+    }
+}
+
+//=====================================================================================================================
+// @brief	Decrease render count
+//=====================================================================================================================
+void Dx11Material::DecreaseRenderCount() const
+{
+    if ( VertexShader ) VertexShader->DecreaseRenderCount();
+    if ( PixelShader  ) PixelShader ->DecreaseRenderCount();
+
+    for ( auto& texture2D : Texture2Ds )
+    {
+        texture2D->DecreaseRenderCount();
     }
 }
 
@@ -49,5 +73,5 @@ const Dx11ResourceRenderer* Dx11Material::GetRenderer_Texture2D( int Idx ) const
 {
     if ( Idx < 0 || Idx >= Texture2Ds.size() ) return nullptr;
 
-    return &Texture2Ds[ Idx ];
+    return Texture2Ds[ Idx ];
 }

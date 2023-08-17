@@ -20,7 +20,7 @@ private:
     Dx11VertexShader* VertexShader;
     Dx11PixelShader*  PixelShader;
 
-    std::vector< Dx11ResourceRenderer > Texture2Ds;
+    std::vector< Dx11ResourceRenderer* > Texture2Ds;
     
 public:
     // Construct
@@ -30,7 +30,13 @@ public:
     void Initialize( Dx11VertexShader* InVertexShader, Dx11PixelShader* InPixelShader );
 
     // Initialize texture 2d array
-    void InitializeTexture2Ds( const std::vector< Dx11Texture2D* >& InTexture2D );
+    void InitializeTexture2Ds( const std::vector< Dx11ResourceRenderer* >& InTexture2D );
+
+    // Increase render count
+    void IncreaseRenderCount() const;
+
+    // Decrease render count
+    void DecreaseRenderCount() const;
 
     // Render
     void Render() const;

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+
 #include "DevTestUI.h"
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
@@ -7,6 +8,9 @@
 #include <d3d11.h>
 
 
+//=====================================================================================================================
+// @brief	GuiManager
+//=====================================================================================================================
 class GuiManager
 {
 private:
@@ -23,13 +27,19 @@ public:
     bool Initialize( HWND hWnd ) const;
 
     // PreRender
-    void PreRender() const;
+    void PreRender();
 
     // PostRender
     void PostRender() const;
 
     // Window message processor
     bool WndProcHandler( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam ) const;
+
+    // Get dev test ui
+    class DevTestUI& GetDevTestUI() { return DevTestUI; }
 };
 
+//=====================================================================================================================
+// @brief	GetGuiManager
+//=====================================================================================================================
 GuiManager* GetGuiManager();

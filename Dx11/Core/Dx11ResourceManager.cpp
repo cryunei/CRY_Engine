@@ -4,6 +4,7 @@
 #include "Dx11Texture2D.h"
 #include "Dx11VertexBuffer.h"
 #include "Dx11VertexShader.h"
+#include "../Render/Dx11ResourceRenderer.h"
 #include "../Asset/CrAssetManager.h"
 
 
@@ -135,4 +136,50 @@ Dx11Texture2D* Dx11ResourceManager::CreateTexture2D( const CrTexture2D* AssetPtr
     Texture2Ds[ AssetPtr->GetName() ] = dxTex;
 
     return dxTex;
+}
+
+//=====================================================================================================================
+// @brief	Create resource renderer
+//=====================================================================================================================
+Dx11ResourceRenderer* Dx11ResourceManager::CreateResourceRenderer_Texture2D( const std::string& AssetName, int Idx )
+{
+    return CreateResourceRenderer_Texture2D( GetAssetManager()->GetTexture2D( AssetName ), Idx );
+}
+
+//=====================================================================================================================
+// @brief	Create resource renderer
+//=====================================================================================================================
+Dx11ResourceRenderer* Dx11ResourceManager::CreateResourceRenderer_Texture2D( const CrTexture2D* AssetPtr, int Idx )
+{
+    if ( !AssetPtr ) return nullptr;
+
+    Dx11Texture2D* dxTex = CreateTexture2D( AssetPtr );
+    if ( !dxTex ) return nullptr;
+
+    Dx11ResourceRenderer* dxRR = GetResourceRenderer_Texture2D( dxTex, Idx );
+    if ( !dxRR )
+    {
+        dxRR = new Dx11ResourceRenderer( dxTex, Idx );
+        ResourceRenderers.push_back( dxRR );
+    }
+
+    return dxRR;
+}
+
+//=====================================================================================================================
+// @brief	Get resource renderer
+//=====================================================================================================================
+Dx11ResourceRenderer* Dx11ResourceManager::GetResourceRenderer_Texture2D( const Dx11Resource* ResourcePtr, int Idx )
+{
+    auto itr = std::find_if( ResourceRenderers.begin(), ResourceRenderers.end(), [ ResourcePtr, Idx ] ( const Dx11ResourceRenderer* dxRR )
+    {
+        return dxRR->GetResourcePtr() == ResourcePtr && dxRR->GetRegisterIndex() == Idx;
+    } );
+
+    if ( itr != ResourceRenderers.end() )
+    {
+        return *itr;
+    }
+
+    return nullptr;
 }

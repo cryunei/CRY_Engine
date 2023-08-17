@@ -38,7 +38,7 @@ bool GuiManager::Initialize( HWND hWnd ) const
 //=================================================================================================
 // @brief	PreRender
 //=================================================================================================
-void GuiManager::PreRender() const
+void GuiManager::PreRender()
 {
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();

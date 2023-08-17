@@ -19,6 +19,9 @@ public:
     // Set look at direction
     void SetLookAtDirection( const Vector3& direction );
 
+    // Look at location
+    void LookAt( const Vector3& location );
+
     // Get view matrix
     Matrix GetViewMatrix() const;
 

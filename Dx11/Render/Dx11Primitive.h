@@ -21,6 +21,12 @@ public:
     // Initialize
     void Initialize( Dx11VertexBuffer* InVertexBuffer, Dx11IndexBuffer* InIndexBuffer );
 
+    // Incrase render count
+    void IncreaseRenderCount() const;
+
+    // Decrease render count
+    void DecreaseRenderCount() const;
+
     // Get vertex buffer
     const Dx11VertexBuffer* GetVertexBuffer() const { return VertexBuffer; }
 

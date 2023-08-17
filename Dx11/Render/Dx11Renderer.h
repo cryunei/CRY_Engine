@@ -45,7 +45,7 @@ public:
 	void Clear();
 	
 	// Initialize
-	void Initialize();
+	void Initialize( int Width, int Height );
 
 	// Render frame
 	void RenderFrame();
@@ -64,7 +64,7 @@ private:
 	void _initializeRenderTargetView();
 
 	// Initialize viewport
-	void _initializeViewport() const;
+	void _initializeViewport( int Width, int Height );
 
 	// Initialize constant buffers
 	void _initializeConstantBuffers();

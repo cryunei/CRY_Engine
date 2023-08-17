@@ -30,6 +30,9 @@ public:
     inline void SetLocationY( float V ) { Location.y = V; }
     inline void SetLocationZ( float V ) { Location.z = V; }
 
+    // Get rotation
+    inline const Quaternion& GetRotation() const { return Rotation; }
+
     // Rotate
     inline void SetRotation( float X, float Y, float Z ) { Rotation = Quaternion::CreateFromYawPitchRoll( X, Y, Z ); }
 
@@ -37,6 +40,12 @@ public:
     inline void SetRotationX( float V ) { const Vector3& euler = Rotation.ToEuler(); Rotation = Quaternion::CreateFromYawPitchRoll( V, euler.y, euler.z ); }
     inline void SetRotationY( float V ) { const Vector3& euler = Rotation.ToEuler(); Rotation = Quaternion::CreateFromYawPitchRoll( euler.x, V, euler.z ); }
     inline void SetRotationZ( float V ) { const Vector3& euler = Rotation.ToEuler(); Rotation = Quaternion::CreateFromYawPitchRoll( euler.x, euler.y, V ); }
+
+    // Rotate
+    inline void Rotate( const Quaternion& InRotation ) { Rotation *= InRotation; }
+
+    // Get scale
+    inline const Vector3& GetScale() const { return Scale; }
 
     // Set scale
     inline void SetScale( float X, float Y, float Z ) { Scale.x = X; Scale.y = Y; Scale.z = Z; }

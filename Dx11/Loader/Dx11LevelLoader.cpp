@@ -24,15 +24,15 @@ void Dx11LevelLoader::Load( CrLevel& InLevel )
         dxMesh->InitializePrimitive( vb, ib );
         dxMesh->InitializeMaterial( vs, ps );
 
-        std::vector< Dx11Texture2D* > texture2Ds;
+        std::vector< Dx11ResourceRenderer* > dxRRs;
         for ( int t = 0; t < crMesh->GetCount_Texture2D(); ++t )
         {
-            Dx11Texture2D* texture2D = GetDx11ResourceManager()->CreateTexture2D( crMesh->GetTexture2D( t ) );
-            if ( !texture2D ) break;
+            Dx11ResourceRenderer* dxRR = GetDx11ResourceManager()->CreateResourceRenderer_Texture2D( crMesh->GetTexture2D( t ), t );
+            if ( !dxRR ) break;
 
-            texture2Ds.push_back( texture2D );
+            dxRRs.push_back( dxRR );
         }
-        dxMesh->InitializeTexture2Ds( texture2Ds );
+        dxMesh->InitializeTexture2Ds( dxRRs );
 
         Meshes.push_back( dxMesh );
 

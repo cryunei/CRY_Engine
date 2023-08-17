@@ -110,7 +110,10 @@ BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
 {
     hInst = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
 
-    HWND hWnd = CreateWindowW( szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr );
+    int width  = 1400;
+    int height = 900;
+
+    HWND hWnd = CreateWindowW( szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, 0, width, height, nullptr, nullptr, hInstance, nullptr );
 
     if ( !hWnd )
     {
@@ -121,7 +124,7 @@ BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
 
     LoadAssets();
 
-    G_Dx11Renderer.Initialize();
+    G_Dx11Renderer.Initialize( width, height );
     GetGuiManager()->Initialize( hWnd );
 
     ShowWindow(hWnd, nCmdShow);

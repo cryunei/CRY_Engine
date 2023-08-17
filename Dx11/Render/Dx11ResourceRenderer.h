@@ -25,4 +25,10 @@ public:
 
     // On render
     virtual void OnRender() const override;
+
+    // Get resource ptr
+    const Dx11Resource* GetResourcePtr() const { return ResourcePtr; }
+
+    // Get register index
+    int GetRegisterIndex() const { return RegisterIndex; }
 };

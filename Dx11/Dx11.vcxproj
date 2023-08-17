@@ -171,6 +171,7 @@
     <ClInclude Include="Externals\ImGUI\imstb_truetype.h" />
     <ClInclude Include="Fbx\FbxImportHelper.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GUI\TransformEditor.h" />
     <ClInclude Include="Level\CrLevel.h" />
     <ClInclude Include="Loader\Dx11LevelLoader.h" />
     <ClInclude Include="Render\Dx11ConstantBufferStructure.h" />
@@ -514,6 +515,7 @@
     <ClCompile Include="Externals\ImGUI\imgui_tables.cpp" />
     <ClCompile Include="Externals\ImGUI\imgui_widgets.cpp" />
     <ClCompile Include="Fbx\FbxImportHelper.cpp" />
+    <ClCompile Include="GUI\TransformEditor.cpp" />
     <ClCompile Include="Level\CrLevel.cpp" />
     <ClCompile Include="Loader\Dx11LevelLoader.cpp" />
     <ClCompile Include="Render\Dx11Material.cpp" />
