@@ -105,10 +105,10 @@ bool FbxImportHelper::LoadAll( const std::string& FilePath, const std::string& A
             vb->UVs      .insert( vb->UVs      .end(), uv,       uv       + 3 );
             vb->Normals  .insert( vb->Normals  .end(), normal,   normal   + 3 );
 
-            _getTangentAndBinormals( location, uv, tangent, binormal );
+            _getTangentAndBitangents( location, uv, tangent, binormal );
 
             vb->Tangents .insert( vb->Tangents .end(), tangent , tangent  + 3 );
-            vb->BiNormals.insert( vb->BiNormals.end(), binormal, binormal + 3 );
+            vb->Bitangents.insert( vb->Bitangents.end(), binormal, binormal + 3 );
         };
 
         // Process each polygon
@@ -190,9 +190,9 @@ void FbxImportHelper::_getNormal( FbxMesh* Mesh, int ControlPointIndex, const in
 }
 
 //=====================================================================================================================
-// @brief	Get tangent and binormal
+// @brief	Get tangent and bitangent
 //=====================================================================================================================
-void FbxImportHelper::_getTangentAndBinormals( const Vector3 (&Location)[ 3 ], const Vector2 (&UVs)[ 3 ], Vector3 (&OutTangents)[ 3 ], Vector3 (&OutBitangents)[ 3 ] ) const
+void FbxImportHelper::_getTangentAndBitangents( const Vector3 (&Location)[ 3 ], const Vector2 (&UVs)[ 3 ], Vector3 (&OutTangents)[ 3 ], Vector3 (&OutBitangents)[ 3 ] ) const
 {
     Vector3 edge1 = Location[ 1 ] - Location[ 0 ];
     Vector3 edge2 = Location[ 2 ] - Location[ 0 ];

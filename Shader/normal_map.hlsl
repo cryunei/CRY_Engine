@@ -4,7 +4,7 @@ struct VertexIn
     float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 binormal : BINORMAL;
+    float3 bitangent : BITANGENT;
 };
 
 struct PixelIn
@@ -13,7 +13,7 @@ struct PixelIn
     float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
-    float3 binormal : BINORMAL;
+    float3 bitangent : BITANGENT;
 };
 
 cbuffer WorldMatrix : register(b0)
@@ -47,9 +47,9 @@ PixelIn VS_NormalMap( VertexIn input )
     output.position = mul( output.position, viewMat );
     output.position = mul( output.position, projMat );
     
-    output.normal   = mul( input.normal  , (float3x3)worldMat );
-    output.tangent  = mul( input.tangent , (float3x3)worldMat );
-    output.binormal = mul( input.binormal, (float3x3)worldMat );
+    output.normal    = mul( input.normal   , (float3x3)worldMat );
+    output.tangent   = mul( input.tangent  , (float3x3)worldMat );
+    output.bitangent = mul( input.bitangent, (float3x3)worldMat );
     
     output.tex = input.tex;
 
@@ -70,7 +70,7 @@ float4 PS_NormalMap( PixelIn input ) : SV_TARGET
     textureColor = diffuseTexture.Sample( SampleType, input.tex );
     textureColor = pow( textureColor, 1.f/2.2f );
 
-    float3x3 tbn = transpose( float3x3( input.tangent, input.binormal, input.normal ) );
+    float3x3 tbn = transpose( float3x3( input.tangent, input.bitangent, input.normal ) );
     float3 lightDirection_tangentSpace = mul( -lightDirection, tbn );
 
     float3 normal = normalize( normalMapTexture.Sample( SampleType, input.tex ).xyz * 2.f - 1.f );
