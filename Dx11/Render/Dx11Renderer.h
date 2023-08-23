@@ -59,6 +59,9 @@ public:
 	CrCamera* GetCamera() { return &Camera; }
 	const CrCamera* GetCamera() const { return &Camera; }
 
+	CrDirectionalLight* GetLight() { return &Light; }
+	void SetLightDirection( const Vector3& Direction );
+
 private:
 	// Initialize render target view
 	void _initializeRenderTargetView();

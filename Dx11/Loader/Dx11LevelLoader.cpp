@@ -15,10 +15,19 @@ void Dx11LevelLoader::Load( CrLevel& InLevel )
     int i = 0;
     for ( const CrMesh* crMesh : InLevel.GetMeshes() )
     {
-        Dx11VertexBuffer* vb = GetDx11ResourceManager()->CreateVertexBuffer( crMesh->GetVertexBuffer() );
         Dx11IndexBuffer*  ib = GetDx11ResourceManager()->CreateIndexBuffer ( crMesh->GetIndexBuffer () );
         Dx11VertexShader* vs = GetDx11ResourceManager()->CreateVertexShader( crMesh->GetVertexShader() );
         Dx11PixelShader*  ps = GetDx11ResourceManager()->CreatePixelShader ( crMesh->GetPixelShader () );
+
+        Dx11VertexBuffer* vb = nullptr;
+        if ( crMesh->GetVertexShader()->GetName().find( "Normal" ) != std::string::npos )
+        {
+            vb = GetDx11ResourceManager()->CreateVertexBuffer< Vertex_NormalMap >( crMesh->GetVertexBuffer() );
+        }
+        else
+        {
+            vb = GetDx11ResourceManager()->CreateVertexBuffer< Vertex_Diffuse >( crMesh->GetVertexBuffer() );            
+        }        
 
         Dx11Mesh* dxMesh =new Dx11Mesh();
         dxMesh->InitializePrimitive( vb, ib );
@@ -38,7 +47,7 @@ void Dx11LevelLoader::Load( CrLevel& InLevel )
 
         dxMesh->GetTransform().SetLocationX( -8.f + 8.f * ( ( i ) % 3 ) );
         dxMesh->GetTransform().SetLocationY( -4.f + 8.f * ( ( i ) / 3 ) );
-        ++i;        
+        ++i;
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿#include "FbxImportHelper.h"
 #include "../Asset/CrAssetManager.h"
 #include "../Asset/CrVertexBuffer.h"
+#include "../Render/Dx11VertexStructure.h"
 
 
 //=================================================================================================
@@ -83,20 +84,48 @@ bool FbxImportHelper::LoadAll( const std::string& FilePath, const std::string& A
         CrVertexBuffer* vb = GetAssetManager()->CreateVertexBuffer( AssetName + "_Vertex" + std::to_string( i ) );
         if ( !vb ) break;
 
-        vb->Vertices.reserve( _GetVertexCount( fbxMesh ) );
+        int vertexCount = _getVertexCount( fbxMesh );
+        vb->Locations.reserve( vertexCount );
+        vb->UVs      .reserve( vertexCount );
+        vb->Normals  .reserve( vertexCount );
+
+        Vector3 location[ 3 ];
+        Vector3 normal  [ 3 ];
+        Vector3 tangent [ 3 ];
+        Vector3 binormal[ 3 ];
+        Vector2 uv      [ 3 ];
+
+        auto ftrAddElements = [ this, &fbxMesh, &vb, &location, &normal, &tangent, &binormal, &uv ] ( int p, const int (&polygonIdx)[ 3 ] )
+        {
+            _getLocation( fbxMesh, p, polygonIdx, location );
+            _getUV      ( fbxMesh, p, polygonIdx, uv       );
+            _getNormal  ( fbxMesh, p, polygonIdx, normal   );
+
+            vb->Locations.insert( vb->Locations.end(), location, location + 3 );
+            vb->UVs      .insert( vb->UVs      .end(), uv,       uv       + 3 );
+            vb->Normals  .insert( vb->Normals  .end(), normal,   normal   + 3 );
+
+            _getTangentAndBinormals( location, uv, tangent, binormal );
+
+            vb->Tangents .insert( vb->Tangents .end(), tangent , tangent  + 3 );
+            vb->BiNormals.insert( vb->BiNormals.end(), binormal, binormal + 3 );
+        };
 
         // Process each polygon
-        for ( int i = 0; i < fbxMesh->GetPolygonCount(); ++i )
+        int polygonIdx[ 3 ] = { 0, 1, 2 };
+        for ( int p = 0; p < fbxMesh->GetPolygonCount(); ++p )
         {
-            _AddVertex( fbxMesh, i, 0, vb->Vertices );
-            _AddVertex( fbxMesh, i, 1, vb->Vertices );
-            _AddVertex( fbxMesh, i, 2, vb->Vertices );
+            int polygonSize = fbxMesh->GetPolygonSize( i );
+            if ( polygonSize < 3 ) continue;
 
-            for ( int j = 2; j < fbxMesh->GetPolygonSize( i ); ++j )
+            ftrAddElements( p, polygonIdx );
+
+            if ( polygonSize <= 3 ) continue;
+
+            for ( int e = 2; e < polygonSize; ++e )
             {
-                _AddVertex( fbxMesh, i, 0    , vb->Vertices );
-                _AddVertex( fbxMesh, i, j    , vb->Vertices );
-                _AddVertex( fbxMesh, i, j + 1, vb->Vertices );
+                int polygonIdxEx[ 3 ] = { 0, e, e + 1 };
+                ftrAddElements( p, polygonIdxEx );
             }
         }
     }
@@ -104,45 +133,90 @@ bool FbxImportHelper::LoadAll( const std::string& FilePath, const std::string& A
     return true;
 }
 
-//=================================================================================================
-// @brief	Add vertex
-//=================================================================================================
-void FbxImportHelper::_AddVertex( FbxMesh* Mesh, int ControlPointIndex, int PositionPolygon, std::vector< Vertex >& OutVertices ) const
+//=====================================================================================================================
+// @brief	Get location
+//=====================================================================================================================
+void FbxImportHelper::_getLocation( FbxMesh* Mesh, int ControlPointIndex, const int (&PositionPolygon)[ 3 ], Vector3 (&OutLocations)[ 3 ] ) const
 {
-    if ( !Mesh ) return;
-
-    Vertex vtx;
-
-    FbxVector4* fbxVertices = Mesh->GetControlPoints();
-    int controlPointIndex = Mesh->GetPolygonVertex( ControlPointIndex, PositionPolygon );
-
-    vtx.Position.x = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 0 ] );
-    vtx.Position.y = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 1 ] );
-    vtx.Position.z = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 2 ] );
-
-    FbxVector4 normal;
-    Mesh->GetPolygonVertexNormal( ControlPointIndex, PositionPolygon, normal );
-
-    vtx.Normal.x = static_cast< float >( normal.mData[ 0 ] );
-    vtx.Normal.y = static_cast< float >( normal.mData[ 1 ] );
-    vtx.Normal.z = static_cast< float >( normal.mData[ 2 ] );
-
-    FbxVector2 uv;
-    bool unmappedUV;
-    Mesh->GetPolygonVertexUV( ControlPointIndex, PositionPolygon, Mesh->GetElementUV( 0 )->GetName(), uv, unmappedUV );
-    if ( !unmappedUV )
+    for ( int i = 0; i < 3; ++i )
     {
-        vtx.TextureUV.x = static_cast< float >( uv.mData[ 0 ] );
-        vtx.TextureUV.y = static_cast< float >( uv.mData[ 1 ] );
+        FbxVector4* fbxVertices = Mesh->GetControlPoints();
+        int controlPointIndex = Mesh->GetPolygonVertex( ControlPointIndex, PositionPolygon[ i ] );
+
+        OutLocations[ i ].x = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 0 ] );
+        OutLocations[ i ].y = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 1 ] );
+        OutLocations[ i ].z = static_cast< float >( fbxVertices[ controlPointIndex ].mData[ 2 ] );
+    }    
+}
+
+//=====================================================================================================================
+// @brief	Get UV
+//=====================================================================================================================
+void FbxImportHelper::_getUV( FbxMesh* Mesh, int ControlPointIndex, const int (&PositionPolygon)[ 3 ], Vector2 (&OutUVs)[ 3 ] ) const
+{
+    int uvCount = Mesh->GetElementUVCount();
+    for ( int i = 0; i < uvCount; ++i )
+    {
+        const char* name = Mesh->GetElementUV( i )->GetName();
     }
 
-    OutVertices.push_back( vtx );
+    for ( int i = 0; i < 3; ++i )
+    {
+        FbxVector2 uv;
+        bool unmappedUV;
+        Mesh->GetPolygonVertexUV( ControlPointIndex, PositionPolygon[ i ], Mesh->GetElementUV( 0 )->GetName(), uv, unmappedUV );
+        if ( !unmappedUV )
+        {
+            OutUVs[ i ].x = static_cast< float >( uv.mData[ 0 ] );
+            OutUVs[ i ].y = static_cast< float >( uv.mData[ 1 ] );
+        }
+    }
+}
+
+//=====================================================================================================================
+// @brief	Get normal
+//=====================================================================================================================
+void FbxImportHelper::_getNormal( FbxMesh* Mesh, int ControlPointIndex, const int (&PositionPolygon)[ 3 ], Vector3 (&OutNormals)[ 3 ] ) const
+{
+    for ( int i = 0; i < 3; ++i )
+    {
+        FbxVector4 normal;
+        Mesh->GetPolygonVertexNormal( ControlPointIndex, PositionPolygon[ i ], normal );
+
+        OutNormals[ i ].x = static_cast< float >( normal.mData[ 0 ] );
+        OutNormals[ i ].y = static_cast< float >( normal.mData[ 1 ] );
+        OutNormals[ i ].z = static_cast< float >( normal.mData[ 2 ] );
+    }
+}
+
+//=====================================================================================================================
+// @brief	Get tangent and binormal
+//=====================================================================================================================
+void FbxImportHelper::_getTangentAndBinormals( const Vector3 (&Location)[ 3 ], const Vector2 (&UVs)[ 3 ], Vector3 (&OutTangents)[ 3 ], Vector3 (&OutBitangents)[ 3 ] ) const
+{
+    Vector3 edge1 = Location[ 1 ] - Location[ 0 ];
+    Vector3 edge2 = Location[ 2 ] - Location[ 0 ];
+
+    Vector2 deltaUV1 = UVs[ 1 ] - UVs[ 0 ];
+    Vector2 deltaUV2 = UVs[ 2 ] - UVs[ 0 ];
+
+    float f = 1.0f / ( deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y );
+
+    OutTangents[ 0 ] = f * ( deltaUV2.x * edge1 - deltaUV1.x * edge2 );
+    OutTangents[ 0 ].Normalize();
+
+    OutTangents[ 1 ] =OutTangents[ 2 ] = OutTangents[ 0 ];
+
+    OutBitangents[ 0 ] = f * ( -deltaUV2.y * edge1 + deltaUV1.y * edge2 );
+    OutBitangents[ 0 ].Normalize();
+
+    OutBitangents[ 1 ] = OutBitangents[ 2 ] = OutBitangents[ 0 ];
 }
 
 //=================================================================================================
 // @brief	Get vertex count
 //=================================================================================================
-int FbxImportHelper::_GetVertexCount( FbxMesh* Mesh ) const
+int FbxImportHelper::_getVertexCount( FbxMesh* Mesh ) const
 {
     if ( !Mesh ) return 0;
 

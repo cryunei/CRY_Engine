@@ -8,6 +8,9 @@
 #pragma comment ( lib, "libfbxsdk.lib" )
 
 
+//=====================================================================================================================
+// @brief	FbxImportHelper
+//=====================================================================================================================
 class FbxImportHelper
 {
 private:
@@ -30,9 +33,20 @@ public:
     bool LoadAll( const std::string& FilePath, const std::string& AssetName );
 
 private:
-    // Add vertex
-    void _AddVertex( FbxMesh* Mesh, int ControlPointIndex, int PositionPolygon, std::vector< Vertex >& OutVertices ) const;
+    // Get location
+    void _getLocation( FbxMesh* Mesh, int ControlPointIndex, const int (&PositionPolygon)[ 3 ], Vector3 (&OutLocations)[ 3 ] ) const;
+
+    // Get UV
+    void _getUV( FbxMesh* Mesh, int ControlPointIndex, const int (&PositionPolygon)[ 3 ], Vector2 (&OutUVs)[ 3 ] ) const;
+
+    // Get normal
+    void _getNormal( FbxMesh* Mesh, int ControlPointIndex, const int (&PositionPolygon)[ 3 ], Vector3 (&OutNormals)[ 3 ] ) const;
+
+    // Get tangent and binormal
+    void _getTangentAndBinormals( const Vector3 (&Location)[ 3 ], const Vector2 (&UVs)[ 3 ], Vector3 (&OutTangents)[ 3 ], Vector3 (&OutBitangents)[ 3 ] ) const;
 
     // Get vertex count
-    int _GetVertexCount( FbxMesh* Mesh ) const;
+    int _getVertexCount( FbxMesh* Mesh ) const;
 };
+
+

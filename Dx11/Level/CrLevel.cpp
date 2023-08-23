@@ -50,11 +50,22 @@ CrLevel::CrLevel()
     mesh = GetAssetManager()->CreateMesh( "Test5" );
     if ( !mesh ) return;
 
-    mesh->LoadVertexShader( "DefaultDiffuse" );
+    mesh->LoadVertexShader( "NormalMap" );
     mesh->LoadVertexBuffer( "WoodenSphere_Vertex0" );
-    mesh->LoadPixelShader( "TextureBlended" );
+    mesh->LoadPixelShader( "NormalMap" );
     mesh->LoadTexture( "BlockDiffuse" );
-    mesh->LoadTexture( "WoodenSphereDiffuse" );
+    mesh->LoadTexture( "BlockNormal" );
+
+    Meshes.push_back( mesh );
+
+    mesh = GetAssetManager()->CreateMesh( "Test6" );
+    if ( !mesh ) return;
+
+    mesh->LoadVertexShader( "NormalMap" );
+    mesh->LoadVertexBuffer( "WoodenSphere_Vertex0" );
+    mesh->LoadPixelShader( "NormalMap" );
+    mesh->LoadTexture( "StoneDiffuse" );
+    mesh->LoadTexture( "StoneNormal" );
 
     Meshes.push_back( mesh );
 }

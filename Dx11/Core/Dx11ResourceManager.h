@@ -1,8 +1,11 @@
 ﻿#pragma once
 
 
+#include "../Asset/CrAssetManager.h"
 #include "../DxTypes.h"
+#include "Dx11VertexBuffer.h"
 #include <map>
+
 
 class Dx11Resource;
 class Dx11ResourceRenderer;
@@ -45,7 +48,9 @@ public:
     Dx11ResourceManager& operator=( Dx11ResourceManager&& Other ) noexcept = delete;
 
     // Create vertex buffer
+    template < typename T >
     Dx11VertexBuffer* CreateVertexBuffer( const std::string& AssetName );
+    template < typename T >
     Dx11VertexBuffer* CreateVertexBuffer( const CrVertexBuffer* AssetPtr );
 
     // Create index buffer
@@ -128,6 +133,36 @@ T* Dx11ResourceManager::_get( const std::string& Name, std::map<std::string, T*>
     }
 
     return nullptr;
+}
+
+//=====================================================================================================================
+// @brief	Create vertex buffer
+//=====================================================================================================================
+template < typename T >
+Dx11VertexBuffer* Dx11ResourceManager::CreateVertexBuffer( const std::string& AssetName )
+{
+    return CreateVertexBuffer< T >( GetAssetManager()->GetVertexBuffer( AssetName ) );    
+}
+
+//=====================================================================================================================
+// @brief	Create vertex buffer
+//=====================================================================================================================
+template < typename T >
+Dx11VertexBuffer* Dx11ResourceManager::CreateVertexBuffer( const CrVertexBuffer* AssetPtr )
+{
+    if ( !AssetPtr ) return nullptr;
+
+    Dx11VertexBuffer* dxVB = _create< Dx11VertexBuffer >( AssetPtr->GetName(), VertexBuffers );
+    if ( !dxVB ) return nullptr;
+
+    std::vector< T > vertices;
+    AssetPtr->GetVertices( vertices );
+
+    dxVB->CreateBuffer< T >( vertices, AssetPtr->GetDx11Usage(), AssetPtr->GetDx11CpuAccessFlag() );
+
+    VertexBuffers[ AssetPtr->GetName() ] = dxVB;
+
+    return dxVB;
 }
 
 

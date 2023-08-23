@@ -39,6 +39,8 @@ void Dx11Renderer::Initialize( int Width, int Height )
 	GetCamera()->Transform.SetLocation( 0.f, 0.f, 25.f );
 
 	GetGuiManager()->GetDevTestUI().BindCameraTransform( &GetCamera()->Transform );
+
+	SetLightDirection( Vector3( 1.f, -1.f, 1.f ) );
 }
 
 //=====================================================================================================================
@@ -80,6 +82,17 @@ bool Dx11Renderer::AddMeshRenderElement( const Dx11Mesh* MeshPtr )
 void Dx11Renderer::SortRenderQueue()
 {
 	RenderQueue.Sort();
+}
+
+//=====================================================================================================================
+// @brief	SetLightDirection
+//=====================================================================================================================
+void Dx11Renderer::SetLightDirection( const Vector3& Direction )
+{
+	Light.SetDirection( Direction );
+	LightProperty prop( Light.GetColor(), Vector4::One, Light.GetDirection() );
+
+	LightBuffer.Update( prop );
 }
 
 //=====================================================================================================================
@@ -157,10 +170,6 @@ void Dx11Renderer::_setViewProjectionMatrixBufferData() const
 //=====================================================================================================================
 void Dx11Renderer::_setLightPropertyBufferData() const
 {
-	LightProperty prop( Vector4( 0.f, 0.f, 0.15f, 1.f ), Vector4::One, Vector3( 1.0f, -1.0f, 1.0f ) );
-
-	LightBuffer.Update( prop );
-
 	SpecularProperty specularProp( Vector4( 0.5f, 0.5f, 0.5f, 1.f ), 32.0f );
 
 	SpecularBuffer.Update( specularProp );

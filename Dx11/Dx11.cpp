@@ -202,6 +202,7 @@ void LoadAssets()
     FbxImportHelper fbxImporter;
     fbxImporter.LoadAll( "../Asset/Fbx/wooden_sphere.fbx", "WoodenSphere" );
     fbxImporter.LoadAll( "../Asset/Fbx/Lowpoly_tree_sample.fbx", "Tree" );
+    fbxImporter.LoadAll( "../Asset/Fbx/stone.fbx", "Stone" );
 
     if ( CrVertexShader* vs = GetAssetManager()->CreateVertexShader( "DefaultDiffuse" ) )
     {
@@ -213,9 +214,26 @@ void LoadAssets()
         } );
     }
 
+    if ( CrVertexShader* vs = GetAssetManager()->CreateVertexShader( "NormalMap" ) )
+    {
+        vs->Initialize( "../Shader/normal_map.hlsl", "VS_NormalMap", "vs_4_0",
+        {
+            { "SV_POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "TANGENT",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "BINORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        } );
+    }
+
     if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "DefaultDiffuse" ) )
     {
         ps->Initialize( "../Shader/Shader.hlsl", "PS", "ps_4_0" );
+    }
+
+    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "NormalMap" ) )
+    {
+        ps->Initialize( "../Shader/normal_map.hlsl", "PS_NormalMap", "ps_4_0" );
     }
 
     if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "Specular" ) )
@@ -245,10 +263,37 @@ void LoadAssets()
 
     if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "BlockDiffuse" ) )
     {
-        tex->SetPath  ( "../Asset/Texture/block.jpg" );
+        tex->SetPath  ( "../Asset/Texture/Normal/197.jpg" );
         tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );
         tex->SetWidth ( 743 );
         tex->SetHeight( 484 );
+        tex->SetSamplingCount( 1 );
+    }
+
+    if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "BlockNormal" ) )
+    {
+        tex->SetPath  ( "../Asset/Texture/Normal/197_norm.jpg" );
+        tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );
+        tex->SetWidth ( 743 );
+        tex->SetHeight( 484 );
+        tex->SetSamplingCount( 1 );
+    }
+
+    if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "StoneDiffuse" ) )
+    {
+        tex->SetPath  ( "../Asset/Texture/Normal/188.jpg" );
+        tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );
+        tex->SetWidth ( 1024 );
+        tex->SetHeight( 1024 );
+        tex->SetSamplingCount( 1 );
+    }
+
+    if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "StoneNormal" ) )
+    {
+        tex->SetPath  ( "../Asset/Texture/Normal/188_norm.jpg" );
+        tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );
+        tex->SetWidth ( 1024 );
+        tex->SetHeight( 1024 );
         tex->SetSamplingCount( 1 );
     }
 

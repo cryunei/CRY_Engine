@@ -2,7 +2,7 @@
 
 
 #include "CrAsset.h"
-#include "../DxTypes.h"
+#include "../Render/Dx11VertexStructure.h"
 #include <vector>
 
 
@@ -14,10 +14,18 @@ class CrVertexBuffer : public CrAsset
 public:
     friend class FbxImportHelper;
 
+public:
+    static CrVertexBuffer Plane;
+
 private:
-    std::vector< Vertex > Vertices;
-    D3D11_USAGE           Usage;
-    D3D11_CPU_ACCESS_FLAG CpuAccessFlag;
+    std::vector< Vector3 > Locations;
+    std::vector< Vector2 > UVs;
+    std::vector< Vector3 > Normals;
+    std::vector< Vector3 > Tangents;
+    std::vector< Vector3 > BiNormals;
+
+    D3D11_USAGE           Dx11Usage;
+    D3D11_CPU_ACCESS_FLAG Dx11CpuAccessFlag;
 
 public:
     // Contructor
@@ -33,7 +41,16 @@ public:
     CrVertexBuffer& operator=( CrVertexBuffer&& Other ) noexcept = default;
 
     // Getters
-    const std::vector< Vertex >& GetVertices() const { return Vertices; }
-    D3D11_USAGE GetUsage() const { return Usage; }
-    D3D11_CPU_ACCESS_FLAG GetCpuAccessFlag() const { return CpuAccessFlag; }
+    const std::vector< Vector3 >& GetLocations() const { return Locations; }
+    const std::vector< Vector2 >& GetUVs() const { return UVs; }
+    const std::vector< Vector3 >& GetNormals() const { return Normals; }
+    const std::vector< Vector3 >& GetTangents() const { return Tangents; }
+    const std::vector< Vector3 >& GetBiNormals() const { return BiNormals; }
+
+    D3D11_USAGE GetDx11Usage() const { return Dx11Usage; }
+    D3D11_CPU_ACCESS_FLAG GetDx11CpuAccessFlag() const { return Dx11CpuAccessFlag; }
+
+    // Get vertices
+    void GetVertices( std::vector< Vertex_Diffuse >& OutVertices ) const;
+    void GetVertices( std::vector< Vertex_NormalMap >& OutVertices ) const;
 };

@@ -8,6 +8,7 @@ class DevTestUI
 {
 private:
     TransformEditor CameraTransformEditor;
+    float           LightDirection[ 3 ];
 
 public:
     // Constructor

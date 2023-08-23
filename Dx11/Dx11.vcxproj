@@ -183,6 +183,7 @@
     <ClInclude Include="Render\Dx11RenderQueue.h" />
     <ClInclude Include="Render\Dx11RenderTypes.h" />
     <ClInclude Include="Render\Dx11ResourceRenderer.h" />
+    <ClInclude Include="Render\Dx11VertexStructure.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="GUI\DevTestUI.h" />

@@ -2,7 +2,6 @@
 #include "Dx11IndexBuffer.h"
 #include "Dx11PixelShader.h"
 #include "Dx11Texture2D.h"
-#include "Dx11VertexBuffer.h"
 #include "Dx11VertexShader.h"
 #include "../Render/Dx11ResourceRenderer.h"
 #include "../Asset/CrAssetManager.h"
@@ -11,31 +10,6 @@
 static Dx11ResourceManager G_Dx11ResourceManager;
 Dx11ResourceManager* GetDx11ResourceManager() { return &G_Dx11ResourceManager; }
 
-
-//=====================================================================================================================
-// @brief	Create vertex buffer
-//=====================================================================================================================
-Dx11VertexBuffer* Dx11ResourceManager::CreateVertexBuffer( const std::string& AssetName )
-{
-    return CreateVertexBuffer( GetAssetManager()->GetVertexBuffer( AssetName ) );    
-}
-
-//=====================================================================================================================
-// @brief	Create vertex buffer
-//=====================================================================================================================
-Dx11VertexBuffer* Dx11ResourceManager::CreateVertexBuffer( const CrVertexBuffer* AssetPtr )
-{
-    if ( !AssetPtr ) return nullptr;
-
-    Dx11VertexBuffer* dxVB = _create< Dx11VertexBuffer >( AssetPtr->GetName(), VertexBuffers );
-    if ( !dxVB ) return nullptr;
-
-    dxVB->CreateBuffer( AssetPtr->GetVertices(), AssetPtr->GetUsage(), AssetPtr->GetCpuAccessFlag() );
-
-    VertexBuffers[ AssetPtr->GetName() ] = dxVB;
-
-    return dxVB;
-}
 
 //=====================================================================================================================
 // @brief	Create index buffer
