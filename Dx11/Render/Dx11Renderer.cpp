@@ -1,5 +1,5 @@
 #include "Dx11Renderer.h"
-#include "../Actor/Camera/CrCamera.h"
+#include "Dx11Mesh.h"
 #include "../Core/Dx11Device.h"
 #include "../Core/Dx11ResourceManager.h"
 #include "../Core/Dx11VertexShader.h"
@@ -10,9 +10,8 @@
 // @brief	Constructor
 //=====================================================================================================================
 Dx11Renderer::Dx11Renderer()
-: RenderTargetView ( nullptr )
-, ViewportWidth    ( 1920.f )
-, ViewportHeight   ( 1080.f )
+: ViewportWidth  ( 1920.f )
+, ViewportHeight ( 1080.f )
 {
 }
 
@@ -21,9 +20,6 @@ Dx11Renderer::Dx11Renderer()
 //=====================================================================================================================
 void Dx11Renderer::Clear()
 {
-	if ( RenderTargetView )RenderTargetView->Release();
-
-	RenderTargetView = nullptr;
 }
 
 //=====================================================================================================================
@@ -31,16 +27,34 @@ void Dx11Renderer::Clear()
 //=====================================================================================================================
 void Dx11Renderer::Initialize( int Width, int Height )
 {
-	_initializeRenderTargetView();
-	_initializeViewport( Width, Height);
 	_initializeConstantBuffers();	
 
 	GetCamera()->SetLookAtDirection( Vector3( 0.f, 0.f, -1.f ) );
-	GetCamera()->Transform.SetLocation( 0.f, 0.f, 25.f );
+	GetCamera()->Transform.SetLocation( 0.f, 0.f, 40.f );
+
+	Camera_RT.SetLookAtDirection( Vector3( 0.f, 0.f, -1.f ) );
+	Camera_RT.Transform.SetLocation( 0.f, 0.f, 15.f );
 
 	GetGuiManager()->GetDevTestUI().BindCameraTransform( &GetCamera()->Transform );
 
 	SetLightDirection( Vector3( 1.f, -1.f, 1.f ) );
+
+	RenderQueueScreen.Initialize( Width, Height );
+	RenderQueueScreen.SetCamera( GetCamera() );
+}
+
+//=====================================================================================================================
+// @brief	Add render target
+//=====================================================================================================================
+void Dx11Renderer::AddRenderTarget( const std::string& RenderTargetName, int Width, int Height, DXGI_FORMAT Format )
+{
+	auto ret = RenderQueues.insert( std::make_pair( RenderTargetName, Dx11RenderQueue() ) );
+	if ( ret.second )
+	{
+		Dx11RenderQueue& renderQ = ret.first->second;
+		renderQ.GetRenderTarget()->Initialize( RenderTargetName + "_Texture", Width, Height, Format );
+		renderQ.SetCamera( &Camera_RT );
+	}
 }
 
 //=====================================================================================================================
@@ -50,14 +64,17 @@ void Dx11Renderer::RenderFrame()
 {
 	GetGuiManager()->PreRender();
 
-	float color[ 4 ] = { 0.0f, 0.2f, 0.4f, 1.0f };
-	
-	GetDx11DeviceContext()->ClearRenderTargetView( RenderTargetView, color );
-
-	_setViewProjectionMatrixBufferData();
 	_setLightPropertyBufferData();
 
-	RenderQueue.Render();
+	for ( auto itr = RenderQueues.begin(); itr != RenderQueues.end(); ++itr )
+	{
+		Dx11RenderQueue& renderQ = itr->second;
+		_setViewProjectionMatrixBufferData( renderQ.GetCamera(), renderQ.GetViewportWidth(), renderQ.GetViewportHeight() );
+		renderQ.Render();
+	}
+
+	_setViewProjectionMatrixBufferData( RenderQueueScreen.GetCamera(), RenderQueueScreen.GetViewportWidth(), RenderQueueScreen.GetViewportHeight() );
+	RenderQueueScreen.Render();
 
 	GetGuiManager()->PostRender();
 
@@ -73,7 +90,22 @@ bool Dx11Renderer::AddMeshRenderElement( const Dx11Mesh* MeshPtr )
 
 	MeshPtr->IncreaseRenderCount();
 
-	return RenderQueue.Add( MeshPtr, &WorldBuffer );
+	return RenderQueueScreen.Add( MeshPtr, &WorldBuffer );
+}
+
+//=====================================================================================================================
+// @brief	Add mesh render element
+//=====================================================================================================================
+bool Dx11Renderer::AddMeshRenderElement( const Dx11Mesh* MeshPtr, const std::string& RenderTargetName )
+{
+	if ( !MeshPtr ) return false;
+
+	if ( Dx11RenderQueue* renderQ = GetRenderQueue( RenderTargetName ) )
+	{
+		return renderQ->Add( MeshPtr, &WorldBuffer );
+	}
+
+	return false;
 }
 
 //=====================================================================================================================
@@ -81,7 +113,12 @@ bool Dx11Renderer::AddMeshRenderElement( const Dx11Mesh* MeshPtr )
 //=====================================================================================================================
 void Dx11Renderer::SortRenderQueue()
 {
-	RenderQueue.Sort();
+	for ( auto itr = RenderQueues.begin(); itr != RenderQueues.end(); ++itr )
+	{
+		itr->second.Sort();
+	}
+
+	RenderQueueScreen.Sort();
 }
 
 //=====================================================================================================================
@@ -96,36 +133,27 @@ void Dx11Renderer::SetLightDirection( const Vector3& Direction )
 }
 
 //=====================================================================================================================
-// @brief	Initialize render target view
+// @brief	RenderTargetName
 //=====================================================================================================================
-void Dx11Renderer::_initializeRenderTargetView()
+Dx11RenderQueue* Dx11Renderer::GetRenderQueue( const std::string& RenderTargetName )
 {
-	ID3D11Texture2D* texture = nullptr;
+	auto itr = RenderQueues.find( RenderTargetName );
+	if ( itr == RenderQueues.end() ) return nullptr;
 
-	GetSwapChain()->GetBuffer( 0, __uuidof( ID3D11Texture2D ), ( LPVOID* )&texture );
-	if ( !texture ) return;
-
-	GetDx11Device()->CreateRenderTargetView( texture, nullptr, &RenderTargetView );
-	GetDx11DeviceContext()->OMSetRenderTargets( 1, &RenderTargetView, nullptr );
+	return &itr->second;
 }
 
 //=====================================================================================================================
-// @brief	Initialize viewport
+// @brief	Dx11RenderTarget* GetRenderTarget( const std::string& RenderTargetName );
 //=====================================================================================================================
-void Dx11Renderer::_initializeViewport( int Width, int Height )
+Dx11RenderTarget* Dx11Renderer::GetRenderTarget( const std::string& RenderTargetName )
 {
-	ViewportWidth  = Width;
-	ViewportHeight = Height;
+	if ( Dx11RenderQueue* renerQ = GetRenderQueue( RenderTargetName ) )
+	{
+		return renerQ->GetRenderTarget();
+	}
 
-	D3D11_VIEWPORT viewport;
-	ZeroMemory( &viewport, sizeof( D3D11_VIEWPORT ) );
-
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.Width  = ViewportWidth;
-	viewport.Height = ViewportHeight;
-
-	GetDx11DeviceContext()->RSSetViewports( 1, &viewport );
+	return nullptr;
 }
 
 //=====================================================================================================================
@@ -154,13 +182,15 @@ void Dx11Renderer::_initializeConstantBuffers()
 //=====================================================================================================================
 // @brief	Set view projection matrix buffer data
 //=====================================================================================================================
-void Dx11Renderer::_setViewProjectionMatrixBufferData() const
+void Dx11Renderer::_setViewProjectionMatrixBufferData( const CrCamera* Camera, unsigned int InViewportWidth, unsigned int InViewportHeight ) const
 {
-	ViewProjMatrix mat( GetCamera()->GetViewMatrix().Transpose(), GetCamera()->GetProjectionMatrix( ViewportWidth, ViewportHeight ).Transpose() );
+	if ( !Camera ) return;
+
+	ViewProjMatrix mat( Camera->GetViewMatrix().Transpose(), Camera->GetProjectionMatrix( InViewportWidth, InViewportHeight ).Transpose() );
 
 	ViewProjBuffer.Update( mat );
 
-	CameraProperty prop( GetCamera()->Transform.GetLocation() );
+	CameraProperty prop( Camera->Transform.GetLocation() );
 
 	CameraBuffer.Update( prop );
 }

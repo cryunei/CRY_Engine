@@ -3,7 +3,7 @@
 
 #include "CrIndexBuffer.h"
 #include "CrMesh.h"
-#include "CrVertexBuffer.h"
+#include "CrPrimitive.h"
 #include "CrVertexShader.h"
 #include "CrPixelShader.h"
 #include "CrTexture2D.h"
@@ -17,8 +17,7 @@
 class CrAssetManager
 {
 private:
-    std::map< std::string, CrVertexBuffer* > VertexBuffers;
-    std::map< std::string, CrIndexBuffer*  > IndexBuffers;
+    std::map< std::string, CrPrimitive* >    Primitives;
     std::map< std::string, CrVertexShader* > VertexShaders;
     std::map< std::string, CrPixelShader*  > PixelShaders;
     std::map< std::string, CrTexture2D*    > Texture2Ds;
@@ -31,17 +30,11 @@ public:
     // Destructor
     ~CrAssetManager() = default;
 
-    // Create vertex buffer
-    CrVertexBuffer* CreateVertexBuffer( const std::string& Name ) { return _createAsset< CrVertexBuffer >( Name, VertexBuffers );}
+    // Create primitive
+    CrPrimitive* CreatePrimitive( const std::string& Name ) { return _createAsset< CrPrimitive >( Name, Primitives );}
 
-    // Get vertex buffer
-    CrVertexBuffer* GetVertexBuffer( const std::string& Name ) { return _getAsset< CrVertexBuffer >( Name, VertexBuffers ); }
-
-    // Create index buffer
-    CrIndexBuffer* CreateIndexBuffer( const std::string& Name ) { return _createAsset< CrIndexBuffer >( Name, IndexBuffers ); }
-
-    // Get index buffer
-    CrIndexBuffer* GetIndexBuffer( const std::string& Name ) { return _getAsset< CrIndexBuffer >( Name, IndexBuffers ); }
+    // Get primitive
+    CrPrimitive* GetPrimitive( const std::string& Name ) { return _getAsset< CrPrimitive >( Name, Primitives ); }
 
     // Create vertex shader
     CrVertexShader* CreateVertexShader( const std::string& Name ) { return _createAsset< CrVertexShader >( Name, VertexShaders ); }

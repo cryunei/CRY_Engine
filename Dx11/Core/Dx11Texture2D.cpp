@@ -18,7 +18,7 @@ void Dx11Texture2D::Release()
 //=====================================================================================================================
 // @brief	Create texture
 //=====================================================================================================================
-void Dx11Texture2D::CreateTexture( const std::string& TexturePath, DXGI_FORMAT Format, UINT Width, UINT Height, UINT SamplingCount )
+void Dx11Texture2D::CreateTexture( DXGI_FORMAT Format, UINT Width, UINT Height, UINT SamplingCount )
 {
     // create texture    
     ZeroMemory( &Desc, sizeof( D3D11_TEXTURE2D_DESC ) );
@@ -35,8 +35,14 @@ void Dx11Texture2D::CreateTexture( const std::string& TexturePath, DXGI_FORMAT F
     Desc.CPUAccessFlags = 0;
     Desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
-    GetDx11Device()->CreateTexture2D( &Desc, nullptr, Texture2DComPtr.GetAddressOf() );
+     HRESULT hr = GetDx11Device()->CreateTexture2D( &Desc, nullptr, Texture2DComPtr.GetAddressOf() );
+}
 
+//=====================================================================================================================
+// @brief	Create sampler
+//=====================================================================================================================
+void Dx11Texture2D::CreateSampler()
+{
     // create sample state
     D3D11_SAMPLER_DESC sd;
     ZeroMemory( &sd, sizeof( D3D11_SAMPLER_DESC ) );
@@ -56,7 +62,31 @@ void Dx11Texture2D::CreateTexture( const std::string& TexturePath, DXGI_FORMAT F
     sd.MaxLOD = D3D11_FLOAT32_MAX;
 
     // Create the texture sampler state.
-    GetDx11Device()->CreateSamplerState( &sd, TextureSSComPtr.GetAddressOf() );
+    HRESULT hr = GetDx11Device()->CreateSamplerState( &sd, TextureSSComPtr.GetAddressOf() );
+}
+
+//=====================================================================================================================
+// @brief	Create shader resource view
+//=====================================================================================================================
+void Dx11Texture2D::CreateSRV()
+{
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
+    ZeroMemory( &srvd, sizeof( D3D11_SHADER_RESOURCE_VIEW_DESC ) );
+
+    srvd.Format = Desc.Format;
+    srvd.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvd.Texture2D.MostDetailedMip = 0;
+    srvd.Texture2D.MipLevels = 1;
+
+    HRESULT hr = GetDx11Device()->CreateShaderResourceView( Texture2DComPtr.Get(), &srvd, TextureSRVComPtr.GetAddressOf() );
+}
+
+//=====================================================================================================================
+// @brief	Load from file
+//=====================================================================================================================
+void Dx11Texture2D::LoadFromFile( const std::string& TexturePath )
+{
+    CreateSampler();
 
     CoInitialize( nullptr );
 

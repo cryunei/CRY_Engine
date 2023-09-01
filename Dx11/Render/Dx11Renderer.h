@@ -3,11 +3,11 @@
 
 #include "Dx11RenderQueue.h"
 #include "../Core/Dx11ConstantBuffer.h"
-#include "../Render/Dx11Mesh.h"
 #include "../Actor/Camera/CrCamera.h"
 #include "../Actor/Light/CrDirectionalLight.h"
+#include "../Core/Dx11RenderTarget.h"
 #include "../Render/Dx11ConstantBufferStructure.h"
-#include <d3d11.h>
+#include <map>
 
 
 #pragma comment ( lib, "d3d11.lib" )
@@ -22,8 +22,6 @@ private:
 	float ViewportWidth;
 	float ViewportHeight;
 
-	ID3D11RenderTargetView* RenderTargetView;
-
 	WorldMatrixBuffer        WorldBuffer;
 	ViewProjMatrixBuffer     ViewProjBuffer;
 	CameraPropertyBuffer     CameraBuffer;
@@ -32,9 +30,11 @@ private:
 	PointLightLocationBuffer LightLocationBuffer;
 	PointLightColorBuffer    LightColorBuffer;
 
-	Dx11RenderQueue RenderQueue;
+	std::map< std::string, Dx11RenderQueue > RenderQueues;
+	Dx11RenderQueue RenderQueueScreen; 
 
 	CrCamera Camera;
+	CrCamera Camera_RT;
 	CrDirectionalLight Light;
 
 public:
@@ -47,11 +47,17 @@ public:
 	// Initialize
 	void Initialize( int Width, int Height );
 
+	// Add render target
+	void AddRenderTarget( const std::string& RenderTargetName, int Width, int Height, DXGI_FORMAT Format );
+
 	// Render frame
 	void RenderFrame();
 
 	// Add mesh render element
 	bool AddMeshRenderElement( const Dx11Mesh* MeshPtr );
+	
+	// Add mesh render element
+	bool AddMeshRenderElement( const Dx11Mesh* MeshPtr, const std::string& RenderTargetName );
 
 	// Sort render queue	
 	void SortRenderQueue();
@@ -62,18 +68,15 @@ public:
 	CrDirectionalLight* GetLight() { return &Light; }
 	void SetLightDirection( const Vector3& Direction );
 
+	Dx11RenderQueue* GetRenderQueue( const std::string& RenderTargetName );
+	Dx11RenderTarget* GetRenderTarget( const std::string& RenderTargetName );
+
 private:
-	// Initialize render target view
-	void _initializeRenderTargetView();
-
-	// Initialize viewport
-	void _initializeViewport( int Width, int Height );
-
 	// Initialize constant buffers
 	void _initializeConstantBuffers();
 
 	// Set view projection matrix buffer data
-	void _setViewProjectionMatrixBufferData() const;
+	void _setViewProjectionMatrixBufferData( const CrCamera* Camera, unsigned int InViewportWidth, unsigned int InViewportHeight ) const;
 
 	// Set light property buffer data
 	void _setLightPropertyBufferData() const;

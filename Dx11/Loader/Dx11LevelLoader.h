@@ -13,6 +13,8 @@ class Dx11LevelLoader
 {
 private:
     std::vector< Dx11Mesh* > Meshes;
+    Dx11Mesh*                TestMesh;
+    Dx11Mesh*                TestRT;
 
 public:
     // Load

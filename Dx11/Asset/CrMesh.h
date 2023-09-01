@@ -5,11 +5,12 @@
 #include <string>
 #include <vector>
 
+
 class CrTexture2D;
 class CrPixelShader;
 class CrIndexBuffer;
 class CrVertexShader;
-class CrVertexBuffer;
+class CrPrimitive;
 
 
 //=====================================================================================================================
@@ -19,7 +20,7 @@ class CrMesh : public CrAsset
 {
 private:
     CrVertexShader* VertexShaderPtr;
-    CrVertexBuffer* VertexBufferPtr;
+    CrPrimitive*    PrimitivePtr;
     CrIndexBuffer*  IndexBufferPtr;
     CrPixelShader*  PixelShaderPtr;
 
@@ -32,11 +33,8 @@ public:
     // Load vertex shader
     void LoadVertexShader( const std::string& Name );
 
-    // Load vertex buffer
-    void LoadVertexBuffer( const std::string& Name );
-
-    // Load index buffer
-    void LoadIndexBuffer( const std::string& Name );
+    // Load primitive
+    void LoadPrimitive( const std::string& Name );
 
     // Load pixel shader
     void LoadPixelShader( const std::string& Name );
@@ -46,7 +44,7 @@ public:
 
     // Getters
     const CrVertexShader* GetVertexShader() const { return VertexShaderPtr; }
-    const CrVertexBuffer* GetVertexBuffer() const { return VertexBufferPtr; }
+    const CrPrimitive*    GetPrimitve()     const { return PrimitivePtr;    }
     const CrIndexBuffer*  GetIndexBuffer()  const { return IndexBufferPtr;  }
     const CrPixelShader*  GetPixelShader()  const { return PixelShaderPtr;  }
 

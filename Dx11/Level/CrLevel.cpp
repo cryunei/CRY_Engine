@@ -11,7 +11,7 @@ CrLevel::CrLevel()
     if ( !mesh ) return;
 
     mesh->LoadVertexShader( "DefaultDiffuse" );
-    mesh->LoadVertexBuffer( "WoodenSphere_Vertex0" );
+    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
     mesh->LoadPixelShader( "PointLight" );
     mesh->LoadTexture( "WoodenSphereDiffuse" );
 
@@ -21,7 +21,7 @@ CrLevel::CrLevel()
     if ( !mesh ) return;
 
     mesh->LoadVertexShader( "DefaultDiffuse" );
-    mesh->LoadVertexBuffer( "WoodenSphere_Vertex0" );
+    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
     mesh->LoadPixelShader( "PointLight" );
     mesh->LoadTexture( "BlockDiffuse" );
 
@@ -31,7 +31,7 @@ CrLevel::CrLevel()
     if ( !mesh ) return;
 
     mesh->LoadVertexShader( "DefaultDiffuse" );
-    mesh->LoadVertexBuffer( "WoodenSphere_Vertex0" );
+    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
     mesh->LoadPixelShader( "Specular" );
     mesh->LoadTexture( "WoodenSphereDiffuse" );
 
@@ -41,7 +41,7 @@ CrLevel::CrLevel()
     if ( !mesh ) return;
 
     mesh->LoadVertexShader( "DefaultDiffuse" );
-    mesh->LoadVertexBuffer( "WoodenSphere_Vertex0" );
+    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
     mesh->LoadPixelShader( "Toon" );
     mesh->LoadTexture( "BlockDiffuse" );
 
@@ -51,7 +51,7 @@ CrLevel::CrLevel()
     if ( !mesh ) return;
 
     mesh->LoadVertexShader( "NormalMap" );
-    mesh->LoadVertexBuffer( "WoodenSphere_Vertex0" );
+    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
     mesh->LoadPixelShader( "NormalMap" );
     mesh->LoadTexture( "BlockDiffuse" );
     mesh->LoadTexture( "BlockNormal" );
@@ -62,7 +62,7 @@ CrLevel::CrLevel()
     if ( !mesh ) return;
 
     mesh->LoadVertexShader( "NormalMap" );
-    mesh->LoadVertexBuffer( "WoodenSphere_Vertex0" );
+    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
     mesh->LoadPixelShader( "NormalMap" );
     mesh->LoadTexture( "StoneDiffuse" );
     mesh->LoadTexture( "StoneNormal" );

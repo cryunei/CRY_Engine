@@ -29,10 +29,21 @@ public:
     virtual void Release() override;
 
     // Create texture
-    void CreateTexture( const std::string& TexturePath, DXGI_FORMAT Format, UINT Width, UINT Height, UINT SamplingCount );
+    void CreateTexture( DXGI_FORMAT Format, UINT Width, UINT Height, UINT SamplingCount );
+
+    // Create sampler
+    void CreateSampler();
+
+    // Create shader resource view
+    void CreateSRV();
+
+    // Load from file
+    void LoadFromFile( const std::string& TexturePath ); 
 
     // Set to render state 
     virtual bool SetRenderState( int InRegisterIndex ) const override;
 
-    
+    // Get texture
+    ID3D11Texture2D* GetTexture() const { return Texture2DComPtr.Get(); }
+    ID3D11Texture2D** GetTextureAddress() { return Texture2DComPtr.GetAddressOf(); }    
 };

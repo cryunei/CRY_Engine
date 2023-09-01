@@ -16,20 +16,20 @@ Dx11ResourceManager* GetDx11ResourceManager() { return &G_Dx11ResourceManager; }
 //=====================================================================================================================
 Dx11IndexBuffer* Dx11ResourceManager::CreateIndexBuffer( const std::string& AssetName )
 {
-    return CreateIndexBuffer( GetAssetManager()->GetIndexBuffer( AssetName ) );   
+    return CreateIndexBuffer( GetAssetManager()->GetPrimitive( AssetName ) );   
 }
 
 //=====================================================================================================================
 // @brief	Create index buffer
 //=====================================================================================================================
-Dx11IndexBuffer* Dx11ResourceManager::CreateIndexBuffer( const CrIndexBuffer* AssetPtr )
+Dx11IndexBuffer* Dx11ResourceManager::CreateIndexBuffer( const CrPrimitive* AssetPtr )
 {
     if ( !AssetPtr ) return nullptr;
 
     Dx11IndexBuffer* dxIB = _create< Dx11IndexBuffer >( AssetPtr->GetName(), IndexBuffers );
     if ( !dxIB ) return nullptr;
 
-    dxIB->CreateBuffer( AssetPtr->GetIndices(), AssetPtr->GetUsage(), AssetPtr->GetCpuAccessFlag() );
+    dxIB->CreateBuffer( AssetPtr->GetIndices(), AssetPtr->GetDx11Usage(), AssetPtr->GetDx11CpuAccessFlag() );
 
     IndexBuffers[ AssetPtr->GetName() ] = dxIB;
 
@@ -102,14 +102,23 @@ Dx11Texture2D* Dx11ResourceManager::CreateTexture2D( const CrTexture2D* AssetPtr
 {
     if ( !AssetPtr ) return nullptr;
 
-    Dx11Texture2D* dxTex = _create< Dx11Texture2D >( AssetPtr->GetName(), Texture2Ds );
+    Dx11Texture2D* dxTex = CreateEmptyTexture2D( AssetPtr->GetName() );
     if ( !dxTex ) return nullptr;
 
-    dxTex->CreateTexture( AssetPtr->GetPath(), AssetPtr->GetFormat(), AssetPtr->GetWidth(), AssetPtr->GetHeight(), AssetPtr->GetSamplingCount() );
+    dxTex->CreateTexture( AssetPtr->GetFormat(), AssetPtr->GetWidth(), AssetPtr->GetHeight(), AssetPtr->GetSamplingCount() );
+    dxTex->LoadFromFile( AssetPtr->GetPath() );
 
     Texture2Ds[ AssetPtr->GetName() ] = dxTex;
 
     return dxTex;
+}
+
+//=====================================================================================================================
+// @brief	Create empty texture
+//=====================================================================================================================
+Dx11Texture2D* Dx11ResourceManager::CreateEmptyTexture2D( const std::string& AssetName )
+{
+    return _create< Dx11Texture2D >( AssetName, Texture2Ds );
 }
 
 //=====================================================================================================================
@@ -130,10 +139,18 @@ Dx11ResourceRenderer* Dx11ResourceManager::CreateResourceRenderer_Texture2D( con
     Dx11Texture2D* dxTex = CreateTexture2D( AssetPtr );
     if ( !dxTex ) return nullptr;
 
-    Dx11ResourceRenderer* dxRR = GetResourceRenderer_Texture2D( dxTex, Idx );
+    return CreateResourceRenderer_Texture2D( dxTex, Idx );
+}
+
+ //=====================================================================================================================
+// @brief	Create resource renderer
+//=====================================================================================================================
+Dx11ResourceRenderer* Dx11ResourceManager::CreateResourceRenderer_Texture2D( const Dx11Texture2D* TexturePtr, int Idx )
+{
+    Dx11ResourceRenderer* dxRR = GetResourceRenderer_Texture2D( TexturePtr, Idx );
     if ( !dxRR )
     {
-        dxRR = new Dx11ResourceRenderer( dxTex, Idx );
+        dxRR = new Dx11ResourceRenderer( TexturePtr, Idx );
         ResourceRenderers.push_back( dxRR );
     }
 

@@ -1,4 +1,5 @@
 ﻿#include "Dx11LevelLoader.h"
+#include "../Dx11.h"
 #include "../Asset/CrMesh.h"
 #include "../Core/Dx11Texture2D.h"
 #include "../Core/Dx11ResourceManager.h"
@@ -15,18 +16,18 @@ void Dx11LevelLoader::Load( CrLevel& InLevel )
     int i = 0;
     for ( const CrMesh* crMesh : InLevel.GetMeshes() )
     {
-        Dx11IndexBuffer*  ib = GetDx11ResourceManager()->CreateIndexBuffer ( crMesh->GetIndexBuffer () );
+        Dx11IndexBuffer*  ib = GetDx11ResourceManager()->CreateIndexBuffer ( crMesh->GetPrimitve    () );
         Dx11VertexShader* vs = GetDx11ResourceManager()->CreateVertexShader( crMesh->GetVertexShader() );
         Dx11PixelShader*  ps = GetDx11ResourceManager()->CreatePixelShader ( crMesh->GetPixelShader () );
 
         Dx11VertexBuffer* vb = nullptr;
         if ( crMesh->GetVertexShader()->GetName().find( "Normal" ) != std::string::npos )
         {
-            vb = GetDx11ResourceManager()->CreateVertexBuffer< Vertex_NormalMap >( crMesh->GetVertexBuffer() );
+            vb = GetDx11ResourceManager()->CreateVertexBuffer< Vertex_NormalMap >( crMesh->GetPrimitve() );
         }
         else
         {
-            vb = GetDx11ResourceManager()->CreateVertexBuffer< Vertex_Diffuse >( crMesh->GetVertexBuffer() );            
+            vb = GetDx11ResourceManager()->CreateVertexBuffer< Vertex_Diffuse >( crMesh->GetPrimitve() );            
         }        
 
         Dx11Mesh* dxMesh =new Dx11Mesh();
@@ -49,6 +50,30 @@ void Dx11LevelLoader::Load( CrLevel& InLevel )
         dxMesh->GetTransform().SetLocationY( -4.f + 8.f * ( ( i ) / 3 ) );
         ++i;
     }
+    TestMesh = new Dx11Mesh();
+    *TestMesh = *Meshes[ 0 ];
+    TestMesh->GetTransform().SetLocation( 0.f, 0.f, 0.f );
+
+    TestRT = new Dx11Mesh();
+    Dx11VertexBuffer* vb = GetDx11ResourceManager()->CreateVertexBuffer< Vertex_Diffuse >( "Plane" );
+    Dx11IndexBuffer*  ib = GetDx11ResourceManager()->CreateIndexBuffer ( "Plane" );
+
+    Dx11VertexShader* vs = GetDx11ResourceManager()->CreateVertexShader( "DefaultDiffuse" );
+    Dx11PixelShader*  ps = GetDx11ResourceManager()->CreatePixelShader ( "DefaultDiffuse" );
+
+    TestRT->InitializePrimitive( vb, ib );
+    TestRT->InitializeMaterial( vs, ps );
+
+    std::vector< Dx11ResourceRenderer* > dxRRs;
+    dxRRs.push_back( GetDx11ResourceManager()->CreateResourceRenderer_Texture2D( G_Dx11Renderer.GetRenderTarget( "TestRT" )->GetTexture2D(), 0 ) );
+
+    TestRT->InitializeTexture2Ds( dxRRs );
+
+    TestRT->GetTransform().SetLocationX( -8.f + 8.f * ( Meshes.size() % 3 ) );
+    TestRT->GetTransform().SetLocationY( -4.f + 8.f * ( Meshes.size() / 3 ) );
+    TestRT->GetTransform().SetScale( 4.f, 4.f, 1.f );
+
+    
 }
 
 //=====================================================================================================================
@@ -56,9 +81,15 @@ void Dx11LevelLoader::Load( CrLevel& InLevel )
 //=====================================================================================================================
 void Dx11LevelLoader::AddRenderMeshes( Dx11Renderer& InRenderer ) const
 {
-    for ( Dx11Mesh* dxMesh : Meshes )
+    auto itr = Meshes.begin();
+
+    for ( ; itr != Meshes.end(); ++itr )
     {
-        InRenderer.AddMeshRenderElement( dxMesh );
+        InRenderer.AddMeshRenderElement( *itr );
     }
+
+    InRenderer.AddMeshRenderElement( TestMesh, "TestRT" );
+    
+    InRenderer.AddMeshRenderElement( TestRT );
     InRenderer.SortRenderQueue();
 }

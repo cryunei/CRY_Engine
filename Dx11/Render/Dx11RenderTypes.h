@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 
-#include "Dx11MeshRenderer.h"
+#include "Dx11MeshRenderElement.h"
 #include <vector>
 
 
@@ -15,7 +15,7 @@ class Dx11Mesh;
 struct MeshRenderElement
 {
     const Dx11Mesh*  MeshPtr;
-    Dx11MeshRenderer Renderer;
+    Dx11MeshRenderElement Renderer;
 
     // Construct
     MeshRenderElement( const Dx11Mesh* InMeshPtr, const WorldMatrixBuffer* InWorldBufferPtr )

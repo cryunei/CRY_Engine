@@ -1,8 +1,7 @@
 ﻿#pragma once
 
-
+#include "Dx11Texture2D.h"
 #include "../Asset/CrAssetManager.h"
-#include "../DxTypes.h"
 #include "Dx11VertexBuffer.h"
 #include <map>
 
@@ -13,7 +12,7 @@ class CrTexture2D;
 class CrPixelShader;
 class CrVertexShader;
 class CrIndexBuffer;
-class CrVertexBuffer;
+class CrPrimitive;
 class Dx11Texture2D;
 class Dx11PixelShader;
 class Dx11IndexBuffer;
@@ -51,11 +50,11 @@ public:
     template < typename T >
     Dx11VertexBuffer* CreateVertexBuffer( const std::string& AssetName );
     template < typename T >
-    Dx11VertexBuffer* CreateVertexBuffer( const CrVertexBuffer* AssetPtr );
+    Dx11VertexBuffer* CreateVertexBuffer( const CrPrimitive* AssetPtr );
 
     // Create index buffer
     Dx11IndexBuffer* CreateIndexBuffer( const std::string& AssetName );
-    Dx11IndexBuffer* CreateIndexBuffer( const CrIndexBuffer* AssetPtr );
+    Dx11IndexBuffer* CreateIndexBuffer( const CrPrimitive* AssetPtr );
 
     // Create vertex shader
     Dx11VertexShader* CreateVertexShader( const std::string& AssetName );
@@ -69,9 +68,13 @@ public:
     Dx11Texture2D* CreateTexture2D( const std::string& AssetName );
     Dx11Texture2D* CreateTexture2D( const CrTexture2D* AssetPtr );
 
+    // Create empty texture
+    Dx11Texture2D* CreateEmptyTexture2D( const std::string& AssetName );
+
     // Create resource renderer
     Dx11ResourceRenderer* CreateResourceRenderer_Texture2D( const std::string& AssetName, int Idx );
     Dx11ResourceRenderer* CreateResourceRenderer_Texture2D( const CrTexture2D* AssetPtr, int Idx );
+    Dx11ResourceRenderer* CreateResourceRenderer_Texture2D( const Dx11Texture2D* TexturePtr, int Idx );
 
     // Get vertex buffer
     Dx11VertexBuffer* GetVertexBuffer( const std::string& AssetName ) { return _get< Dx11VertexBuffer >( AssetName, VertexBuffers ); }
@@ -141,14 +144,14 @@ T* Dx11ResourceManager::_get( const std::string& Name, std::map<std::string, T*>
 template < typename T >
 Dx11VertexBuffer* Dx11ResourceManager::CreateVertexBuffer( const std::string& AssetName )
 {
-    return CreateVertexBuffer< T >( GetAssetManager()->GetVertexBuffer( AssetName ) );    
+    return CreateVertexBuffer< T >( GetAssetManager()->GetPrimitive( AssetName ) );    
 }
 
 //=====================================================================================================================
 // @brief	Create vertex buffer
 //=====================================================================================================================
 template < typename T >
-Dx11VertexBuffer* Dx11ResourceManager::CreateVertexBuffer( const CrVertexBuffer* AssetPtr )
+Dx11VertexBuffer* Dx11ResourceManager::CreateVertexBuffer( const CrPrimitive* AssetPtr )
 {
     if ( !AssetPtr ) return nullptr;
 

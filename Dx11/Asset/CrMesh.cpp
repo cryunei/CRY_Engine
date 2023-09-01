@@ -7,7 +7,7 @@
 //=====================================================================================================================
 CrMesh::CrMesh()
 : VertexShaderPtr ( nullptr )
-, VertexBufferPtr ( nullptr )
+, PrimitivePtr    ( nullptr )
 , IndexBufferPtr  ( nullptr )
 , PixelShaderPtr  ( nullptr )
 {
@@ -22,19 +22,11 @@ void CrMesh::LoadVertexShader( const std::string& Name )
 }
 
 //=====================================================================================================================
-// @brief	Load vertex buffer
+// @brief	Load primitive
 //=====================================================================================================================
-void CrMesh::LoadVertexBuffer( const std::string& Name )
+void CrMesh::LoadPrimitive( const std::string& Name )
 {
-    VertexBufferPtr = GetAssetManager()->CreateVertexBuffer( Name );
-}
-
-//=====================================================================================================================
-// @brief	Load index buffer
-//=====================================================================================================================
-void CrMesh::LoadIndexBuffer( const std::string& Name )
-{
-    IndexBufferPtr = GetAssetManager()->CreateIndexBuffer( Name );
+    PrimitivePtr = GetAssetManager()->CreatePrimitive( Name );
 }
 
 //=====================================================================================================================

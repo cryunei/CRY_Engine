@@ -1,11 +1,10 @@
-﻿#include "CrIndexBuffer.h"
-
+﻿#pragma once
+#include "../Core/IDxRenderElement.h"
 
 //=====================================================================================================================
-// @brief	Contructor
+// @brief	Dx11RenderElement
 //=====================================================================================================================
-CrIndexBuffer::CrIndexBuffer()
-: Usage         ( D3D11_USAGE_DYNAMIC )
-, CpuAccessFlag ( D3D11_CPU_ACCESS_WRITE )
+class Dx11RenderElement : public IDxRenderElement
 {
-}
+public:    
+};

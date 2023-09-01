@@ -12,7 +12,16 @@
 // @brief	Construct
 //=====================================================================================================================
 Dx11RenderQueue::Dx11RenderQueue()
+: CameraPtr ( nullptr )
 {
+}
+
+//=====================================================================================================================
+// @brief	Initialize
+//=====================================================================================================================
+void Dx11RenderQueue::Initialize( unsigned int Width, unsigned int Height )
+{
+    RenderTarget.Initialize( Width, Height );
 }
 
 //=====================================================================================================================
@@ -121,7 +130,12 @@ void Dx11RenderQueue::Sort()
 // @brief	Render
 //=====================================================================================================================
 void Dx11RenderQueue::Render() const
-{
+{    
+    float color[ 4 ] = { 0.0f, 0.2f, 0.4f, 1.0f };
+
+    RenderTarget.Clear( color );
+    RenderTarget.SetRenderTarget();
+
     for ( const IDxRenderElement* renderElement : RenderElements )
     {
         renderElement->OnRender();

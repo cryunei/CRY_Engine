@@ -122,13 +122,15 @@ BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
 
     G_Dx11Device.Create( hWnd );
 
-    LoadAssets();
-
     G_Dx11Renderer.Initialize( width, height );
+    G_Dx11Renderer.AddRenderTarget( "TestRT", 1024, 1024, DXGI_FORMAT_R8G8B8A8_UNORM );
+
     GetGuiManager()->Initialize( hWnd );
 
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow( hWnd );
+
+    LoadAssets();
 
     return TRUE;
 }
@@ -199,6 +201,8 @@ INT_PTR CALLBACK About( HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam )
 //=====================================================================================================================
 void LoadAssets()
 {
+    CrPrimitive::InitializeStaticPrimitives();
+
     FbxImportHelper fbxImporter;
     fbxImporter.LoadAll( "../Asset/Fbx/wooden_sphere.fbx", "WoodenSphere" );
     fbxImporter.LoadAll( "../Asset/Fbx/Lowpoly_tree_sample.fbx", "Tree" );

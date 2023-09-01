@@ -1,6 +1,6 @@
 ﻿#include "FbxImportHelper.h"
 #include "../Asset/CrAssetManager.h"
-#include "../Asset/CrVertexBuffer.h"
+#include "../Asset/CrPrimitive.h"
 #include "../Render/Dx11VertexStructure.h"
 
 
@@ -81,13 +81,12 @@ bool FbxImportHelper::LoadAll( const std::string& FilePath, const std::string& A
         FbxMesh* fbxMesh = fbxMeshNode->GetMesh();
         if ( !fbxMesh ) continue;
 
-        CrVertexBuffer* vb = GetAssetManager()->CreateVertexBuffer( AssetName + "_Vertex" + std::to_string( i ) );
-        if ( !vb ) break;
+        CrPrimitive* primitive = GetAssetManager()->CreatePrimitive( AssetName + "_Primitive" + std::to_string( i ) );
+        if ( !primitive ) break;
 
         int vertexCount = _getVertexCount( fbxMesh );
-        vb->Locations.reserve( vertexCount );
-        vb->UVs      .reserve( vertexCount );
-        vb->Normals  .reserve( vertexCount );
+
+        primitive->Reserve( vertexCount );
 
         Vector3 location[ 3 ];
         Vector3 normal  [ 3 ];
@@ -95,20 +94,20 @@ bool FbxImportHelper::LoadAll( const std::string& FilePath, const std::string& A
         Vector3 binormal[ 3 ];
         Vector2 uv      [ 3 ];
 
-        auto ftrAddElements = [ this, &fbxMesh, &vb, &location, &normal, &tangent, &binormal, &uv ] ( int p, const int (&polygonIdx)[ 3 ] )
+        auto ftrAddElements = [ this, &fbxMesh, &primitive, &location, &normal, &tangent, &binormal, &uv ] ( int p, const int (&polygonIdx)[ 3 ] )
         {
             _getLocation( fbxMesh, p, polygonIdx, location );
             _getUV      ( fbxMesh, p, polygonIdx, uv       );
             _getNormal  ( fbxMesh, p, polygonIdx, normal   );
 
-            vb->Locations.insert( vb->Locations.end(), location, location + 3 );
-            vb->UVs      .insert( vb->UVs      .end(), uv,       uv       + 3 );
-            vb->Normals  .insert( vb->Normals  .end(), normal,   normal   + 3 );
+            primitive->Locations.insert( primitive->Locations.end(), location, location + 3 );
+            primitive->UVs      .insert( primitive->UVs      .end(), uv,       uv       + 3 );
+            primitive->Normals  .insert( primitive->Normals  .end(), normal,   normal   + 3 );
 
             _getTangentAndBitangents( location, uv, tangent, binormal );
 
-            vb->Tangents .insert( vb->Tangents .end(), tangent , tangent  + 3 );
-            vb->Bitangents.insert( vb->Bitangents.end(), binormal, binormal + 3 );
+            primitive->Tangents .insert( primitive->Tangents .end(), tangent , tangent  + 3 );
+            primitive->Bitangents.insert( primitive->Bitangents.end(), binormal, binormal + 3 );
         };
 
         // Process each polygon
