@@ -137,6 +137,7 @@
     <ClInclude Include="Actor\Light\CrDirectionalLight.h" />
     <ClInclude Include="Asset\CrAsset.h" />
     <ClInclude Include="Asset\CrAssetManager.h" />
+    <ClInclude Include="Asset\CrAssetTypes.h" />
     <ClInclude Include="Asset\CrMesh.h" />
     <ClInclude Include="Asset\CrPixelShader.h" />
     <ClInclude Include="Asset\CrTexture2D.h" />
@@ -145,12 +146,13 @@
     <ClInclude Include="Core\Dx11Buffer.h" />
     <ClInclude Include="Core\Dx11ConstantBuffer.h" />
     <ClInclude Include="Core\Dx11CoreTypes.h" />
+    <ClInclude Include="Core\Dx11DepthStencilBuffer.h" />
     <ClInclude Include="Core\Dx11Device.h" />
     <ClInclude Include="Core\Dx11IndexBuffer.h" />
     <ClInclude Include="Core\Dx11Object.h" />
     <ClInclude Include="Core\Dx11PixelShader.h" />
     <ClInclude Include="Core\Dx11RenderTarget.h" />
-    <ClInclude Include="Core\Dx11ResourceManager.h" />
+    <ClInclude Include="Core\Dx11ObjectManager.h" />
     <ClInclude Include="Core\Dx11Shader.h" />
     <ClInclude Include="Core\Dx11Texture2D.h" />
     <ClInclude Include="Core\Dx11VertexBuffer.h" />
@@ -184,7 +186,7 @@
     <ClInclude Include="Render\Dx11RenderQueue.h" />
     <ClInclude Include="Render\Dx11RenderTypes.h" />
     <ClInclude Include="Render\Dx11ResourceRenderer.h" />
-    <ClInclude Include="Render\Dx11VertexStructure.h" />
+    <ClInclude Include="Render\Dx11VertexBufferDescriptor.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="GUI\DevTestUI.h" />
@@ -276,12 +278,13 @@
     <ClCompile Include="Asset\CrVertexShader.cpp" />
     <ClCompile Include="Core\Dx11Buffer.cpp" />
     <ClCompile Include="Core\Dx11ConstantBuffer.cpp" />
+    <ClCompile Include="Core\Dx11DepthStencilBuffer.cpp" />
     <ClCompile Include="Core\Dx11Device.cpp" />
     <ClCompile Include="Core\Dx11IndexBuffer.cpp" />
     <ClCompile Include="Core\Dx11Object.cpp" />
     <ClCompile Include="Core\Dx11PixelShader.cpp" />
     <ClCompile Include="Core\Dx11RenderTarget.cpp" />
-    <ClCompile Include="Core\Dx11ResourceManager.cpp" />
+    <ClCompile Include="Core\Dx11ObjectManager.cpp" />
     <ClCompile Include="Core\Dx11Shader.cpp" />
     <ClCompile Include="Core\Dx11Texture2D.cpp" />
     <ClCompile Include="Core\Dx11VertexBuffer.cpp">

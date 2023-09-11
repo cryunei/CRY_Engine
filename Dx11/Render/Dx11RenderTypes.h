@@ -2,6 +2,7 @@
 
 
 #include "Dx11MeshRenderElement.h"
+#include "DirectXTK/Inc/BufferHelpers.h"
 #include <vector>
 
 
@@ -18,7 +19,7 @@ struct MeshRenderElement
     Dx11MeshRenderElement Renderer;
 
     // Construct
-    MeshRenderElement( const Dx11Mesh* InMeshPtr, const WorldMatrixBuffer* InWorldBufferPtr )
+    MeshRenderElement( const Dx11Mesh* InMeshPtr, const Dx11ConstantBuffer* InWorldBufferPtr )
     : MeshPtr( InMeshPtr )
     , Renderer( InMeshPtr, InWorldBufferPtr )
     {}

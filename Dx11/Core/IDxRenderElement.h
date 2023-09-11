@@ -31,6 +31,9 @@ public:
     // Get render count
     int GetRenderCount() const { return RenderCount; }
 
+    // Pre render
+    virtual void PreRender() const {}
+
     // On render 
-    virtual void OnRender() const = 0;
+    virtual void OnRender() const {}
 };

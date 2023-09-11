@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-
+#include "Dx11DepthStencilBuffer.h"
 #include "Dx11Object.h"
 #include "Dx11Texture2D.h"
 #include "../DxTypes.h"
@@ -18,10 +18,10 @@ class Dx11RenderTarget : public Dx11Object
 
 private:
     Dx11Texture2D* Texture2DPtr;
+    Dx11DepthStencilBuffer* DepthStencilBufferPtr;
     D3D11_VIEWPORT Viewport;
 
-    ComPtr< ID3D11RenderTargetView   > RenderTargetViewComPtr;
-    ComPtr< ID3D11ShaderResourceView > ShaderResourceViewComPtr;
+    ComPtr< ID3D11RenderTargetView > RenderTargetViewComPtr;
 
 public:
     // Construct
@@ -47,6 +47,7 @@ public:
     const D3D11_VIEWPORT& GetViewport() const { return Viewport; }
 
 private:
+
     // Set viewport
-    void _SetViewport( unsigned int Width, unsigned int Height );
+    void _setViewport( unsigned int Width, unsigned int Height );
 };

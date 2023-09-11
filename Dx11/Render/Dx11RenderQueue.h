@@ -4,7 +4,9 @@
 #include "Dx11RenderTypes.h"
 #include "../Core/Dx11RenderTarget.h"
 
+
 class CrCamera;
+class Dx11ConstantBuffer;
 class Dx11Mesh;
 class IDxRenderElement;
 class IDxRenderQueueCandidate;
@@ -32,7 +34,7 @@ public:
     void SetCamera( CrCamera* InCameraPtr ) { CameraPtr = InCameraPtr; }
 
     // Add
-    bool Add( const Dx11Mesh* MeshePtr, const WorldMatrixBuffer* WorldBufferPtr );
+    bool Add( const Dx11Mesh* MeshePtr, const Dx11ConstantBuffer* WorldBufferPtr );
 
     // Clear
     void Clear();
@@ -46,7 +48,7 @@ public:
     // Getter
     Dx11RenderTarget* GetRenderTarget() { return &RenderTarget; }
     CrCamera* GetCamera() const { return CameraPtr; }
-    unsigned int GetViewportWidth() const { return RenderTarget.GetViewport().Width; }
-    unsigned int GetViewportHeight() const { return RenderTarget.GetViewport().Height; }
+    unsigned int GetViewportWidth() const { return (unsigned int)( RenderTarget.GetViewport().Width ); }
+    unsigned int GetViewportHeight() const { return (unsigned int)( RenderTarget.GetViewport().Height ); }
 
 };

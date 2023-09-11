@@ -22,13 +22,13 @@ private:
 	float ViewportWidth;
 	float ViewportHeight;
 
-	WorldMatrixBuffer        WorldBuffer;
-	ViewProjMatrixBuffer     ViewProjBuffer;
-	CameraPropertyBuffer     CameraBuffer;
-	LightPropertyBuffer      LightBuffer;
-	SpecularPropertyBuffer   SpecularBuffer;
-	PointLightLocationBuffer LightLocationBuffer;
-	PointLightColorBuffer    LightColorBuffer;
+	Dx11ConstantBuffer* WorldBuffer;
+	Dx11ConstantBuffer* ViewProjBuffer;
+	Dx11ConstantBuffer* CameraBuffer;
+	Dx11ConstantBuffer* LightBuffer;
+	Dx11ConstantBuffer* SpecularBuffer;
+	Dx11ConstantBuffer* LightLocationBuffer;
+	Dx11ConstantBuffer* LightColorBuffer;
 
 	std::map< std::string, Dx11RenderQueue > RenderQueues;
 	Dx11RenderQueue RenderQueueScreen; 

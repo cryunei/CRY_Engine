@@ -1,7 +1,7 @@
 ﻿#include "FbxImportHelper.h"
 #include "../Asset/CrAssetManager.h"
 #include "../Asset/CrPrimitive.h"
-#include "../Render/Dx11VertexStructure.h"
+#include "..\Render\Dx11VertexBufferDescriptor.h"
 
 
 //=================================================================================================
@@ -81,7 +81,7 @@ bool FbxImportHelper::LoadAll( const std::string& FilePath, const std::string& A
         FbxMesh* fbxMesh = fbxMeshNode->GetMesh();
         if ( !fbxMesh ) continue;
 
-        CrPrimitive* primitive = GetAssetManager()->CreatePrimitive( AssetName + "_Primitive" + std::to_string( i ) );
+        CrPrimitive* primitive = GetAssetManager()->Get< CrPrimitive >( ECrAssetType::Primitive, AssetName + "_Primitive" + std::to_string( i ) );
         if ( !primitive ) break;
 
         int vertexCount = _getVertexCount( fbxMesh );

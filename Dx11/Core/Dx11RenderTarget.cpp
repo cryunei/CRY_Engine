@@ -1,6 +1,7 @@
 ﻿#include "Dx11RenderTarget.h"
 #include "Dx11Device.h"
-#include "Dx11ResourceManager.h"
+#include "Dx11ObjectManager.h"
+
 
 //=====================================================================================================================
 // @brief	Initialize
@@ -9,15 +10,17 @@ void Dx11RenderTarget::Initialize( unsigned int Width, unsigned int Height )
 {
     Release();
 
-    _SetViewport( Width, Height );
+    _setViewport( Width, Height );
 
-    Texture2DPtr = GetDx11ResourceManager()->CreateEmptyTexture2D( "ScreenBuffer" );
+    Texture2DPtr = GetDx11ObjectManager()->Get< Dx11Texture2D >( EDx11ResourceType::Texture2D, "ScreenBuffer" );
     if ( !Texture2DPtr ) return;
 
     GetSwapChain()->GetBuffer( 0, __uuidof( ID3D11Texture2D ), ( LPVOID* )Texture2DPtr->GetTextureAddress() );
     if ( !Texture2DPtr->GetTexture() ) return;
 
     GetDx11Device()->CreateRenderTargetView( Texture2DPtr->GetTexture(), nullptr, RenderTargetViewComPtr.GetAddressOf() );
+
+    DepthStencilBufferPtr = GetDx11ObjectManager()->Get< Dx11DepthStencilBuffer >( EDx11ResourceType::DepthStencilBuffer, "ScreenBuffer" );
 }
 
 //=====================================================================================================================
@@ -27,9 +30,9 @@ void Dx11RenderTarget::Initialize( const std::string& Name, unsigned int Width, 
 {
     Release();
 
-    _SetViewport( Width, Height );
+    _setViewport( Width, Height );
 
-    Texture2DPtr = GetDx11ResourceManager()->CreateEmptyTexture2D( Name );
+    Texture2DPtr = GetDx11ObjectManager()->Get< Dx11Texture2D >( EDx11ResourceType::Texture2D, Name );
     if ( !Texture2DPtr ) return;
 
     Texture2DPtr->CreateTexture( Format, Width, Height, 1 );
@@ -44,6 +47,9 @@ void Dx11RenderTarget::Initialize( const std::string& Name, unsigned int Width, 
     GetDx11Device()->CreateRenderTargetView( Texture2DPtr->GetTexture(), &rtvd, RenderTargetViewComPtr.GetAddressOf() );
 
     Texture2DPtr->CreateSRV();
+
+    DepthStencilBufferPtr = GetDx11ObjectManager()->Get< Dx11DepthStencilBuffer >( EDx11ResourceType::DepthStencilBuffer, Name );
+    DepthStencilBufferPtr->Create( Width, Height );
 }
 
 //=====================================================================================================================
@@ -52,6 +58,7 @@ void Dx11RenderTarget::Initialize( const std::string& Name, unsigned int Width, 
 void Dx11RenderTarget::Clear( float Color[4] ) const
 {
     GetDx11DeviceContext()->ClearRenderTargetView( RenderTargetViewComPtr.Get(), Color );
+    DepthStencilBufferPtr->PreRender();
 }
 
 //=====================================================================================================================
@@ -59,8 +66,10 @@ void Dx11RenderTarget::Clear( float Color[4] ) const
 //=====================================================================================================================
 void Dx11RenderTarget::SetRenderTarget() const
 {
-    GetDx11DeviceContext()->OMSetRenderTargets( 1, RenderTargetViewComPtr.GetAddressOf(), nullptr );
     GetDx11DeviceContext()->RSSetViewports( 1, &Viewport );
+    GetDx11DeviceContext()->OMSetRenderTargets( 1, RenderTargetViewComPtr.GetAddressOf(), DepthStencilBufferPtr->GetView() );
+
+    DepthStencilBufferPtr->OnRender();
 }
 
 //=====================================================================================================================
@@ -74,12 +83,14 @@ void Dx11RenderTarget::Release()
 //=====================================================================================================================
 // @brief	Set viewport
 //=====================================================================================================================
-void Dx11RenderTarget::_SetViewport( unsigned Width, unsigned Height )
+void Dx11RenderTarget::_setViewport( unsigned Width, unsigned Height )
 {
     ZeroMemory( &Viewport, sizeof( D3D11_VIEWPORT ) );
 
     Viewport.TopLeftX = 0;
     Viewport.TopLeftY = 0;
+    Viewport.MinDepth = 0.f;
+    Viewport.MaxDepth = 1.f;
     Viewport.Width  = (float)( Width );
     Viewport.Height = (float)( Height );
 }

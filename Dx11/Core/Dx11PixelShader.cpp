@@ -1,6 +1,6 @@
 ﻿#include "Dx11PixelShader.h"
 #include "Dx11Device.h"
-
+#include "../Asset/CrPixelShader.h"
 
 //=====================================================================================================================
 // @brief	Create shader
@@ -25,6 +25,20 @@ void Dx11PixelShader::Release()
     Dx11Shader::Release();
 
     ShaderComPtr.Reset();
+}
+
+//=====================================================================================================================
+// @brief	Create from
+//=====================================================================================================================
+bool Dx11PixelShader::CreateFrom( const CrAsset* Asset )
+{
+    if ( !Asset ) return false;
+
+    const auto* crPS = ( const CrPixelShader*)( Asset );
+
+    CreateShader( crPS->GetFileName(), crPS->GetEntryPoint(), crPS->GetShaderModel() );
+
+    return true;
 }
 
 //=====================================================================================================================

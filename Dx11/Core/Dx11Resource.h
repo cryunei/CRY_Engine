@@ -4,6 +4,9 @@
 #include "Dx11Object.h"
 
 
+class CrAsset;
+
+
 //=====================================================================================================================
 // @brief	Dx11Resource
 //=====================================================================================================================
@@ -16,5 +19,5 @@ public:
     Dx11Resource() = default;
 
     // Set render state
-    virtual bool SetRenderState( int InRegisterIndex ) const = 0;
+    virtual bool SetRenderState( int InRegisterIndex ) const { return true; }
 };

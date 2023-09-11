@@ -1,14 +1,12 @@
 ﻿#pragma once
 
-
-#include "CrIndexBuffer.h"
-#include "CrMesh.h"
-#include "CrPrimitive.h"
-#include "CrVertexShader.h"
-#include "CrPixelShader.h"
-#include "CrTexture2D.h"
+#include "CrAssetTypes.h"
 #include <map>
+#include <vector>
 #include <string>
+
+
+class CrAsset;
 
 
 //=====================================================================================================================
@@ -16,89 +14,66 @@
 //=====================================================================================================================
 class CrAssetManager
 {
+public:
+    using TAssetMap = std::map< std::string, CrAsset* >;
+    using TAssetMapVector = std::vector< TAssetMap >;
+
 private:
-    std::map< std::string, CrPrimitive* >    Primitives;
-    std::map< std::string, CrVertexShader* > VertexShaders;
-    std::map< std::string, CrPixelShader*  > PixelShaders;
-    std::map< std::string, CrTexture2D*    > Texture2Ds;
-    std::map< std::string, CrMesh*         > Meshes;
+    TAssetMapVector Assets;
 
 public:
     // Contructor
-    CrAssetManager() = default;
+    CrAssetManager();
 
     // Destructor
     ~CrAssetManager() = default;
 
-    // Create primitive
-    CrPrimitive* CreatePrimitive( const std::string& Name ) { return _createAsset< CrPrimitive >( Name, Primitives );}
-
-    // Get primitive
-    CrPrimitive* GetPrimitive( const std::string& Name ) { return _getAsset< CrPrimitive >( Name, Primitives ); }
-
-    // Create vertex shader
-    CrVertexShader* CreateVertexShader( const std::string& Name ) { return _createAsset< CrVertexShader >( Name, VertexShaders ); }
-
-    // Get vertex shader
-    CrVertexShader* GetVertexShader( const std::string& Name ) { return _getAsset< CrVertexShader >( Name, VertexShaders ); }
-
-    // Create pixel shader
-    CrPixelShader* CreatePixelShader( const std::string& Name ) { return _createAsset< CrPixelShader >( Name, PixelShaders ); }
-
-    // Get pixel shader
-    CrPixelShader* GetPixelShader( const std::string& Name ) { return _getAsset< CrPixelShader >( Name, PixelShaders ); }
-
-    // Create texture
-    CrTexture2D* CreateTexture2D( const std::string& Name ) { return _createAsset< CrTexture2D >( Name, Texture2Ds ); }
-
-    // Get texture
-    CrTexture2D* GetTexture2D( const std::string& Name ) { return _getAsset< CrTexture2D >( Name, Texture2Ds ); }
-
-    // Create mesh
-    CrMesh* CreateMesh( const std::string& Name ) { return _createAsset< CrMesh >( Name, Meshes ); }
-
-    // Get mesh
-    CrMesh* GetMesh( const std::string& Name ) { return _getAsset< CrMesh >( Name, Meshes ); }
-
-private:
-    // Create asset
-    template< typename T >
-    T* _createAsset( const std::string& Name, std::map< std::string, T* >& AssetMap );
-
     // Get asset
     template< typename T >
-    T* _getAsset( const std::string& Name, std::map< std::string, T* >& AssetMap ) const;
+    T* Get( ECrAssetType Type, const std::string& Name );
+    CrAsset* Get( ECrAssetType Type, const std::string& Name );
+
+private:
+    // Get asset
+    template< typename T >
+    T* _getAsset( const std::string& Name, TAssetMap& AssetMap ) const;
+
+    // Get map
+    TAssetMap& _getMap( ECrAssetType Type ) { return Assets[ ( int )( Type ) ]; }
 };
 
 
 //=====================================================================================================================
-// @brief	Create asset
+// @brief	Get asset
 //=====================================================================================================================
 template < typename T >
-T* CrAssetManager::_createAsset( const std::string& Name, std::map< std::string, T* >& AssetMap )
+T* CrAssetManager::Get( ECrAssetType Type, const std::string& Name )
 {
-    if ( T* asset = _getAsset( Name, AssetMap ) ) return asset;
-
-    AssetMap[ Name ] = new T();
-    AssetMap[ Name ]->SetName( Name );
-
-    return AssetMap[ Name ];
+    return (T*)( Get( Type, Name ) );
 }
 
 //=====================================================================================================================
 // @brief	Get asset
 //=====================================================================================================================
 template < typename T >
-T* CrAssetManager::_getAsset( const std::string& Name, std::map< std::string, T* >& AssetMap ) const
+T* CrAssetManager::_getAsset( const std::string& Name, TAssetMap& AssetMap ) const
 {
     auto itrFind = AssetMap.find( Name );
 
-    if ( itrFind != AssetMap.end() )
+    T* asset = nullptr;
+    if ( itrFind == AssetMap.end() )
     {
-        return itrFind->second;
+        asset = new T();
+        asset->SetName( Name );
+
+        AssetMap.insert( std::make_pair( Name, asset ) );
+    }
+    else
+    {
+        asset = (T*)( itrFind->second );
     }
 
-    return nullptr;
+    return asset;
 }
 
 //=====================================================================================================================

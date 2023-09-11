@@ -38,7 +38,10 @@ public:
     void CreateSRV();
 
     // Load from file
-    void LoadFromFile( const std::string& TexturePath ); 
+    void LoadFromFile( const std::string& TexturePath );
+
+    // Create from
+    virtual bool CreateFrom( const CrAsset* Asset ) override;
 
     // Set to render state 
     virtual bool SetRenderState( int InRegisterIndex ) const override;

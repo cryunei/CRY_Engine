@@ -1,6 +1,7 @@
 ﻿#include "Dx11RenderQueue.h"
 #include "Dx11Mesh.h"
 #include "Dx11ResourceRenderer.h"
+#include "../Core/Dx11CoreTypes.h"
 #include "../Core/Dx11VertexBuffer.h"
 #include "../Core/Dx11IndexBuffer.h"
 #include "../Core/Dx11VertexShader.h"
@@ -27,7 +28,7 @@ void Dx11RenderQueue::Initialize( unsigned int Width, unsigned int Height )
 //=====================================================================================================================
 // @brief	Add
 //=====================================================================================================================
-bool Dx11RenderQueue::Add( const Dx11Mesh* MeshPtr, const WorldMatrixBuffer* WorldBufferPtr )
+bool Dx11RenderQueue::Add( const Dx11Mesh* MeshPtr, const Dx11ConstantBuffer* WorldBufferPtr )
 {
     if ( !MeshPtr ) return false;
     if ( !MeshPtr->GetMaterial().GetVertexShader() ) return false;
@@ -131,10 +132,10 @@ void Dx11RenderQueue::Sort()
 //=====================================================================================================================
 void Dx11RenderQueue::Render() const
 {    
-    float color[ 4 ] = { 0.0f, 0.2f, 0.4f, 1.0f };
-
-    RenderTarget.Clear( color );
     RenderTarget.SetRenderTarget();
+
+    float color[ 4 ] = { 0.0f, 0.2f, 0.4f, 1.0f };
+    RenderTarget.Clear( color );
 
     for ( const IDxRenderElement* renderElement : RenderElements )
     {

@@ -2,7 +2,7 @@
 
 
 #include "CrAsset.h"
-#include "../Render/Dx11VertexStructure.h"
+#include "../DxTypes.h"
 #include <vector>
 
 
@@ -55,8 +55,4 @@ public:
 
     D3D11_USAGE GetDx11Usage() const { return Dx11Usage; }
     D3D11_CPU_ACCESS_FLAG GetDx11CpuAccessFlag() const { return Dx11CpuAccessFlag; }
-
-    // Get vertices
-    void GetVertices( std::vector< Vertex_Diffuse >& OutVertices ) const;
-    void GetVertices( std::vector< Vertex_NormalMap >& OutVertices ) const;
 };

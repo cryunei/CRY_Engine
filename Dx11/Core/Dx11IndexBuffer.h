@@ -22,6 +22,9 @@ public:
     // Create buffer
     void CreateBuffer( const std::vector< unsigned int >& Indices, D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess );
 
+    // Create From
+    virtual bool CreateFrom( const CrAsset* AssetPtr ) override;
+
     // Set to render state
     virtual bool SetRenderState( int InRegisterIndex ) const override;
 

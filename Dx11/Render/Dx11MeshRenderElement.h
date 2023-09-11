@@ -1,10 +1,10 @@
 ﻿#pragma once
 
 
-#include "Dx11ConstantBufferStructure.h"
 #include "Dx11RenderElement.h"
 
 
+class Dx11ConstantBuffer;
 class Dx11Mesh;
 
 
@@ -15,11 +15,11 @@ class Dx11MeshRenderElement : public Dx11RenderElement
 {
 private:
     const Dx11Mesh* MeshPtr;
-    const WorldMatrixBuffer* WorldBufferPtr;
+    const Dx11ConstantBuffer* WorldBufferPtr;
 
 public:
     // Construct
-    Dx11MeshRenderElement( const Dx11Mesh* InMeshPtr, const WorldMatrixBuffer* InWorldBufferPtr )
+    Dx11MeshRenderElement( const Dx11Mesh* InMeshPtr, const Dx11ConstantBuffer* InWorldBufferPtr )
     : MeshPtr( InMeshPtr )
     , WorldBufferPtr( InWorldBufferPtr )
     {}

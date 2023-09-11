@@ -18,14 +18,15 @@ public:
     // Construct
     Dx11PixelShader() = default;
 
-    // Create shader
-    void CreateShader( const std::string& FileName, const std::string& EntryPoint, const std::string& ShaderModel );
-
     // Release
     virtual void Release() override;
+
+    // Create from
+    virtual bool CreateFrom( const CrAsset* Asset ) override;
 
     // Set shader 
     virtual void SetShader() const override;
 
-    
+    // Create shader
+    void CreateShader( const std::string& FileName, const std::string& EntryPoint, const std::string& ShaderModel );
 };

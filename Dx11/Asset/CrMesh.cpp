@@ -1,15 +1,19 @@
 ﻿#include "CrMesh.h"
 #include "CrAssetManager.h"
-
+#include "CrPixelShader.h"
+#include "CrPrimitive.h"
+#include "CrTexture2D.h"
+#include "CrVertexShader.h"
 
 //=====================================================================================================================
 // @brief	Constructor
 //=====================================================================================================================
 CrMesh::CrMesh()
-: VertexShaderPtr ( nullptr )
-, PrimitivePtr    ( nullptr )
-, IndexBufferPtr  ( nullptr )
-, PixelShaderPtr  ( nullptr )
+: VertexShaderPtr    ( nullptr )
+, PrimitivePtr       ( nullptr )
+, IndexBufferPtr     ( nullptr )
+, PixelShaderPtr     ( nullptr )
+, VertexStructureType( EVertexBufferStructureType::None )
 {
 }
 
@@ -18,7 +22,7 @@ CrMesh::CrMesh()
 //=====================================================================================================================
 void CrMesh::LoadVertexShader( const std::string& Name )
 {
-    VertexShaderPtr = GetAssetManager()->CreateVertexShader( Name );
+    VertexShaderPtr = GetAssetManager()->Get< CrVertexShader >( ECrAssetType::VertexShader, Name );
 }
 
 //=====================================================================================================================
@@ -26,7 +30,7 @@ void CrMesh::LoadVertexShader( const std::string& Name )
 //=====================================================================================================================
 void CrMesh::LoadPrimitive( const std::string& Name )
 {
-    PrimitivePtr = GetAssetManager()->CreatePrimitive( Name );
+    PrimitivePtr = GetAssetManager()->Get< CrPrimitive >( ECrAssetType::Primitive, Name );
 }
 
 //=====================================================================================================================
@@ -34,7 +38,7 @@ void CrMesh::LoadPrimitive( const std::string& Name )
 //=====================================================================================================================
 void CrMesh::LoadPixelShader( const std::string& Name )
 {
-    PixelShaderPtr = GetAssetManager()->CreatePixelShader( Name );
+    PixelShaderPtr = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, Name );
 }
 
 //=====================================================================================================================
@@ -42,5 +46,5 @@ void CrMesh::LoadPixelShader( const std::string& Name )
 //=====================================================================================================================
 void CrMesh::LoadTexture( const std::string& Name )
 {
-    Texture2DPtrs.push_back( GetAssetManager()->CreateTexture2D( Name ) );
+    Texture2DPtrs.push_back( GetAssetManager()->Get< CrTexture2D >( ECrAssetType::Texture2D, Name ) );
 }

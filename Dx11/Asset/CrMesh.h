@@ -2,6 +2,7 @@
 
 
 #include "CrAsset.h"
+#include "..\Render\Dx11VertexBufferDescriptor.h"
 #include <string>
 #include <vector>
 
@@ -25,6 +26,8 @@ private:
     CrPixelShader*  PixelShaderPtr;
 
     std::vector< CrTexture2D* > Texture2DPtrs;
+
+    EVertexBufferStructureType VertexStructureType;
 
 public:
     // Constructor
@@ -51,4 +54,9 @@ public:
     // Texture2D
     const CrTexture2D* GetTexture2D( int Idx ) const { return Texture2DPtrs[ Idx ]; }
     int GetCount_Texture2D() const { return (int)( Texture2DPtrs.size() ); }
+
+    // Vertex structure type
+    EVertexBufferStructureType GetVertexStructureType() const { return VertexStructureType; }
+    void SetVertexStructureType( EVertexBufferStructureType InVertexStructureType ) { VertexStructureType = InVertexStructureType; }
+
 };

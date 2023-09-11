@@ -1,5 +1,6 @@
 ﻿#include "Dx11Texture2D.h"
 #include "Dx11Device.h"
+#include "../Asset/CrTexture2D.h"
 #include "../Util/UtilString.h"
 #include <DirectXTK/Inc/WICTextureLoader.h>
 
@@ -91,6 +92,21 @@ void Dx11Texture2D::LoadFromFile( const std::string& TexturePath )
     CoInitialize( nullptr );
 
     CreateWICTextureFromFile( GetDx11Device(), ToWstring( TexturePath ).c_str(), TextureResourceComPtr.GetAddressOf(), TextureSRVComPtr.GetAddressOf() );
+}
+
+//=====================================================================================================================
+// @brief	Create from
+//=====================================================================================================================
+bool Dx11Texture2D::CreateFrom( const CrAsset* Asset )
+{
+    if ( !Asset ) return false;
+
+    const auto* tex = ( const CrTexture2D* )( Asset );
+
+    CreateTexture( tex->GetFormat(), tex->GetWidth(), tex->GetHeight(), tex->GetSamplingCount() );
+    LoadFromFile( tex->GetPath() );
+
+    return true;
 }
 
 //=====================================================================================================================

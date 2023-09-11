@@ -1,6 +1,7 @@
 ﻿#include "Dx11IndexBuffer.h"
 #include "Dx11ResourceFactory.h"
 #include "../DxMacros.h"
+#include "../Asset/CrPrimitive.h"
 #include "../Core/Dx11Device.h"
 
 
@@ -33,6 +34,20 @@ void Dx11IndexBuffer::CreateBuffer( const std::vector< unsigned int >& Indices, 
     BufferSD.SysMemSlicePitch = 0;
 
     Create( &BufferSD );
+}
+
+//=====================================================================================================================
+// @brief	Create From
+//=====================================================================================================================
+bool Dx11IndexBuffer::CreateFrom( const CrAsset* AssetPtr )
+{
+    if ( !AssetPtr ) return false;
+
+    const auto* primitive = (const CrPrimitive*)( AssetPtr );
+
+    CreateBuffer( primitive->GetIndices(), primitive->GetDx11Usage(), primitive->GetDx11CpuAccessFlag() );
+
+    return true;
 }
 
 //=====================================================================================================================

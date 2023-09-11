@@ -16,7 +16,7 @@ bool Dx11Device::Create( HWND hWnd )
     scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     scd.OutputWindow = hWnd;
-    scd.SampleDesc.Count = 4;
+    scd.SampleDesc.Count = 1;
     scd.Windowed = true;
 
     HRESULT hr = D3D11CreateDeviceAndSwapChain( nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, nullptr, 0, D3D11_SDK_VERSION, &scd, SwapChainComPtr.GetAddressOf(), DeviceComPtr.GetAddressOf(), nullptr, DeviceContextComPtr.GetAddressOf() );

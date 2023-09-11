@@ -2,6 +2,9 @@
 #include "framework.h"
 #include "Asset/CrAssetManager.h"
 #include "Asset/CrVertexShader.h"
+#include "Asset/CrPixelShader.h"
+#include "Asset/CrPrimitive.h"
+#include "Asset/CrTexture2D.h"
 #include "Core/Dx11Device.h"
 #include "Level/CrLevel.h"
 #include "Render/Dx11Renderer.h"
@@ -208,7 +211,7 @@ void LoadAssets()
     fbxImporter.LoadAll( "../Asset/Fbx/Lowpoly_tree_sample.fbx", "Tree" );
     fbxImporter.LoadAll( "../Asset/Fbx/stone.fbx", "Stone" );
 
-    if ( CrVertexShader* vs = GetAssetManager()->CreateVertexShader( "DefaultDiffuse" ) )
+    if ( CrVertexShader* vs = GetAssetManager()->Get< CrVertexShader >( ECrAssetType::VertexShader, "DefaultDiffuse" ) )
     {
         vs->Initialize( "../Shader/Shader.hlsl", "VS", "vs_4_0",
         {
@@ -218,7 +221,7 @@ void LoadAssets()
         } );
     }
 
-    if ( CrVertexShader* vs = GetAssetManager()->CreateVertexShader( "NormalMap" ) )
+    if ( CrVertexShader* vs = GetAssetManager()->Get< CrVertexShader >( ECrAssetType::VertexShader, "NormalMap" ) )
     {
         vs->Initialize( "../Shader/normal_map.hlsl", "VS_NormalMap", "vs_4_0",
         {
@@ -230,42 +233,42 @@ void LoadAssets()
         } );
     }
 
-    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "DefaultDiffuse" ) )
+    if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "DefaultDiffuse" ) )
     {
         ps->Initialize( "../Shader/Shader.hlsl", "PS", "ps_4_0" );
     }
 
-    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "NormalMap" ) )
+    if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "NormalMap" ) )
     {
         ps->Initialize( "../Shader/normal_map.hlsl", "PS_NormalMap", "ps_4_0" );
     }
 
-    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "Specular" ) )
+    if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "Specular" ) )
     {
         ps->Initialize( "../Shader/Shader.hlsl", "PS_Specular", "ps_4_0" );
     }
 
-    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "PointLight" ) )
+    if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "PointLight" ) )
     {
         ps->Initialize( "../Shader/Shader.hlsl", "PS_PointLight", "ps_4_0" );
     }
 
-    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "HalfLambert" ) )
+    if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "HalfLambert" ) )
     {
         ps->Initialize( "../Shader/Shader.hlsl", "PS_HalfLambert", "ps_4_0" );
     }
 
-    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "TextureBlended" ) )
+    if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "TextureBlended" ) )
     {
         ps->Initialize( "../Shader/Shader.hlsl", "PS_TextureBlended", "ps_4_0" );
     }
 
-    if ( CrPixelShader* ps = GetAssetManager()->CreatePixelShader( "Toon" ) )
+    if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "Toon" ) )
     {
         ps->Initialize( "../Shader/Shader.hlsl", "PS_Toon", "ps_4_0" );
     }
 
-    if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "BlockDiffuse" ) )
+    if ( CrTexture2D* tex = GetAssetManager()->Get< CrTexture2D >( ECrAssetType::Texture2D, "BlockDiffuse" ) )
     {
         tex->SetPath  ( "../Asset/Texture/Normal/197.jpg" );
         tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );
@@ -274,7 +277,7 @@ void LoadAssets()
         tex->SetSamplingCount( 1 );
     }
 
-    if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "BlockNormal" ) )
+    if ( CrTexture2D* tex = GetAssetManager()->Get< CrTexture2D >( ECrAssetType::Texture2D, "BlockNormal" ) )
     {
         tex->SetPath  ( "../Asset/Texture/Normal/197_norm.jpg" );
         tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );
@@ -283,7 +286,7 @@ void LoadAssets()
         tex->SetSamplingCount( 1 );
     }
 
-    if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "StoneDiffuse" ) )
+    if ( CrTexture2D* tex = GetAssetManager()->Get< CrTexture2D >( ECrAssetType::Texture2D, "StoneDiffuse" ) )
     {
         tex->SetPath  ( "../Asset/Texture/Normal/188.jpg" );
         tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );
@@ -292,7 +295,7 @@ void LoadAssets()
         tex->SetSamplingCount( 1 );
     }
 
-    if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "StoneNormal" ) )
+    if ( CrTexture2D* tex = GetAssetManager()->Get< CrTexture2D >( ECrAssetType::Texture2D, "StoneNormal" ) )
     {
         tex->SetPath  ( "../Asset/Texture/Normal/188_norm.jpg" );
         tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );
@@ -301,7 +304,7 @@ void LoadAssets()
         tex->SetSamplingCount( 1 );
     }
 
-    if ( CrTexture2D* tex = GetAssetManager()->CreateTexture2D( "WoodenSphereDiffuse" ) )
+    if ( CrTexture2D* tex = GetAssetManager()->Get< CrTexture2D >( ECrAssetType::Texture2D, "WoodenSphereDiffuse" ) )
     {
         tex->SetPath  ( "../Asset/Texture/mpm_vol.08_p16_light_side_A_diff.jpg" );
         tex->SetFormat( DXGI_FORMAT_R8G8B8A8_UNORM );

@@ -14,6 +14,7 @@ class CrLevel
 {
 private:
     std::vector< CrMesh* > Meshes;
+    CrMesh* TestRT;
     
 public:
     // Constructor
@@ -21,4 +22,7 @@ public:
 
     // Get meshes
     const std::vector< CrMesh* >& GetMeshes() const { return Meshes; }
+
+    // Get test RT
+    CrMesh* GetTestRT() const { return TestRT; }
 };

@@ -6,7 +6,7 @@
 //=====================================================================================================================
 void CrPrimitive::InitializeStaticPrimitives()
 {
-    CrPrimitive* plane = GetAssetManager()->CreatePrimitive( "Plane" );
+    CrPrimitive* plane = GetAssetManager()->Get< CrPrimitive >( ECrAssetType::Primitive, "Plane" );
     if ( plane )
     {
         plane->Locations.insert( plane->Locations.end(),
@@ -54,44 +54,4 @@ void CrPrimitive::Reserve( int NumVertices )
     Normals   .reserve( NumVertices );
     Tangents  .reserve( NumVertices );
     Bitangents.reserve( NumVertices );
-}
-
-//=====================================================================================================================
-// @brief	Get vertices
-//=====================================================================================================================
-void CrPrimitive::GetVertices( std::vector< Vertex_Diffuse >& OutVertices ) const
-{
-    OutVertices.clear();
-    OutVertices.reserve( Locations.size() );
-
-    for ( size_t i = 0; i < Locations.size(); ++i )
-    {
-        Vertex_Diffuse Vertex;
-        Vertex.Position  = Locations[ i ];
-        Vertex.TextureUV = UVs      [ i ];
-        Vertex.Normal    = Normals  [ i ];
-
-        OutVertices.emplace_back( Vertex );
-    }
-}
-
-//=====================================================================================================================
-// @brief	Get vertices
-//=====================================================================================================================
-void CrPrimitive::GetVertices( std::vector< Vertex_NormalMap >& OutVertices ) const
-{
-    OutVertices.clear();
-    OutVertices.reserve( Locations.size() );
-
-    for ( size_t i = 0; i < Locations.size(); ++i )
-    {
-        Vertex_NormalMap Vertex;
-        Vertex.Position   = Locations [ i ];
-        Vertex.TextureUV  = UVs       [ i ];
-        Vertex.Normal     = Normals   [ i ];
-        Vertex.Tangent    = Tangents  [ i ];
-        Vertex.Bitangent  = Bitangents[ i ];
-
-        OutVertices.push_back( Vertex );
-    }
 }

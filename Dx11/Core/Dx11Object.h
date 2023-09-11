@@ -4,6 +4,9 @@
 #include "../DxMacros.h"
 
 
+class CrAsset;
+
+
 //=====================================================================================================================
 // @brief	Dx11Object
 //=====================================================================================================================
@@ -17,6 +20,9 @@ public:
 
     // Destructor
     virtual ~Dx11Object() = default;
+
+    // Create from
+    virtual bool CreateFrom( const CrAsset* Asset ) { return true; }
 
     // Release
     virtual void Release() = 0;
