@@ -55,7 +55,7 @@ void Dx11RenderTarget::Initialize( const std::string& Name, unsigned int Width, 
 //=====================================================================================================================
 // @brief	Clear
 //=====================================================================================================================
-void Dx11RenderTarget::Clear( float Color[4] ) const
+void Dx11RenderTarget::Clear( float Color[ 4 ] ) const
 {
     GetDx11DeviceContext()->ClearRenderTargetView( RenderTargetViewComPtr.Get(), Color );
     DepthStencilBufferPtr->PreRender();

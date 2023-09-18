@@ -25,13 +25,17 @@ private:
 	Dx11ConstantBuffer* WorldBuffer;
 	Dx11ConstantBuffer* ViewProjBuffer;
 	Dx11ConstantBuffer* CameraBuffer;
+	Dx11ConstantBuffer* RenderPropertyBuffer;
 	Dx11ConstantBuffer* LightBuffer;
 	Dx11ConstantBuffer* SpecularBuffer;
 	Dx11ConstantBuffer* LightLocationBuffer;
 	Dx11ConstantBuffer* LightColorBuffer;
 
-	std::map< std::string, Dx11RenderQueue > RenderQueues;
-	Dx11RenderQueue RenderQueueScreen; 
+	ComPtr< ID3D11BlendState > BlendStateComPtr;
+
+	std::map< std::string, Dx11RenderQueue > RenderToTextureQueues;
+	Dx11RenderQueue RenderQueueScreen;
+	Dx11RenderQueue BlendedRenderQueueScreen;
 
 	CrCamera Camera;
 	CrCamera Camera_RT;
@@ -62,13 +66,25 @@ public:
 	// Sort render queue	
 	void SortRenderQueue();
 
+	// Change blend state
+	void ChangeBlendState( D3D11_BLEND SrcBlend, D3D11_BLEND DestBlend, D3D11_BLEND_OP BlendOp, D3D11_BLEND SrcBlendAlpha, D3D11_BLEND DestBlendAlpha, D3D11_BLEND_OP BlendOpAlpha );
+
+	// Enable blend state
+	void EnableBlendState() const;
+
+	// Disable blend state
+	void DisableBlendState() const;
+
+	// Camera
 	CrCamera* GetCamera() { return &Camera; }
 	const CrCamera* GetCamera() const { return &Camera; }
 
+	// Light
 	CrDirectionalLight* GetLight() { return &Light; }
 	void SetLightDirection( const Vector3& Direction );
 
-	Dx11RenderQueue* GetRenderQueue( const std::string& RenderTargetName );
+	// Render queue
+	Dx11RenderQueue* GetRenderToTextureQueue( const std::string& RenderTargetName );
 	Dx11RenderTarget* GetRenderTarget( const std::string& RenderTargetName );
 
 private:

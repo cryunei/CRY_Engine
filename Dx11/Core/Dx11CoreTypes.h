@@ -16,6 +16,7 @@ enum class EDx11ResourceType
     VertexShader,
     PixelShader,
     Texture2D,
+    RenderTarget,
     Max,
 };
 static constexpr int DX11_RESOURCE_TYPE_COUNT = (int)( EDx11ResourceType::Max );

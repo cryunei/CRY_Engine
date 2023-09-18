@@ -4,6 +4,7 @@
 #include "Dx11Primitive.h"
 #include "Dx11Material.h"
 #include "../Core/DxTransform.h"
+#include <string>
 
 
 //=====================================================================================================================
@@ -15,6 +16,9 @@ private:
     DxTransform   Transform;
     Dx11Primitive Primitive;
     Dx11Material  Material;
+
+    std::string   RenderTarget;
+    float         Opacity;
 
 public:
     // Construct
@@ -38,6 +42,7 @@ public:
     // Get transform
     const DxTransform& GetTransform() const { return Transform; }
     DxTransform& GetTransform() { return Transform; }
+    void SetTransform( const DxTransform& InTransform ) { Transform = InTransform; }
 
     // Get primitive
     const Dx11Primitive& GetPrimitive() const { return Primitive; }
@@ -46,4 +51,12 @@ public:
     // Get material
     const Dx11Material& GetMaterial() const { return Material; }
     Dx11Material& GetMaterial() { return Material; }
+
+    // Render target
+    const std::string& GetRenderTarget() const { return RenderTarget; }
+    void SetRenderTarget( const std::string& InRenderTarget ) { RenderTarget = InRenderTarget; }
+
+    // Ocaticy
+    float GetOpacity() const { return Opacity; }
+    void SetOpacity( float InOpacity ) { Opacity = InOpacity; }
 };

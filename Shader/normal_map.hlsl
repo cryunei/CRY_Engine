@@ -27,7 +27,13 @@ cbuffer ViewProjMatrix : register(b1)
     matrix projMat;
 };
 
-cbuffer LightProperty : register(b0)
+cbuffer RenderProperty : register(b0)
+{
+    float opacity;
+    float3 padding_o;
+};
+
+cbuffer LightProperty : register(b10)
 {
     float4 ambientColor;
     float4 diffuseColor;
@@ -83,6 +89,7 @@ float4 PS_NormalMap( PixelIn input ) : SV_TARGET
 
     float4 lightColor = saturate( diffuseColor * lightIntensity );
     float4 finalColor = textureColor * lightColor;
+    finalColor.a = opacity;
 
     return finalColor;
 }

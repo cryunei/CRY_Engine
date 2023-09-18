@@ -42,9 +42,6 @@ private:
     // Get normal
     void _getNormal( FbxMesh* Mesh, int ControlPointIndex, const int (&PositionPolygon)[ 3 ], Vector3 (&OutNormals)[ 3 ] ) const;
 
-    // Get tangent and bitangent
-    void _getTangentAndBitangents( const Vector3 (&Location)[ 3 ], const Vector2 (&UVs)[ 3 ], Vector3 (&OutTangents)[ 3 ], Vector3 (&OutBitangents)[ 3 ] ) const;
-
     // Get vertex count
     int _getVertexCount( FbxMesh* Mesh ) const;
 };

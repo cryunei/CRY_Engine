@@ -38,4 +38,5 @@ public:
 
     // Getters
     unsigned int GetCount() const { return Descriptor->GetCount(); }
+    const IDxVertexBufferDescriptor* GetDescriptor() const { return Descriptor; }
 };

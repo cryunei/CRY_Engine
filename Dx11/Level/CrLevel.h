@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 
+#include <string>
 #include <vector>
 
 
@@ -19,6 +20,9 @@ private:
 public:
     // Constructor
     CrLevel();
+
+    // Load from json
+    void LoadFromJson( const std::string& Path );
 
     // Get meshes
     const std::vector< CrMesh* >& GetMeshes() const { return Meshes; }

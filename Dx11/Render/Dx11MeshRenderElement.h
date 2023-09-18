@@ -16,12 +16,12 @@ class Dx11MeshRenderElement : public Dx11RenderElement
 private:
     const Dx11Mesh* MeshPtr;
     const Dx11ConstantBuffer* WorldBufferPtr;
+    const Dx11ConstantBuffer* RenderPropertyBufferPtr;
 
 public:
     // Construct
-    Dx11MeshRenderElement( const Dx11Mesh* InMeshPtr, const Dx11ConstantBuffer* InWorldBufferPtr )
-    : MeshPtr( InMeshPtr )
-    , WorldBufferPtr( InWorldBufferPtr )
+    Dx11MeshRenderElement( const Dx11Mesh* InMeshPtr, const Dx11ConstantBuffer* InWorldBufferPtr, const Dx11ConstantBuffer* InRenderPropertyBufferPtr )
+    : MeshPtr( InMeshPtr ) , WorldBufferPtr( InWorldBufferPtr ), RenderPropertyBufferPtr( InRenderPropertyBufferPtr )
     {}
 
     // On render

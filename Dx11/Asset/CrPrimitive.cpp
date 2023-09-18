@@ -32,6 +32,9 @@ void CrPrimitive::InitializeStaticPrimitives()
             0, 1, 2,
             3, 0, 2
         } );
+
+        plane->Tangents   = std::vector< Vector3 >( 4, Vector3( 1.f, 0.f, 0.f ) );
+        plane->Bitangents = std::vector< Vector3 >( 4, Vector3( 0.f, 1.f, 0.f ) );
     }
 }
 

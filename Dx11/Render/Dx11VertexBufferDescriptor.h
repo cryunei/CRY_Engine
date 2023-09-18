@@ -22,6 +22,7 @@ enum class EVertexBufferStructureType
 class IDxVertexBufferDescriptor
 {
 protected:
+    EVertexBufferStructureType Type = EVertexBufferStructureType::None;
     void** VerticePtr = nullptr;
 
     unsigned int Count  = 0;
@@ -35,6 +36,7 @@ public:
     virtual void ReadVertice( const CrPrimitive& Primitive ) = 0;
 
     // Getters
+    EVertexBufferStructureType GetType() const { return Type; }
     void** GetVerticePtr() const { return VerticePtr; }
     unsigned int GetSize() const { return Count * Stride; }
     unsigned int GetCount() const { return Count; }
@@ -148,11 +150,18 @@ struct SVertex_NormalMap
 //=====================================================================================================================
 inline IDxVertexBufferDescriptor* IDxVertexBufferDescriptor::Create( EVertexBufferStructureType Type )
 {
+    IDxVertexBufferDescriptor* descriptor = nullptr;
+
     switch ( Type )
     {
-    case EVertexBufferStructureType::Diffuse:   return new Dx11VertexBufferDescriptor< SVertex_Diffuse   >();
-    case EVertexBufferStructureType::NormalMap: return new Dx11VertexBufferDescriptor< SVertex_NormalMap >();
+    case EVertexBufferStructureType::Diffuse:   descriptor = new Dx11VertexBufferDescriptor< SVertex_Diffuse   >(); break;
+    case EVertexBufferStructureType::NormalMap: descriptor = new Dx11VertexBufferDescriptor< SVertex_NormalMap >(); break;
     }
 
-    return nullptr;
+    if ( descriptor )
+    {
+        descriptor->Type = Type;
+    }
+
+    return descriptor;
 }

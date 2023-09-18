@@ -21,6 +21,8 @@ void Dx11Texture2D::Release()
 //=====================================================================================================================
 void Dx11Texture2D::CreateTexture( DXGI_FORMAT Format, UINT Width, UINT Height, UINT SamplingCount )
 {
+    if ( Format == DXGI_FORMAT_UNKNOWN ) return;
+
     // create texture    
     ZeroMemory( &Desc, sizeof( D3D11_TEXTURE2D_DESC ) );
 
@@ -87,6 +89,8 @@ void Dx11Texture2D::CreateSRV()
 //=====================================================================================================================
 void Dx11Texture2D::LoadFromFile( const std::string& TexturePath )
 {
+    if ( TexturePath == "" ) return;
+
     CreateSampler();
 
     CoInitialize( nullptr );

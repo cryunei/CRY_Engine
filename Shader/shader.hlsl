@@ -31,7 +31,13 @@ cbuffer PointLightLocation : register(b3)
     float4 pointLightLocation[ NUM_POINT_LIGHTS ];
 };
 
-cbuffer LightProperty : register(b0)
+cbuffer RenderProperty : register(b0)
+{
+    float opacity;
+    float3 padding_o;
+};
+
+cbuffer LightProperty : register(b10)
 {
     float4 ambientColor;
     float4 diffuseColor;
@@ -39,17 +45,19 @@ cbuffer LightProperty : register(b0)
     float  padding_lp;
 };
 
-cbuffer SpecularProperty : register(b1)
+cbuffer SpecularProperty : register(b11)
 {
     float4 specularColor;
     float  specularPower;
     float3 padding_sp;
 };
 
-cbuffer PointLightColor : register(b2)
+cbuffer PointLightColor : register(b12)
 {
     float4 pointLightColor[ NUM_POINT_LIGHTS ];
 };
+
+
 
 //------------------------------------------------------------------------------
 // Lambert
@@ -94,6 +102,7 @@ float4 PS( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 normal 
     float4 lightColor = saturate( diffuseColor * lightIntensity );
     
     float4 finalColor = textureColor * lightColor;
+    finalColor.a = opacity;
 
     return finalColor;
 }
@@ -122,6 +131,7 @@ float4 PS_Specular( PixelIn input ) : SV_TARGET
     
     float4 finalColor = textureColor * lightColor;
     finalColor = saturate( finalColor + specular );
+    finalColor.a = opacity;
 
     return finalColor;
 }
@@ -156,6 +166,7 @@ float4 PS_PointLight( PixelIn input ) : SV_TARGET
     }
     
     float4 finalColor = textureColor * saturate( colorSum );
+    finalColor.a = opacity;
 
     return finalColor;
 }
@@ -179,6 +190,7 @@ float4 PS_HalfLambert( float4 position : SV_POSITION, float2 tex : TEXCOORD0, fl
     float4 lightColor = saturate( diffuseColor * lightIntensity );
     
     float4 finalColor = textureColor * lightColor;
+    finalColor.a = opacity;
 
     return finalColor;
 }
@@ -208,6 +220,7 @@ float4 PS_TextureBlended( float4 position : SV_POSITION, float2 tex : TEXCOORD0,
     float4 lightColor = saturate( diffuseColor * lightIntensity );
     
     float4 finalColor = textureColor * lightColor;
+    finalColor.a = opacity;
 
     return finalColor;
 }
@@ -236,6 +249,7 @@ float4 PS_Toon( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 no
     float4 lightColor = saturate( diffuseColor * lightIntensity );
     
     float4 finalColor = textureColor * lightColor;
+    finalColor.a = opacity;
 
     return finalColor;
 }

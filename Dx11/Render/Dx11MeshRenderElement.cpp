@@ -13,6 +13,7 @@
 void Dx11MeshRenderElement::OnRender() const
 {
     WorldBufferPtr->Update< WorldMatrix >( WorldMatrix( XMMatrixTranspose( MeshPtr->GetTransform().GetWorldMatrix() ) ) );
+    RenderPropertyBufferPtr->Update< RenderProperty >( RenderProperty( MeshPtr->GetOpacity() ) );
     
     const Dx11Primitive* primitive = &MeshPtr->GetPrimitive();
     if ( primitive->GetIndexBuffer() && primitive->GetIndexBuffer()->GetCount() > 0 )

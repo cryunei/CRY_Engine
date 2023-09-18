@@ -19,9 +19,9 @@ struct MeshRenderElement
     Dx11MeshRenderElement Renderer;
 
     // Construct
-    MeshRenderElement( const Dx11Mesh* InMeshPtr, const Dx11ConstantBuffer* InWorldBufferPtr )
+    MeshRenderElement( const Dx11Mesh* InMeshPtr, const Dx11ConstantBuffer* InWorldBufferPtr, const Dx11ConstantBuffer* InRenderPropertyBufferPtr )
     : MeshPtr( InMeshPtr )
-    , Renderer( InMeshPtr, InWorldBufferPtr )
+    , Renderer( InMeshPtr, InWorldBufferPtr, InRenderPropertyBufferPtr )
     {}
 };
 

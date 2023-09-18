@@ -2,6 +2,7 @@
 #include "Dx11DepthStencilBuffer.h"
 #include "Dx11IndexBuffer.h"
 #include "Dx11PixelShader.h"
+#include "Dx11RenderTarget.h"
 #include "Dx11Texture2D.h"
 #include "Dx11VertexShader.h"
 #include "../Asset/CrTexture2D.h"
@@ -32,8 +33,16 @@ Dx11ObjectManager::Dx11ObjectManager()
         ECrAssetType::Max,          // EDx11ResourceType::DepthStencilBuffer
         ECrAssetType::VertexShader, // EDx11ResourceType::VertexBuffer
         ECrAssetType::PixelShader,  // EDx11ResourceType::PixelShader
-        ECrAssetType::Texture2D     // EDx11ResourceType::Texture2D
+        ECrAssetType::Texture2D,    // EDx11ResourceType::Texture2D
+        ECrAssetType::Max,          // EDx11ResourceType::RenderTarget
     } );
+}
+
+//=====================================================================================================================
+// @brief	Release
+//=====================================================================================================================
+void Dx11ObjectManager::Release()
+{
 }
 
 //=====================================================================================================================
@@ -51,6 +60,7 @@ Dx11Object* Dx11ObjectManager::Get( EDx11ResourceType Type, const std::string& N
     case EDx11ResourceType::VertexShader:       object = Get< Dx11VertexShader       > ( Type, Name ); break;
     case EDx11ResourceType::PixelShader:        object = Get< Dx11PixelShader        > ( Type, Name ); break;
     case EDx11ResourceType::Texture2D:          object = Get< Dx11Texture2D          > ( Type, Name ); break;
+    case EDx11ResourceType::RenderTarget:       object = Get< Dx11RenderTarget       > ( Type, Name ); break;
     }
 
     return object;

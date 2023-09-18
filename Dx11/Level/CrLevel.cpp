@@ -1,85 +1,59 @@
 ﻿#include "CrLevel.h"
 #include "../Asset/CrAssetManager.h"
 #include "../Asset/CrMesh.h"
+#include "../Externals/RapidJSON/include/rapidjson/document.h"
+#include <fstream>
 
 //=====================================================================================================================
 // @brief	Constructor
 //=====================================================================================================================
 CrLevel::CrLevel()
 {
-    CrMesh* mesh = GetAssetManager()->Get< CrMesh >( ECrAssetType::Mesh, "Test" );
-    if ( !mesh ) return;
+    LoadFromJson( "../Asset/Level/DevTest.json" );
+}
 
-    mesh->LoadVertexShader( "DefaultDiffuse" );
-    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
-    mesh->LoadPixelShader( "PointLight" );
-    mesh->LoadTexture( "WoodenSphereDiffuse" );
-    mesh->SetVertexStructureType( EVertexBufferStructureType::Diffuse );
+//=====================================================================================================================
+// @brief	Load from json
+//=====================================================================================================================
+void CrLevel::LoadFromJson( const std::string& Path )
+{
+    std::ifstream file( Path );
+    if ( !file.is_open() ) return;
 
-    Meshes.push_back( mesh );
+    std::string json( std::istreambuf_iterator< char >( file ), ( std::istreambuf_iterator< char >() ) );
 
-    mesh = GetAssetManager()->Get< CrMesh >( ECrAssetType::Mesh, "Test2" );
-    if ( !mesh ) return;
+    rapidjson::Document document;
+    document.Parse( json.c_str() );
 
-    mesh->LoadVertexShader( "DefaultDiffuse" );
-    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
-    mesh->LoadPixelShader( "PointLight" );
-    mesh->LoadTexture( "BlockDiffuse" );
-    mesh->SetVertexStructureType( EVertexBufferStructureType::Diffuse );
+    const rapidjson::Value& meshes = document[ "Meshes" ];
+    for ( rapidjson::SizeType i = 0; i < meshes.Size(); ++i )
+    {
+        const rapidjson::Value& mesh = meshes[ i ];
 
-    Meshes.push_back( mesh );
+        CrMesh* crMesh = GetAssetManager()->Get< CrMesh >( ECrAssetType::Mesh, mesh[ "Name" ].GetString() );
+        if ( !crMesh ) continue;
 
-    mesh = GetAssetManager()->Get< CrMesh >( ECrAssetType::Mesh, "Test3" );
-    if ( !mesh ) return;
+        crMesh->LoadVertexShader( mesh[ "VertexShader" ].GetString() );
+        crMesh->LoadPixelShader ( mesh[ "PixelShader"  ].GetString() );
+        crMesh->LoadPrimitive   ( mesh[ "Primitive"    ].GetString() );
+        
+        crMesh->SetVertexStructureType( (EVertexBufferStructureType)mesh[ "VertexStructureType" ].GetInt() );
 
-    mesh->LoadVertexShader( "DefaultDiffuse" );
-    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
-    mesh->LoadPixelShader( "Specular" );
-    mesh->LoadTexture( "WoodenSphereDiffuse" );
-    mesh->SetVertexStructureType( EVertexBufferStructureType::Diffuse );
+        const rapidjson::Value& textures = mesh[ "Textures" ];
+        for ( rapidjson::SizeType t = 0; t < textures.Size(); ++t )
+        {
+            crMesh->LoadTexture( textures[ t ].GetString() );
+        }
 
-    Meshes.push_back( mesh );
+        const rapidjson::Value& transform = mesh[ "Transform" ];
 
-    mesh = GetAssetManager()->Get< CrMesh >( ECrAssetType::Mesh, "Test4" );
-    if ( !mesh ) return;
+        crMesh->GetTransform().SetLocation( transform[ "Location" ][ 0 ].GetFloat(), transform[ "Location" ][ 1 ].GetFloat(), transform[ "Location" ][ 2 ].GetFloat() );
+        crMesh->GetTransform().SetRotation( transform[ "Rotation" ][ 0 ].GetFloat(), transform[ "Rotation" ][ 1 ].GetFloat(), transform[ "Rotation" ][ 2 ].GetFloat() );
+        crMesh->GetTransform().SetScale   ( transform[ "Scale"    ][ 0 ].GetFloat(), transform[ "Scale"    ][ 1 ].GetFloat(), transform[ "Scale"    ][ 2 ].GetFloat() );
 
-    mesh->LoadVertexShader( "DefaultDiffuse" );
-    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
-    mesh->LoadPixelShader( "Toon" );
-    mesh->LoadTexture( "BlockDiffuse" );
-    mesh->SetVertexStructureType( EVertexBufferStructureType::Diffuse );
+        crMesh->SetRenderTarget( mesh[ "RenderTarget" ].GetString() );
+        crMesh->SetOpacity( mesh[ "Opacity" ].GetFloat() );
 
-    Meshes.push_back( mesh );
-
-    mesh = GetAssetManager()->Get< CrMesh >( ECrAssetType::Mesh, "Test5" );
-    if ( !mesh ) return;
-
-    mesh->LoadVertexShader( "NormalMap" );
-    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
-    mesh->LoadPixelShader( "NormalMap" );
-    mesh->LoadTexture( "BlockDiffuse" );
-    mesh->LoadTexture( "BlockNormal" );
-    mesh->SetVertexStructureType( EVertexBufferStructureType::NormalMap );
-
-    Meshes.push_back( mesh );
-
-    mesh = GetAssetManager()->Get< CrMesh >( ECrAssetType::Mesh, "Test6" );
-    if ( !mesh ) return;
-
-    mesh->LoadVertexShader( "NormalMap" );
-    mesh->LoadPrimitive( "WoodenSphere_Primitive0" );
-    mesh->LoadPixelShader( "NormalMap" );
-    mesh->LoadTexture( "StoneDiffuse" );
-    mesh->LoadTexture( "StoneNormal" );
-    mesh->SetVertexStructureType( EVertexBufferStructureType::NormalMap );
-
-    Meshes.push_back( mesh );
-
-    TestRT = GetAssetManager()->Get< CrMesh >( ECrAssetType::Mesh, "TestRT" );
-    if ( !TestRT ) return;
-    
-    TestRT->LoadPrimitive( "Plane" );
-    TestRT->LoadVertexShader( "DefaultDiffuse" );
-    TestRT->LoadPixelShader ( "DefaultDiffuse" );
-    TestRT->SetVertexStructureType( EVertexBufferStructureType::Diffuse );
+        Meshes.push_back( crMesh );
+    }
 }

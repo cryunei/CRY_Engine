@@ -1,11 +1,13 @@
 ﻿#pragma once
 
+
 #include "Dx11ConstantBuffer.h"
 #include "Dx11CoreTypes.h"
 #include "Dx11Texture2D.h"
 #include "Dx11VertexBuffer.h"
 #include "../Asset/CrAssetManager.h"
 #include <map>
+
 
 class Dx11Resource;
 class Dx11ResourceRenderer;
@@ -47,6 +49,9 @@ public:
     // Destruct
     ~Dx11ObjectManager() = default;
 
+    // Release
+    void Release();
+
     // Operators
     Dx11ObjectManager& operator=( const Dx11ObjectManager& Other ) = delete;
     Dx11ObjectManager& operator=( Dx11ObjectManager&& Other ) noexcept = delete;
@@ -72,8 +77,8 @@ public:
     // Get resource renderer
     Dx11ResourceRenderer* GetResourceRenderer_Texture2D( const Dx11Resource* ResourcePtr, int Idx );
 
-    // Release
-    void Release();
+    // Get map
+    const TResourceMap& GetMap( EDx11ResourceType Type ) { return _getMap( Type ); }
 
 private:
     // Get

@@ -1,9 +1,11 @@
 ﻿#include "Dx11RenderQueue.h"
+#include "Dx11ConstantBufferStructure.h"
 #include "Dx11Mesh.h"
 #include "Dx11ResourceRenderer.h"
 #include "../Core/Dx11CoreTypes.h"
 #include "../Core/Dx11VertexBuffer.h"
 #include "../Core/Dx11IndexBuffer.h"
+#include "../Core/Dx11ObjectManager.h"
 #include "../Core/Dx11VertexShader.h"
 #include "../Core/Dx11PixelShader.h"
 #include <algorithm>
@@ -13,28 +15,29 @@
 // @brief	Construct
 //=====================================================================================================================
 Dx11RenderQueue::Dx11RenderQueue()
-: CameraPtr ( nullptr )
+: CameraPtr       ( nullptr )
+, RenderTargetPtr ( nullptr )
 {
 }
 
 //=====================================================================================================================
-// @brief	Initialize
+// @brief	Initialize render target
 //=====================================================================================================================
-void Dx11RenderQueue::Initialize( unsigned int Width, unsigned int Height )
+void Dx11RenderQueue::InitializeRenderTarget( const std::string& RenderTargetName )
 {
-    RenderTarget.Initialize( Width, Height );
+    RenderTargetPtr = GetDx11ObjectManager()->Get< Dx11RenderTarget >( EDx11ResourceType::RenderTarget, RenderTargetName );
 }
 
 //=====================================================================================================================
 // @brief	Add
 //=====================================================================================================================
-bool Dx11RenderQueue::Add( const Dx11Mesh* MeshPtr, const Dx11ConstantBuffer* WorldBufferPtr )
+bool Dx11RenderQueue::Add( const Dx11Mesh* MeshPtr, const Dx11ConstantBuffer* WorldBufferPtr, const Dx11ConstantBuffer* RenderPropertyBufferPtr )
 {
     if ( !MeshPtr ) return false;
     if ( !MeshPtr->GetMaterial().GetVertexShader() ) return false;
     if ( !MeshPtr->GetMaterial().GetPixelShader() ) return false;
 
-    MeshRenderElements.emplace_back( MeshPtr, WorldBufferPtr );
+    MeshRenderElements.emplace_back( MeshPtr, WorldBufferPtr, RenderPropertyBufferPtr );
 
     return true;
 }
@@ -132,10 +135,7 @@ void Dx11RenderQueue::Sort()
 //=====================================================================================================================
 void Dx11RenderQueue::Render() const
 {    
-    RenderTarget.SetRenderTarget();
-
-    float color[ 4 ] = { 0.0f, 0.2f, 0.4f, 1.0f };
-    RenderTarget.Clear( color );
+    RenderTargetPtr->SetRenderTarget();
 
     for ( const IDxRenderElement* renderElement : RenderElements )
     {
