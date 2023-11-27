@@ -4,7 +4,7 @@
 #include "Dx11RenderTypes.h"
 #include "../Core/Dx11RenderTarget.h"
 
-
+class CrMeshActor;
 class CrCamera;
 class Dx11ConstantBuffer;
 class Dx11Mesh;
@@ -34,7 +34,7 @@ public:
     void SetCamera( CrCamera* InCameraPtr ) { CameraPtr = InCameraPtr; }
 
     // Add
-    bool Add( const Dx11Mesh* MeshePtr, const Dx11ConstantBuffer* WorldBufferPtr, const Dx11ConstantBuffer* RenderPropertyBufferPtr );
+    bool Add( const CrMeshActor& MesheActor );
 
     // Clear
     void Clear();
@@ -46,9 +46,17 @@ public:
     void Render() const;
 
     // Getter
-    Dx11RenderTarget* GetRenderTarget() { return RenderTargetPtr; }
+    Dx11RenderTarget* GetRenderTarget() const { return RenderTargetPtr; }
     CrCamera* GetCamera() const { return CameraPtr; }
     unsigned int GetViewportWidth() const { return (unsigned int)( RenderTargetPtr->GetViewport().Width ); }
     unsigned int GetViewportHeight() const { return (unsigned int)( RenderTargetPtr->GetViewport().Height ); }
+    const MeshRenderElementList& GetMeshRenderElements() const { return MeshRenderElements; }
+
+private:
+    // Compare render count
+    bool _CompareRenderCount( const IDxRenderElement* Lhs, const IDxRenderElement* Rhs, bool& Order ) const;
+
+    // Add render element
+    void _AddRenderElement( const IDxRenderElement** CurrPtr, const IDxRenderElement* NewPtr );
 
 };

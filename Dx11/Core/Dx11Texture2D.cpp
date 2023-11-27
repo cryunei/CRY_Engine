@@ -95,7 +95,8 @@ void Dx11Texture2D::LoadFromFile( const std::string& TexturePath )
 
     CoInitialize( nullptr );
 
-    CreateWICTextureFromFile( GetDx11Device(), ToWstring( TexturePath ).c_str(), TextureResourceComPtr.GetAddressOf(), TextureSRVComPtr.GetAddressOf() );
+    const std::wstring& wPath = ToWstring( TexturePath );
+    CreateWICTextureFromFile( GetDx11Device(), wPath.c_str(), TextureResourceComPtr.GetAddressOf(), TextureSRVComPtr.GetAddressOf() );
 }
 
 //=====================================================================================================================

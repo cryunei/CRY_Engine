@@ -1,12 +1,19 @@
 ﻿#pragma once
 
-
+#include "../Asset/CrAsset.h"
 #include "../Core/DxTransform.h"
 
 
-class CrActor
+//=====================================================================================================================
+// @brief	CrActor
+//=====================================================================================================================
+class CrActor : public CrAsset
 {
-public:
+protected:
     DxTransform Transform;
+
+public:
+    const DxTransform& GetTransform() const { return  Transform; }
+    DxTransform*       GetTransform()       { return &Transform; }
     
 };

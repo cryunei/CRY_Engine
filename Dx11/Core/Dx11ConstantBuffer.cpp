@@ -1,6 +1,17 @@
 ﻿#include "Dx11ConstantBuffer.h"
-#include "../Render/Dx11ConstantBufferStructure.h"
 
+
+//=====================================================================================================================
+// @brief	CreateBuffer
+//=====================================================================================================================
+void Dx11ConstantBuffer::CreateBuffer( size_t Size, D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess )
+{
+    BufferDesc.Usage = Usage;
+    BufferDesc.ByteWidth = Size;
+    BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    BufferDesc.CPUAccessFlags = CpuAccess;
+    Create( nullptr );
+}
 
 //=====================================================================================================================
 // @brief	Set register

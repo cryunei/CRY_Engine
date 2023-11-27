@@ -1,8 +1,9 @@
 ﻿#pragma once
 
-
+#include "Dx11Material.h"
+#include "Dx11Primitive.h"
 #include "Dx11RenderElement.h"
-
+#include "../Core/DxTransform.h"
 
 class Dx11ConstantBuffer;
 class Dx11Mesh;
@@ -14,15 +15,21 @@ class Dx11Mesh;
 class Dx11MeshRenderElement : public Dx11RenderElement
 {
 private:
-    const Dx11Mesh* MeshPtr;
-    const Dx11ConstantBuffer* WorldBufferPtr;
-    const Dx11ConstantBuffer* RenderPropertyBufferPtr;
+    friend class Dx11RenderQueue;
+
+protected:
+    const DxTransform*      Transform    = nullptr;
+    const Dx11IndexBuffer*  IndexBuffer  = nullptr;
+    const Dx11VertexShader* VertexShader = nullptr;
+    const Dx11PixelShader*  PixelShader  = nullptr;
+    const Dx11VertexBuffer* VertexBuffer = nullptr;
+    float                   Opacity      = 1.f;
+
+    std::vector< Dx11ResourceRenderer* > Texture2Ds;
 
 public:
     // Construct
-    Dx11MeshRenderElement( const Dx11Mesh* InMeshPtr, const Dx11ConstantBuffer* InWorldBufferPtr, const Dx11ConstantBuffer* InRenderPropertyBufferPtr )
-    : MeshPtr( InMeshPtr ) , WorldBufferPtr( InWorldBufferPtr ), RenderPropertyBufferPtr( InRenderPropertyBufferPtr )
-    {}
+    Dx11MeshRenderElement() = default;
 
     // On render
     virtual void OnRender() const override;

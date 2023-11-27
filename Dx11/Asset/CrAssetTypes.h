@@ -11,6 +11,8 @@ enum class ECrAssetType
     PixelShader,
     Texture2D,
     Mesh,
+    MeshActor,
+    Reflector,
     Max,
 };
 

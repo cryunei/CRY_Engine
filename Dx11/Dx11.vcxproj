@@ -134,6 +134,8 @@
   <ItemGroup>
     <ClInclude Include="Actor\Camera\CrCamera.h" />
     <ClInclude Include="Actor\CrActor.h" />
+    <ClInclude Include="Actor\CrMeshActor.h" />
+    <ClInclude Include="Actor\CrReflector.h" />
     <ClInclude Include="Actor\Light\CrDirectionalLight.h" />
     <ClInclude Include="Asset\CrAsset.h" />
     <ClInclude Include="Asset\CrAssetManager.h" />
@@ -215,10 +217,13 @@
     <ClInclude Include="Level\CrLevel.h" />
     <ClInclude Include="Loader\Dx11LevelLoader.h" />
     <ClInclude Include="Render\Dx11ConstantBufferStructure.h" />
+    <ClInclude Include="Render\Dx11GlobalConstantBuffers.h" />
     <ClInclude Include="Render\Dx11Material.h" />
     <ClInclude Include="Render\Dx11Mesh.h" />
     <ClInclude Include="Render\Dx11MeshRenderElement.h" />
     <ClInclude Include="Render\Dx11Primitive.h" />
+    <ClInclude Include="Render\Dx11ReflectionRenderer.h" />
+    <ClInclude Include="Render\Dx11ReflectorRenderElement.h" />
     <ClInclude Include="Render\Dx11RenderElement.h" />
     <ClInclude Include="Render\Dx11Renderer.h" />
     <ClInclude Include="Render\Dx11RenderQueue.h" />
@@ -234,6 +239,8 @@
   <ItemGroup>
     <ClCompile Include="Actor\Camera\CrCamera.cpp" />
     <ClCompile Include="Actor\CrActor.cpp" />
+    <ClCompile Include="Actor\CrMeshActor.cpp" />
+    <ClCompile Include="Actor\CrReflector.cpp" />
     <ClCompile Include="Actor\Light\CrDirectionalLight.cpp" />
     <ClCompile Include="Asset\CrAsset.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -489,12 +496,15 @@
     <ClCompile Include="GUI\TransformEditor.cpp" />
     <ClCompile Include="Level\CrLevel.cpp" />
     <ClCompile Include="Loader\Dx11LevelLoader.cpp" />
+    <ClCompile Include="Render\Dx11GlobalConstantBuffers.cpp" />
     <ClCompile Include="Render\Dx11Material.cpp" />
     <ClCompile Include="Render\Dx11Mesh.cpp" />
     <ClCompile Include="Render\Dx11MeshRenderElement.cpp" />
     <ClCompile Include="Render\Dx11Primitive.cpp" />
     <ClCompile Include="GUI\DevTestUI.cpp" />
     <ClCompile Include="GUI\GuiManager.cpp" />
+    <ClCompile Include="Render\Dx11ReflectionRenderer.cpp" />
+    <ClCompile Include="Render\Dx11ReflectorRenderElement.cpp" />
     <ClCompile Include="Render\Dx11RenderElement.cpp" />
     <ClCompile Include="Render\Dx11Renderer.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>

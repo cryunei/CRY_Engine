@@ -36,7 +36,7 @@ public:
 private:
     // Get asset
     template< typename T >
-    T* _getAsset( const std::string& Name, TAssetMap& AssetMap ) const;
+    T* _getAsset( ECrAssetType Type, const std::string& Name );
 
     // Get map
     TAssetMap& _getMap( ECrAssetType Type ) { return Assets[ ( int )( Type ) ]; }
@@ -56,8 +56,9 @@ T* CrAssetManager::Get( ECrAssetType Type, const std::string& Name )
 // @brief	Get asset
 //=====================================================================================================================
 template < typename T >
-T* CrAssetManager::_getAsset( const std::string& Name, TAssetMap& AssetMap ) const
+T* CrAssetManager::_getAsset( ECrAssetType Type, const std::string& Name )
 {
+    TAssetMap& AssetMap = _getMap( Type ); 
     auto itrFind = AssetMap.find( Name );
 
     T* asset = nullptr;
@@ -65,6 +66,7 @@ T* CrAssetManager::_getAsset( const std::string& Name, TAssetMap& AssetMap ) con
     {
         asset = new T();
         asset->SetName( Name );
+        asset->SetType( Type ); 
 
         AssetMap.insert( std::make_pair( Name, asset ) );
     }

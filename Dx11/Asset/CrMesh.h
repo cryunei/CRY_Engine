@@ -26,13 +26,9 @@ private:
     CrIndexBuffer*  IndexBufferPtr;
     CrPixelShader*  PixelShaderPtr;
 
-    std::vector< CrTexture2D* > Texture2DPtrs;
+    std::vector< CrTexture2D* > Texture2DPtrs;    
 
     EVertexBufferStructureType VertexStructureType;
-
-    DxTransform Transform;
-    std::string RenderTarget;
-    float       Opacity;
 
 public:
     // Constructor
@@ -56,10 +52,6 @@ public:
     const CrIndexBuffer*  GetIndexBuffer()  const { return IndexBufferPtr;  }
     const CrPixelShader*  GetPixelShader()  const { return PixelShaderPtr;  }
 
-    // Transform
-    const DxTransform& GetTransform() const { return Transform; }
-    DxTransform& GetTransform() { return Transform; }
-
     // Texture2D
     const CrTexture2D* GetTexture2D( int Idx ) const { return Texture2DPtrs[ Idx ]; }
     int GetCount_Texture2D() const { return (int)( Texture2DPtrs.size() ); }
@@ -67,12 +59,4 @@ public:
     // Vertex structure type
     EVertexBufferStructureType GetVertexStructureType() const { return VertexStructureType; }
     void SetVertexStructureType( EVertexBufferStructureType InVertexStructureType ) { VertexStructureType = InVertexStructureType; }
-
-    // Render target
-    const std::string& GetRenderTarget() const { return RenderTarget; }
-    void SetRenderTarget( const std::string& InRenderTarget ) { RenderTarget = InRenderTarget; }
-
-    // Opacity
-    float GetOpacity() const { return Opacity; }
-    void SetOpacity( float InOpacity ) { Opacity = InOpacity; }
 };

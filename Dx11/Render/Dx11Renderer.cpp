@@ -1,5 +1,7 @@
 #include "Dx11Renderer.h"
+#include "Dx11GlobalConstantBuffers.h"
 #include "Dx11Mesh.h"
+#include "../Actor/CrMeshActor.h"
 #include "../Core/Dx11Device.h"
 #include "../Core/Dx11ObjectManager.h"
 #include "../Core/Dx11VertexShader.h"
@@ -27,15 +29,13 @@ void Dx11Renderer::Clear()
 //=====================================================================================================================
 void Dx11Renderer::Initialize( int Width, int Height )
 {
-	_initializeConstantBuffers();	
-
 	GetCamera()->SetLookAtDirection( Vector3( 0.f, 0.f, -1.f ) );
-	GetCamera()->Transform.SetLocation( 0.f, 0.f, 40.f );
+	GetCamera()->GetTransform()->SetLocation( 0.f, 0.f, 40.f );
 
 	Camera_RT.SetLookAtDirection( Vector3( 0.f, 0.f, -1.f ) );
-	Camera_RT.Transform.SetLocation( 0.f, 0.f, 15.f );
+	Camera_RT.GetTransform()->SetLocation( 0.f, 0.f, 15.f );
 
-	GetGuiManager()->GetDevTestUI().BindCameraTransform( &GetCamera()->Transform );
+	GetGuiManager()->GetDevTestUI().BindCameraTransform( GetCamera()->GetTransform() );
 
 	SetLightDirection( Vector3( 1.f, -1.f, 1.f ) );
 
@@ -70,72 +70,47 @@ void Dx11Renderer::AddRenderTarget( const std::string& RenderTargetName, int Wid
 //=====================================================================================================================
 void Dx11Renderer::RenderFrame()
 {
-	GetGuiManager()->PreRender();
-
-	float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f }; 
-	const auto& renderTargets = GetDx11ObjectManager()->GetMap( EDx11ResourceType::RenderTarget );
-	for ( auto itr = renderTargets.begin(); itr != renderTargets.end(); ++itr )
-	{
-		const Dx11RenderTarget* renderTarget = (Dx11RenderTarget*)( itr->second );
-		if ( !renderTarget ) continue;
-
-		renderTarget->Clear( clearColor );
-	}
-
 	_setLightPropertyBufferData();
 
 	for ( auto itr = RenderToTextureQueues.begin(); itr != RenderToTextureQueues.end(); ++itr )
 	{
 		Dx11RenderQueue& renderQ = itr->second;
-		_setViewProjectionMatrixBufferData( renderQ.GetCamera(), renderQ.GetViewportWidth(), renderQ.GetViewportHeight() );
 		renderQ.Render();
 	}
-
-	_setViewProjectionMatrixBufferData( RenderQueueScreen.GetCamera(), RenderQueueScreen.GetViewportWidth(), RenderQueueScreen.GetViewportHeight() );
 
 	DisableBlendState();
 	RenderQueueScreen.Render();
 
 	EnableBlendState();
 	BlendedRenderQueueScreen.Render();
-
-	GetGuiManager()->PostRender();
-
-	GetSwapChain()->Present( 0, 0 );
 }
 
 //=====================================================================================================================
 // @brief	Add mesh render element
 //=====================================================================================================================
-bool Dx11Renderer::AddMeshRenderElement( const Dx11Mesh* MeshPtr )
+bool Dx11Renderer::AddMeshRenderElement( const CrMeshActor& MeshActor )
 {
-	if ( !MeshPtr ) return false;
-
-	MeshPtr->IncreaseRenderCount();
-
-	if ( MeshPtr->GetOpacity() < 1.f )
+	if ( MeshActor.GetOpacity() < 1.f )
 	{
-		return BlendedRenderQueueScreen.Add( MeshPtr, WorldBuffer, RenderPropertyBuffer );
+		return BlendedRenderQueueScreen.Add( MeshActor );
 	}
 
-	return RenderQueueScreen.Add( MeshPtr, WorldBuffer, RenderPropertyBuffer );
+	return RenderQueueScreen.Add( MeshActor );
 }
 
 //=====================================================================================================================
 // @brief	Add mesh render element
 //=====================================================================================================================
-bool Dx11Renderer::AddMeshRenderElement( const Dx11Mesh* MeshPtr, const std::string& RenderTargetName )
+bool Dx11Renderer::AddMeshRenderElement( const CrMeshActor& MeshActor, const std::string& RenderTargetName )
 {
-	if ( !MeshPtr ) return false;
-
 	if ( RenderTargetName == "" )
 	{
-		return AddMeshRenderElement( MeshPtr );
+		return AddMeshRenderElement( MeshActor );
 	}
 
 	if ( Dx11RenderQueue* renderQ = GetRenderToTextureQueue( RenderTargetName ) )
 	{
-		return renderQ->Add( MeshPtr, WorldBuffer, RenderPropertyBuffer );
+		return renderQ->Add( MeshActor );
 	}
 
 	return false;
@@ -164,7 +139,7 @@ void Dx11Renderer::ChangeBlendState( D3D11_BLEND SrcBlend, D3D11_BLEND DestBlend
 
 	D3D11_BLEND_DESC blendDesc;
 	ZeroMemory( &blendDesc, sizeof( D3D11_BLEND_DESC ) );
-	blendDesc.RenderTarget[ 0 ].BlendEnable = TRUE;
+	blendDesc.RenderTarget[ 0 ].BlendEnable = true;
 	blendDesc.RenderTarget[ 0 ].SrcBlend = SrcBlend;
 	blendDesc.RenderTarget[ 0 ].DestBlend = DestBlend;
 	blendDesc.RenderTarget[ 0 ].BlendOp = BlendOp;
@@ -200,7 +175,7 @@ void Dx11Renderer::SetLightDirection( const Vector3& Direction )
 	Light.SetDirection( Direction );
 	LightProperty prop( Light.GetColor(), Vector4::One, Light.GetDirection() );
 
-	LightBuffer->Update< LightProperty >( prop );
+	GetDx11GCB()->GetBuffer( EGlobalConstantBufferType::Light )->Update< LightProperty >( prop );
 }
 
 //=====================================================================================================================
@@ -228,49 +203,14 @@ Dx11RenderTarget* Dx11Renderer::GetRenderTarget( const std::string& RenderTarget
 }
 
 //=====================================================================================================================
-// @brief	Initialize constant buffers
-//=====================================================================================================================
-void Dx11Renderer::_initializeConstantBuffers()
-{
-	WorldBuffer          = GetDx11ObjectManager()->Get< Dx11ConstantBuffer >( EDx11ResourceType::ConstantBuffer, "WorldBuffer" );
-	ViewProjBuffer       = GetDx11ObjectManager()->Get< Dx11ConstantBuffer >( EDx11ResourceType::ConstantBuffer, "ViewProjBuffer" );
-	CameraBuffer         = GetDx11ObjectManager()->Get< Dx11ConstantBuffer >( EDx11ResourceType::ConstantBuffer, "CameraBuffer" );
-	RenderPropertyBuffer = GetDx11ObjectManager()->Get< Dx11ConstantBuffer >( EDx11ResourceType::ConstantBuffer, "RenderPropertyBuffer" );
-	LightBuffer          = GetDx11ObjectManager()->Get< Dx11ConstantBuffer >( EDx11ResourceType::ConstantBuffer, "LightBuffer" );
-	SpecularBuffer       = GetDx11ObjectManager()->Get< Dx11ConstantBuffer >( EDx11ResourceType::ConstantBuffer, "SpecularBuffer" );
-	LightLocationBuffer  = GetDx11ObjectManager()->Get< Dx11ConstantBuffer >( EDx11ResourceType::ConstantBuffer, "LightLocationBuffer" );
-	LightColorBuffer     = GetDx11ObjectManager()->Get< Dx11ConstantBuffer >( EDx11ResourceType::ConstantBuffer, "LightColorBuffer" );
-
-
-	WorldBuffer         ->CreateBuffer< WorldMatrix        >( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
-	ViewProjBuffer      ->CreateBuffer< ViewProjMatrix     >( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
-	CameraBuffer        ->CreateBuffer< CameraProperty     >( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
-	RenderPropertyBuffer->CreateBuffer< RenderProperty     >( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
-	LightBuffer         ->CreateBuffer< LightProperty      >( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
-	SpecularBuffer      ->CreateBuffer< SpecularProperty   >( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
-	LightLocationBuffer ->CreateBuffer< PointLightLocation >( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
-	LightColorBuffer    ->CreateBuffer< PointLightColor    >( D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE );
-
-	WorldBuffer         ->SetRegister( ERenderPipeLineStage::VertexShader, 0 );
-	ViewProjBuffer      ->SetRegister( ERenderPipeLineStage::VertexShader, 1 );
-	CameraBuffer        ->SetRegister( ERenderPipeLineStage::VertexShader, 2 );	
-	LightLocationBuffer ->SetRegister( ERenderPipeLineStage::VertexShader, 3 );
-	RenderPropertyBuffer->SetRegister( ERenderPipeLineStage::PixelShader,  0 );
-	LightBuffer         ->SetRegister( ERenderPipeLineStage::PixelShader,  10 );
-	SpecularBuffer      ->SetRegister( ERenderPipeLineStage::PixelShader,  11 );
-	LightColorBuffer    ->SetRegister( ERenderPipeLineStage::PixelShader,  12 );
-}
-
-//=====================================================================================================================
 // @brief	Set view projection matrix buffer data
 //=====================================================================================================================
 void Dx11Renderer::_setViewProjectionMatrixBufferData( const CrCamera* Camera, unsigned int InViewportWidth, unsigned int InViewportHeight ) const
 {
 	if ( !Camera ) return;
 
-	ViewProjBuffer->Update< ViewProjMatrix >( ViewProjMatrix( Camera->GetViewMatrix().Transpose(), Camera->GetProjectionMatrix( (float)( InViewportWidth ), (float)( InViewportHeight ) ).Transpose() ) );
-
-	CameraBuffer->Update< CameraProperty >( CameraProperty( Camera->Transform.GetLocation() ) );
+	GetDx11GCB()->GetBuffer( EGlobalConstantBufferType::ViewProjection )->Update< ViewProjMatrix >( ViewProjMatrix( Camera->GetViewMatrix().Transpose(), Camera->GetProjectionMatrix( (float)( InViewportWidth ), (float)( InViewportHeight ) ).Transpose() ) );
+	GetDx11GCB()->GetBuffer( EGlobalConstantBufferType::Camera )->Update< CameraProperty >( CameraProperty( Camera->GetTransform().GetLocation() ) );
 }
 
 //=====================================================================================================================
@@ -279,15 +219,13 @@ void Dx11Renderer::_setViewProjectionMatrixBufferData( const CrCamera* Camera, u
 void Dx11Renderer::_setLightPropertyBufferData() const
 {
 	SpecularProperty specularProp( Vector4( 0.5f, 0.5f, 0.5f, 1.f ), 32.0f );
-
-	SpecularBuffer->Update< SpecularProperty >( specularProp );
+	GetDx11GCB()->GetBuffer( EGlobalConstantBufferType::Specular )->Update< SpecularProperty >( specularProp );
 
 	Vector4 lightLocations[ MaxPointLightCount ] = { Vector4( -10.f, 10.f, -5.f, 1.f ), Vector4( -5.f, -8.f, -5.f, 1.f ), Vector4( 5.f, 8.f, -5.f, 1.f ), Vector4( 10.f, -8.f, -3.f, 1.f ) };
 	Vector4 lightColors   [ MaxPointLightCount ] = { Vector4( 1.f, 1.f, 1.f, 1.f ), Vector4( 1.f, 0.f, 0.f, 1.f ), Vector4( 0.f, 1.f, 0.f, 1.f ), Vector4( 0.f, 0.f, 1.f, 1.f ) };
 
 	PointLightLocation pointLightLocation( lightLocations );
 	PointLightColor	   pointLightColor   ( lightColors    );
-
-	LightLocationBuffer->Update< PointLightLocation >( lightLocations );
-	LightColorBuffer   ->Update< PointLightColor    >( lightColors    );	
+	GetDx11GCB()->GetBuffer( EGlobalConstantBufferType::LightLocation )->Update< PointLightLocation >( pointLightLocation );
+	GetDx11GCB()->GetBuffer( EGlobalConstantBufferType::LightColor    )->Update< PointLightColor    >( pointLightColor    );
 }

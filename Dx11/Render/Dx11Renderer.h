@@ -22,15 +22,6 @@ private:
 	float ViewportWidth;
 	float ViewportHeight;
 
-	Dx11ConstantBuffer* WorldBuffer;
-	Dx11ConstantBuffer* ViewProjBuffer;
-	Dx11ConstantBuffer* CameraBuffer;
-	Dx11ConstantBuffer* RenderPropertyBuffer;
-	Dx11ConstantBuffer* LightBuffer;
-	Dx11ConstantBuffer* SpecularBuffer;
-	Dx11ConstantBuffer* LightLocationBuffer;
-	Dx11ConstantBuffer* LightColorBuffer;
-
 	ComPtr< ID3D11BlendState > BlendStateComPtr;
 
 	std::map< std::string, Dx11RenderQueue > RenderToTextureQueues;
@@ -58,10 +49,10 @@ public:
 	void RenderFrame();
 
 	// Add mesh render element
-	bool AddMeshRenderElement( const Dx11Mesh* MeshPtr );
+	bool AddMeshRenderElement( const CrMeshActor& MeshActor );
 	
 	// Add mesh render element
-	bool AddMeshRenderElement( const Dx11Mesh* MeshPtr, const std::string& RenderTargetName );
+	bool AddMeshRenderElement( const CrMeshActor& MeshActor, const std::string& RenderTargetName );
 
 	// Sort render queue	
 	void SortRenderQueue();
@@ -88,9 +79,6 @@ public:
 	Dx11RenderTarget* GetRenderTarget( const std::string& RenderTargetName );
 
 private:
-	// Initialize constant buffers
-	void _initializeConstantBuffers();
-
 	// Set view projection matrix buffer data
 	void _setViewProjectionMatrixBufferData( const CrCamera* Camera, unsigned int InViewportWidth, unsigned int InViewportHeight ) const;
 

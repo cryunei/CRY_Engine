@@ -1,10 +1,12 @@
 ﻿#pragma once
 
 
+#include "../Externals/RapidJSON/include/rapidjson/document.h"
 #include <string>
 #include <vector>
 
-
+class CrReflector;
+class CrMeshActor;
 class CrMesh;
 
 
@@ -14,8 +16,8 @@ class CrMesh;
 class CrLevel
 {
 private:
-    std::vector< CrMesh* > Meshes;
-    CrMesh* TestRT;
+    std::vector< CrMeshActor* > Actors;
+    std::vector< CrReflector* > Reflectors;
     
 public:
     // Constructor
@@ -25,8 +27,21 @@ public:
     void LoadFromJson( const std::string& Path );
 
     // Get meshes
-    const std::vector< CrMesh* >& GetMeshes() const { return Meshes; }
+    const std::vector< CrMeshActor* >& GetMeshes() const { return Actors; }
 
-    // Get test RT
-    CrMesh* GetTestRT() const { return TestRT; }
+    // Get reflectors
+    const std::vector< CrReflector* >& GetReflectors() const { return Reflectors; }
+
+private:
+    // Load render targets from json
+    void _LoadRenderTargetsFromJson( const rapidjson::Document& Document ) const;
+
+    // Load meshes from json
+    void _LoadMeshesFromJson( const rapidjson::Document& Document );
+
+    // Load actors from json
+    void _LoadActorsFromJson( const rapidjson::Document& Document );
+
+    // Load reflectors from json
+    void _LoadReflectorsFromJson( const rapidjson::Document& Document );
 };

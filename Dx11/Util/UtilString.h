@@ -1,8 +1,7 @@
 ﻿#pragma once
 
 
-#include <codecvt>
-#include <locale>
+#include <windows.h>
 #include <string>
 
 
@@ -11,7 +10,12 @@
 //=====================================================================================================================
 inline std::wstring ToWstring( const std::string& Str )
 {
-    std::wstring_convert< std::codecvt_utf8_utf16< wchar_t > > converter;
 
-    return converter.from_bytes( Str );
+    int wide_size = MultiByteToWideChar( CP_UTF8, 0, Str.c_str(), -1, nullptr, 0 );
+
+    std::wstring wStr( wide_size, 0 );
+
+    MultiByteToWideChar( CP_UTF8, 0, Str.c_str(), -1, &wStr[ 0 ], wide_size );
+
+    return wStr;
 }

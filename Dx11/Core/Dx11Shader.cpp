@@ -20,7 +20,9 @@ bool Dx11Shader::CreateBlob( const std::string& Path, const std::string& EntryPo
 
     ID3D10Blob* error = nullptr;
 
-    HRESULT hr = D3DCompileFromFile( ToWstring( Path ).c_str(), nullptr, nullptr, EntryPoint.c_str(), ShaderModel.c_str(), D3DCOMPILE_ENABLE_STRICTNESS, 0, &BlobComPtr, &error );
+    const std::wstring& wPath = ToWstring( Path );
+    HRESULT hr = D3DCompileFromFile( wPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, EntryPoint.c_str(), ShaderModel.c_str(), D3DCOMPILE_ENABLE_STRICTNESS, 0, BlobComPtr.GetAddressOf(), &error );
+
     if ( FAILED( hr ) )
     {
         char* msg = (char * )error->GetBufferPointer();

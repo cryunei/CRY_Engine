@@ -2,30 +2,19 @@
 
 
 //=====================================================================================================================
-// @brief	Constructor
-//=====================================================================================================================
-CrCamera::CrCamera()
-: LookAtDirection( Vector3::Forward )
-, FovDegree      ( 45.f )
-, NearDistance   ( 0.1f )
-, FarDistance    ( 10000.f )
-{
-}
-
-//=====================================================================================================================
 // @brief	Set look at direction
 //=====================================================================================================================
-void CrCamera::SetLookAtDirection( const Vector3& direction )
+void CrCamera::SetLookAtDirection( const Vector3& Direction )
 {
-    LookAtDirection = direction;
+    LookAtDirection = Direction;
 }
 
 //=====================================================================================================================
 // @brief	Look at location
 //=====================================================================================================================
-void CrCamera::LookAt( const Vector3& location )
+void CrCamera::LookAt( const Vector3& Location )
 {
-    const Vector3& to = location - Transform.GetLocation();
+    const Vector3& to = Location - Transform.GetLocation();
     const Vector3& lookAt = Vector3::Transform( LookAtDirection, Transform.GetRotation() );
 
     Quaternion rot;
@@ -40,7 +29,7 @@ Matrix CrCamera::GetViewMatrix() const
 {
     const Vector3& location = Transform.GetLocation();
     const Vector3& lookAt = Vector3::Transform( LookAtDirection, Transform.GetRotation() );
-    return Matrix::CreateLookAt( location, location + lookAt, Vector3::Up );
+    return Matrix::CreateLookAt( location, location + lookAt, Up );
 }
 
 //=====================================================================================================================

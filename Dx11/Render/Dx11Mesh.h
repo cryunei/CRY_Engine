@@ -17,8 +17,8 @@ private:
     Dx11Primitive Primitive;
     Dx11Material  Material;
 
-    std::string   RenderTarget;
-    float         Opacity;
+    std::vector< std::string > RenderTargets;
+    float Opacity;
 
 public:
     // Construct
@@ -53,8 +53,8 @@ public:
     Dx11Material& GetMaterial() { return Material; }
 
     // Render target
-    const std::string& GetRenderTarget() const { return RenderTarget; }
-    void SetRenderTarget( const std::string& InRenderTarget ) { RenderTarget = InRenderTarget; }
+    const std::vector< std::string >& GetRenderTargets() const { return RenderTargets; }
+    void SetRenderTargets( const std::vector< std::string >& InRenderTarget ) { RenderTargets = InRenderTarget; }
 
     // Ocaticy
     float GetOpacity() const { return Opacity; }

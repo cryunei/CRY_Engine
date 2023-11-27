@@ -2,7 +2,7 @@
 
 
 #include "../DxMacros.h"
-
+#include <string>
 
 class CrAsset;
 
@@ -13,6 +13,9 @@ class CrAsset;
 class Dx11Object
 {
     CLASS_DEFAULT_BODY( Dx11Object )
+
+private:
+    std::string Name;
 
 public:
     // Construct
@@ -26,4 +29,8 @@ public:
 
     // Release
     virtual void Release() = 0;
+
+    // Name
+    void SetName( const std::string& InName ) { Name = InName; }
+    const std::string& GetName() const { return Name; }
 };

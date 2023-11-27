@@ -27,8 +27,7 @@ public:
     virtual ~Dx11ConstantBuffer() override = default;
 
     // Create buffer
-    template< typename T >
-    void CreateBuffer( D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess );
+    void CreateBuffer( size_t Size, D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess );
 
     // Set register
     void SetRegister( ERenderPipeLineStage Stage, int Idx );
@@ -38,19 +37,6 @@ public:
     void Update( const T& Data ) const;
 };
 
-
-//=====================================================================================================================
-// @brief	CreateBuffer
-//=====================================================================================================================
-template < typename T >
-void Dx11ConstantBuffer::CreateBuffer( D3D11_USAGE Usage, D3D11_CPU_ACCESS_FLAG CpuAccess )
-{
-    BufferDesc.Usage = Usage;
-    BufferDesc.ByteWidth = sizeof( T );
-    BufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    BufferDesc.CPUAccessFlags = CpuAccess;
-    Create( nullptr );
-}
 
 //=====================================================================================================================
 // @brief	Update

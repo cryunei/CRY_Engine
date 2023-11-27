@@ -128,7 +128,13 @@ T* Dx11ObjectManager::_get( const std::string& Name, std::map<std::string, Dx11O
     T* ret = nullptr;
     if ( itrFind == Map.end() )
     {
+        if ( Name == "DefaultDiffuse" )
+        {
+            int i = 0;
+        }
         ret = new T();
+        ret->SetName( Name );
+
         Map.insert( std::make_pair( Name, ret ) );
     }
     else

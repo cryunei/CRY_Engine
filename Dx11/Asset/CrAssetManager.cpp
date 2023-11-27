@@ -5,6 +5,8 @@
 #include "CrPrimitive.h"
 #include "CrTexture2D.h"
 #include "CrVertexShader.h"
+#include "../Actor/CrMeshActor.h"
+#include "..\Actor\CrReflector.h"
 
 
 CrAssetManager G_AssetManager;
@@ -32,11 +34,13 @@ CrAsset* CrAssetManager::Get( ECrAssetType Type, const std::string& Name )
 
     switch ( Type )
     {
-    case ECrAssetType::Primitive:    asset = _getAsset< CrPrimitive    >( Name, _getMap( Type ) ); break;
-    case ECrAssetType::VertexShader: asset = _getAsset< CrVertexShader >( Name, _getMap( Type ) ); break;
-    case ECrAssetType::PixelShader:  asset = _getAsset< CrPixelShader  >( Name, _getMap( Type ) ); break;
-    case ECrAssetType::Texture2D:    asset = _getAsset< CrTexture2D    >( Name, _getMap( Type ) ); break;
-    case ECrAssetType::Mesh:         asset = _getAsset< CrMesh         >( Name, _getMap( Type ) ); break;
+    case ECrAssetType::Primitive:    asset = _getAsset< CrPrimitive    >( Type, Name ); break;
+    case ECrAssetType::VertexShader: asset = _getAsset< CrVertexShader >( Type, Name ); break;
+    case ECrAssetType::PixelShader:  asset = _getAsset< CrPixelShader  >( Type, Name ); break;
+    case ECrAssetType::Texture2D:    asset = _getAsset< CrTexture2D    >( Type, Name ); break;
+    case ECrAssetType::Mesh:         asset = _getAsset< CrMesh         >( Type, Name ); break;
+    case ECrAssetType::MeshActor:    asset = _getAsset< CrMeshActor    >( Type, Name ); break;
+    case ECrAssetType::Reflector:    asset = _getAsset< CrReflector    >( Type, Name ); break;
     }
     
     return asset;

@@ -82,10 +82,10 @@ struct PointLightColor
 struct RenderProperty
 {
     float    opacity;
-    XMFLOAT3 padding;
+    XMFLOAT3 color;
 
     // Construct
-    RenderProperty( float InOpacity ) : opacity( InOpacity ), padding( 0.0f, 0.0f, 0.0f ) {}
+    RenderProperty( float InOpacity ) : opacity( InOpacity ), color( 1.0f, 1.0f, 1.0f ) {}
 };
 
 //=====================================================================================================================

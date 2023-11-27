@@ -21,6 +21,7 @@ void Dx11RenderTarget::Initialize( unsigned int Width, unsigned int Height )
     GetDx11Device()->CreateRenderTargetView( Texture2DPtr->GetTexture(), nullptr, RenderTargetViewComPtr.GetAddressOf() );
 
     DepthStencilBufferPtr = GetDx11ObjectManager()->Get< Dx11DepthStencilBuffer >( EDx11ResourceType::DepthStencilBuffer, "ScreenBuffer" );
+    DepthStencilBufferPtr->Create( Width, Height );
 }
 
 //=====================================================================================================================

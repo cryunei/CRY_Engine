@@ -1,16 +1,22 @@
 ﻿#include "Dx11.h"
 #include "framework.h"
+#include "Actor\CrReflector.h"
 #include "Asset/CrAssetManager.h"
+#include "Asset/CrMesh.h"
 #include "Asset/CrVertexShader.h"
 #include "Asset/CrPixelShader.h"
 #include "Asset/CrPrimitive.h"
 #include "Asset/CrTexture2D.h"
 #include "Core/Dx11Device.h"
+#include "Core/Dx11ObjectManager.h"
+#include "Core/Dx11VertexShader.h"
 #include "Level/CrLevel.h"
 #include "Render/Dx11Renderer.h"
 #include "Fbx/FbxImportHelper.h"
 #include "GUI/GuiManager.h"
 #include "Loader/Dx11LevelLoader.h"
+#include "Render/Dx11GlobalConstantBuffers.h"
+#include "Render/Dx11ReflectionRenderer.h"
 
 
 enum
@@ -26,6 +32,7 @@ WCHAR szTitle[ MAX_LOADSTRING ];       // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[ MAX_LOADSTRING ]; // 기본 창 클래스 이름입니다.
 
 Dx11Renderer G_Dx11Renderer;
+Dx11ReflectionRenderer G_Dx11ReflectionRenderer;
 Dx11LevelLoader G_Dx11LevelLoader;
 
 
@@ -76,7 +83,24 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
             }
         }
 
+        GetGuiManager()->PreRender();
+
+        float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f }; 
+        const auto& renderTargets = GetDx11ObjectManager()->GetMap( EDx11ResourceType::RenderTarget );
+        for ( auto itr = renderTargets.begin(); itr != renderTargets.end(); ++itr )
+        {
+            const Dx11RenderTarget* renderTarget = (Dx11RenderTarget*)( itr->second );
+            if ( !renderTarget ) continue;
+
+            renderTarget->Clear( clearColor );
+        }
+
+        G_Dx11ReflectionRenderer.RenderFrame();
         G_Dx11Renderer.RenderFrame();
+
+        GetGuiManager()->PostRender();
+
+        GetSwapChain()->Present( 0, 0 );
     }
 
     return (int)msg.wParam;
@@ -125,8 +149,10 @@ BOOL InitInstance( HINSTANCE hInstance, int nCmdShow )
 
     G_Dx11Device.Create( hWnd );
 
+    GetDx11GCB()->Initialize();
+
+    G_Dx11ReflectionRenderer.Initialize();
     G_Dx11Renderer.Initialize( width, height );
-    G_Dx11Renderer.AddRenderTarget( "TestRT", 1024, 1024, DXGI_FORMAT_R8G8B8A8_UNORM );
 
     GetGuiManager()->Initialize( hWnd );
 
@@ -213,7 +239,7 @@ void LoadAssets()
 
     if ( CrVertexShader* vs = GetAssetManager()->Get< CrVertexShader >( ECrAssetType::VertexShader, "DefaultDiffuse" ) )
     {
-        vs->Initialize( "../Shader/Shader.hlsl", "VS", "vs_4_0",
+        vs->Initialize( "../Shader/shader.hlsl", "VS", "vs_5_0",
         {
             { "SV_POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0 },
             { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -223,7 +249,7 @@ void LoadAssets()
 
     if ( CrVertexShader* vs = GetAssetManager()->Get< CrVertexShader >( ECrAssetType::VertexShader, "NormalMap" ) )
     {
-        vs->Initialize( "../Shader/normal_map.hlsl", "VS_NormalMap", "vs_4_0",
+        vs->Initialize( "../Shader/normal_map.hlsl", "VS_NormalMap", "vs_5_0",
         {
             { "SV_POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0 },
             { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -233,39 +259,64 @@ void LoadAssets()
         } );
     }
 
+    if ( CrVertexShader* vs = GetAssetManager()->Get< CrVertexShader >( ECrAssetType::VertexShader, "ReflectionVS" ) )
+    {
+        vs->Initialize( "../Shader/reflection.hlsl", "VS_Reflection", "vs_5_0",
+        {
+            { "SV_POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0 },
+            { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        } );
+    }
+
     if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "DefaultDiffuse" ) )
     {
-        ps->Initialize( "../Shader/Shader.hlsl", "PS", "ps_4_0" );
+        ps->Initialize( "../Shader/shader.hlsl", "PS", "ps_5_0" );
+    }
+
+    if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "UnlitColor" ) )
+    {
+        ps->Initialize( "../Shader/shader.hlsl", "PS_UnlitColor", "ps_5_0" );
+    }
+
+    if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "UnlitDiffuse" ) )
+    {
+        ps->Initialize( "../Shader/shader.hlsl", "PS_UnlitDiffuse", "ps_5_0" );
     }
 
     if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "NormalMap" ) )
     {
-        ps->Initialize( "../Shader/normal_map.hlsl", "PS_NormalMap", "ps_4_0" );
+        ps->Initialize( "../Shader/normal_map.hlsl", "PS_NormalMap", "ps_5_0" );
     }
 
     if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "Specular" ) )
     {
-        ps->Initialize( "../Shader/Shader.hlsl", "PS_Specular", "ps_4_0" );
+        ps->Initialize( "../Shader/shader.hlsl", "PS_Specular", "ps_5_0" );
     }
 
     if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "PointLight" ) )
     {
-        ps->Initialize( "../Shader/Shader.hlsl", "PS_PointLight", "ps_4_0" );
+        ps->Initialize( "../Shader/shader.hlsl", "PS_PointLight", "ps_5_0" );
+        GetDx11ObjectManager()->GetFrom< Dx11PixelShader >( EDx11ResourceType::PixelShader, ps );
     }
 
     if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "HalfLambert" ) )
     {
-        ps->Initialize( "../Shader/Shader.hlsl", "PS_HalfLambert", "ps_4_0" );
+        ps->Initialize( "../Shader/shader.hlsl", "PS_HalfLambert", "ps_5_0" );
     }
 
     if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "TextureBlended" ) )
     {
-        ps->Initialize( "../Shader/Shader.hlsl", "PS_TextureBlended", "ps_4_0" );
+        ps->Initialize( "../Shader/shader.hlsl", "PS_TextureBlended", "ps_5_0" );
     }
 
     if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "Toon" ) )
     {
-        ps->Initialize( "../Shader/Shader.hlsl", "PS_Toon", "ps_4_0" );
+        ps->Initialize( "../Shader/shader.hlsl", "PS_Toon", "ps_5_0" );
+    }
+
+    if ( CrPixelShader* ps = GetAssetManager()->Get< CrPixelShader >( ECrAssetType::PixelShader, "ReflectionPS" ) )
+    {
+        ps->Initialize( "../Shader/reflection.hlsl", "PS_Reflection", "ps_5_0" );
     }
 
     if ( CrTexture2D* tex = GetAssetManager()->Get< CrTexture2D >( ECrAssetType::Texture2D, "BlockDiffuse" ) )
@@ -314,6 +365,6 @@ void LoadAssets()
     }
 
     CrLevel level;
-    G_Dx11LevelLoader.Load( level );
-    G_Dx11LevelLoader.AddRenderMeshes( G_Dx11Renderer );
+    Dx11LevelLoader::Load( level, G_Dx11Renderer );
+    G_Dx11ReflectionRenderer.SortRenderQueue();
 }

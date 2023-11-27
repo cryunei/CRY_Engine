@@ -1,7 +1,6 @@
 ﻿#include "Dx11VertexShader.h"
 #include "../Asset/CrVertexShader.h"
 #include "../Core/Dx11Device.h"
-#include "../Core/Dx11ResourceFactory.h"
 
 
 //=====================================================================================================================
@@ -21,6 +20,7 @@ void Dx11VertexShader::Release()
 bool Dx11VertexShader::CreateFrom( const CrAsset* Asset )
 {
     if ( !Asset ) return false;
+    if ( ShaderComPtr.Get() ) return true;
 
     const auto* crVS = ( const CrVertexShader*)( Asset );
 
@@ -48,8 +48,8 @@ void Dx11VertexShader::SetShader() const
 void Dx11VertexShader::CreateShader( const std::string& Path, const std::string& EntryPoint, const std::string& ShaderModel )
 {
     if ( CreateBlob( Path, EntryPoint, ShaderModel ) )
-    {
-        GetDx11Device()->CreateVertexShader( BlobComPtr->GetBufferPointer(), BlobComPtr->GetBufferSize(), nullptr, &ShaderComPtr );
+    { 
+        GetDx11Device()->CreateVertexShader( BlobComPtr->GetBufferPointer(), BlobComPtr->GetBufferSize(), nullptr, ShaderComPtr.GetAddressOf() );
     }    
 }
 
@@ -60,6 +60,6 @@ void Dx11VertexShader::CreateInputLayout( const std::vector<D3D11_INPUT_ELEMENT_
 {
     if ( !BlobComPtr.Get() ) return;
 
-    GetDx11Device()->CreateInputLayout( &InputElements[ 0 ], (UINT)( InputElements.size() ), BlobComPtr->GetBufferPointer(), BlobComPtr->GetBufferSize(), &InputLayoutComPtr );    
+    GetDx11Device()->CreateInputLayout( &InputElements[ 0 ], (UINT)( InputElements.size() ), BlobComPtr->GetBufferPointer(), BlobComPtr->GetBufferSize(), InputLayoutComPtr.GetAddressOf() );    
 }
 
