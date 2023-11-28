@@ -29,11 +29,11 @@ void Dx11Renderer::Clear()
 //=====================================================================================================================
 void Dx11Renderer::Initialize( int Width, int Height )
 {
-	GetCamera()->SetLookAtDirection( Vector3( 0.f, 0.f, -1.f ) );
-	GetCamera()->GetTransform()->SetLocation( 0.f, 0.f, 40.f );
+	GetCamera()->SetLookAtDirection( Vector3( 0.f, 0.f, 1.f ) );
+	GetCamera()->GetTransform()->SetLocation( 0.f, 0.f, -40.f );
 
-	Camera_RT.SetLookAtDirection( Vector3( 0.f, 0.f, -1.f ) );
-	Camera_RT.GetTransform()->SetLocation( 0.f, 0.f, 15.f );
+	Camera_RT.SetLookAtDirection( Vector3( 0.f, 0.f, 1.f ) );
+	Camera_RT.GetTransform()->SetLocation( 0.f, 0.f, -15.f );
 
 	GetGuiManager()->GetDevTestUI().BindCameraTransform( GetCamera()->GetTransform() );
 

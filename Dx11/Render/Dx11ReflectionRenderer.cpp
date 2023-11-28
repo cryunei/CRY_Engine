@@ -102,7 +102,7 @@ Plane Dx11ReflectionRenderer::_GetReflectionPlane( const DxTransform& Transform 
     const Matrix& worldMatrix = Transform.GetWorldMatrix();
 
     // 31, 32, 33 element means axis-z and it is normal vector 
-    const Vector3& normal = Vector3( worldMatrix._31, worldMatrix._32, worldMatrix._33 );  
+    const Vector3& normal = -Vector3( worldMatrix._31, worldMatrix._32, worldMatrix._33 );  
 
     // 41, 42, 43 element means location form origin
     float d = -normal.Dot( Vector3( worldMatrix._41, worldMatrix._42, worldMatrix._43 ) );

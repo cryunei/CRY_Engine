@@ -1,6 +1,5 @@
 ﻿#include "Dx11.h"
 #include "framework.h"
-#include "Actor\CrReflector.h"
 #include "Asset/CrAssetManager.h"
 #include "Asset/CrMesh.h"
 #include "Asset/CrVertexShader.h"
@@ -9,14 +8,15 @@
 #include "Asset/CrTexture2D.h"
 #include "Core/Dx11Device.h"
 #include "Core/Dx11ObjectManager.h"
-#include "Core/Dx11VertexShader.h"
 #include "Level/CrLevel.h"
 #include "Render/Dx11Renderer.h"
 #include "Fbx/FbxImportHelper.h"
+#include "Game/CrGame.h"
 #include "GUI/GuiManager.h"
 #include "Loader/Dx11LevelLoader.h"
 #include "Render/Dx11GlobalConstantBuffers.h"
 #include "Render/Dx11ReflectionRenderer.h"
+#include "Time/CrTimerManager.h"
 
 
 enum
@@ -34,6 +34,9 @@ WCHAR szWindowClass[ MAX_LOADSTRING ]; // 기본 창 클래스 이름입니다.
 Dx11Renderer G_Dx11Renderer;
 Dx11ReflectionRenderer G_Dx11ReflectionRenderer;
 Dx11LevelLoader G_Dx11LevelLoader;
+
+
+CrGame G_Game;
 
 
 // default functions
@@ -72,6 +75,7 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
     // 기본 메시지 루프입니다:
     while ( TRUE )
     {
+        GetTimerManager()->PreTick();
         if ( PeekMessage( &msg, nullptr, 0, 0, PM_REMOVE ) )
         {
             TranslateMessage( &msg );
@@ -95,12 +99,16 @@ int APIENTRY wWinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstanc
             renderTarget->Clear( clearColor );
         }
 
+        G_Game.Tick();
+
         G_Dx11ReflectionRenderer.RenderFrame();
         G_Dx11Renderer.RenderFrame();
 
         GetGuiManager()->PostRender();
 
         GetSwapChain()->Present( 0, 0 );
+
+        GetTimerManager()->PostTick();
     }
 
     return (int)msg.wParam;
@@ -364,7 +372,5 @@ void LoadAssets()
         tex->SetSamplingCount( 1 );
     }
 
-    CrLevel level;
-    Dx11LevelLoader::Load( level, G_Dx11Renderer );
-    G_Dx11ReflectionRenderer.SortRenderQueue();
+    G_Game.LoadLevel( "../Asset/Level/DevTest.json" );    
 }

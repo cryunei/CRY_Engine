@@ -23,8 +23,14 @@ public:
     // Constructor
     CrLevel();
 
+    // Release
+    void Release();
+
     // Load from json
     void LoadFromJson( const std::string& Path );
+
+    // Tick
+    void Tick( float DeltaTime );
 
     // Get meshes
     const std::vector< CrMeshActor* >& GetMeshes() const { return Actors; }

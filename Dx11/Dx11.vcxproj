@@ -213,6 +213,7 @@
     <ClInclude Include="Externals\RapidJSON\include\rapidjson\writer.h" />
     <ClInclude Include="Fbx\FbxImportHelper.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Game\CrGame.h" />
     <ClInclude Include="GUI\TransformEditor.h" />
     <ClInclude Include="Level\CrLevel.h" />
     <ClInclude Include="Loader\Dx11LevelLoader.h" />
@@ -234,6 +235,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="GUI\DevTestUI.h" />
     <ClInclude Include="GUI\GuiManager.h" />
+    <ClInclude Include="Time\CrTimerManager.h" />
     <ClInclude Include="Util\UtilVertex.h" />
   </ItemGroup>
   <ItemGroup>
@@ -493,6 +495,7 @@
     <ClCompile Include="Externals\ImGUI\imgui_tables.cpp" />
     <ClCompile Include="Externals\ImGUI\imgui_widgets.cpp" />
     <ClCompile Include="Fbx\FbxImportHelper.cpp" />
+    <ClCompile Include="Game\CrGame.cpp" />
     <ClCompile Include="GUI\TransformEditor.cpp" />
     <ClCompile Include="Level\CrLevel.cpp" />
     <ClCompile Include="Loader\Dx11LevelLoader.cpp" />
@@ -728,6 +731,7 @@
       <AdditionalIncludeDirectories>C:\Project\CRY_Engine\\Externals\;C:\Project\CRY_Engine\\Externals\FbxSDK\include\;C:\Project\CRY_Engine\\Dx11\Externals\ImGUI\</AdditionalIncludeDirectories>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
+    <ClCompile Include="Time\CrTimerManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Dx11.rc" />

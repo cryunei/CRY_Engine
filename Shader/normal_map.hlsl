@@ -1,3 +1,14 @@
+#ifndef NORMAL_MAP_HLSL
+#define NORMAL_MAP_HLSL
+
+
+#include "vs_cbuffers.hlsl"
+#include "ps_cbuffers.hlsl"
+
+
+//------------------------------------------------------------------------------
+// VertexIn
+//------------------------------------------------------------------------------
 struct VertexIn
 {
     float4 position : SV_POSITION;
@@ -7,6 +18,9 @@ struct VertexIn
     float3 bitangent : BITANGENT;
 };
 
+//------------------------------------------------------------------------------
+// PixelIn
+//------------------------------------------------------------------------------
 struct PixelIn
 {
     float4 position : SV_POSITION;
@@ -16,30 +30,6 @@ struct PixelIn
     float3 bitangent : BITANGENT;
 };
 
-cbuffer WorldMatrix : register(b0)
-{
-    matrix worldMat;
-};
-
-cbuffer ViewProjMatrix : register(b1)
-{
-    matrix viewMat;
-    matrix projMat;
-};
-
-cbuffer RenderProperty : register(b0)
-{
-    float opacity;
-    float3 padding_o;
-};
-
-cbuffer LightProperty : register(b10)
-{
-    float4 ambientColor;
-    float4 diffuseColor;
-    float3 lightDirection;
-    float  padding_lp;
-};
 
 //------------------------------------------------------------------------------
 // VS_NormalMap
@@ -93,3 +83,5 @@ float4 PS_NormalMap( PixelIn input ) : SV_TARGET
 
     return finalColor;
 }
+
+#endif

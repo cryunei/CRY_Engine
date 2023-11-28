@@ -15,6 +15,9 @@ private:
     float        Intensity = 0.25f;
 
 public:
+    // Tick
+    void Tick(float DeltaTime) override;
+
     // Name
     void SetName( const std::string& InName ) { Name = InName; }
     const std::string& GetName() const { return Name; }

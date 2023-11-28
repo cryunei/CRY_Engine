@@ -29,7 +29,7 @@ Matrix CrCamera::GetViewMatrix() const
 {
     const Vector3& location = Transform.GetLocation();
     const Vector3& lookAt = Vector3::Transform( LookAtDirection, Transform.GetRotation() );
-    return Matrix::CreateLookAt( location, location + lookAt, Up );
+    return DirectX::XMMatrixLookAtLH( location, location + lookAt, Up );
 }
 
 //=====================================================================================================================
@@ -38,5 +38,5 @@ Matrix CrCamera::GetViewMatrix() const
 Matrix CrCamera::GetProjectionMatrix( float ViewportWidth, float ViewportHeight ) const
 {
     //return Matrix::Identity;
-    return Matrix::CreatePerspectiveFieldOfView( DirectX::XMConvertToRadians( FovDegree ), ViewportWidth / ViewportHeight, NearDistance, FarDistance );
+    return DirectX::XMMatrixPerspectiveFovLH( DirectX::XMConvertToRadians( FovDegree ), ViewportWidth / ViewportHeight, NearDistance, FarDistance );
 }

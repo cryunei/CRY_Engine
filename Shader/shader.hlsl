@@ -1,5 +1,14 @@
-#define NUM_POINT_LIGHTS 4
+#ifndef SHADER_HLSL
+#define SHADER_HLSL
 
+
+#include "vs_cbuffers.hlsl"
+#include "ps_cbuffers.hlsl"
+
+
+//------------------------------------------------------------------------------
+// PixelIn
+//------------------------------------------------------------------------------
 struct PixelIn
 {
     float4 position : SV_POSITION;
@@ -8,55 +17,6 @@ struct PixelIn
     float3 viewDirection : TEXCOORD1;
     float3 pointLightLocation[ NUM_POINT_LIGHTS ] : TEXCOORD2;
 };
-
-cbuffer WorldMatrix : register(b0)
-{
-    matrix worldMat;
-};
-
-cbuffer ViewProjMatrix : register(b1)
-{
-    matrix viewMat;
-    matrix projMat;
-};
-
-cbuffer CameraProperty : register(b2)
-{
-    float3 cameraLocation;
-    float  padding_cp;
-};
-
-cbuffer PointLightLocation : register(b3)
-{
-    float4 pointLightLocation[ NUM_POINT_LIGHTS ];
-};
-
-cbuffer RenderProperty : register(b0)
-{
-    float opacity;
-    float3 padding_o;
-};
-
-cbuffer LightProperty : register(b10)
-{
-    float4 ambientColor;
-    float4 diffuseColor;
-    float3 lightDirection;
-    float  padding_lp;
-};
-
-cbuffer SpecularProperty : register(b11)
-{
-    float4 specularColor;
-    float  specularPower;
-    float3 padding_sp;
-};
-
-cbuffer PointLightColor : register(b12)
-{
-    float4 pointLightColor[ NUM_POINT_LIGHTS ];
-};
-
 
 
 //------------------------------------------------------------------------------
@@ -108,6 +68,26 @@ float4 PS( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 normal 
 }
 
 //------------------------------------------------------------------------------
+// UnlitDiffuse
+//------------------------------------------------------------------------------
+float4 PS_UnlitDiffuse( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 normal : NORMAL ) : SV_TARGET
+{
+    float4 textureColor = float4( 1.f, 1.f, 1.f, 1.f );
+    textureColor = shaderTexture.Sample( SampleType, tex );
+    textureColor = pow( textureColor, 1.f/2.2f );
+
+    return textureColor;
+}
+
+//------------------------------------------------------------------------------
+// UnlitColor
+//------------------------------------------------------------------------------
+float4 PS_UnlitColor( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 normal : NORMAL ) : SV_TARGET
+{
+    return float4( 0.5f, 0.5f, 1.f, 1.f );
+}
+
+//------------------------------------------------------------------------------
 // Specular
 //------------------------------------------------------------------------------
 float4 PS_Specular( PixelIn input ) : SV_TARGET
@@ -126,7 +106,7 @@ float4 PS_Specular( PixelIn input ) : SV_TARGET
     float4 lightColor = saturate( ambientColor + ( diffuseColor * lightIntensity ) );
 
     // R = p + 2n(-p dot n)
-    float3 reflection = reflect( lightDir, input.normal ); // normalize( lightDir + 2.f * normal * dot( -lightDir, normal ) );
+    float3 reflection = reflect( -lightDir, input.normal ); // normalize( lightDir + 2.f * normal * dot( -lightDir, normal ) );
     float4 specular = specularColor * pow( saturate( dot( reflection, input.viewDirection ) ), specularPower );
     
     float4 finalColor = textureColor * lightColor;
@@ -253,3 +233,5 @@ float4 PS_Toon( float4 position : SV_POSITION, float2 tex : TEXCOORD0, float3 no
 
     return finalColor;
 }
+
+#endif
